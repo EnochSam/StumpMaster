@@ -32,6 +32,11 @@ public class greet extends HttpServlet {
 		catch(Exception e) {
 			out.println("Error: " + e.getMessage());
 		}
+		finally {
+			out.println("<br></br>");
+			out.println("To go to MainPage, <a href=index.html> ClICK HERE </a>");
+			out.println("</center>");
+		}
 	}
 
 }
