@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title> Chess </title>
+        <link rel= "stylesheet" href="chessStyleSheet.css">
+    
+    </head>
+    <body>
+        
+            
+        <h1 class="TitleScreen">
+            Chess
+        </h1>
+        </body>
+            
+        <form method="post">
+           
+        <table class="ButtonLayout">
+            <th>
+                <div id="JoinGameButton">
+                    <input name="Button" type="submit" value="Join Game" >
+                </div>
+            </th>
+            <th>
+                <div id= "CreateGameButton">
+                    <input onclick="createGame()" name ="Button" type="submit" value="Create Game" >
+                </div>
+            </th>
+            <th>
+                <div id="TopCardsButton">
+                    <input name="Button" type="submit" value="View Top Plays" >
+                </div>
+            </th>
+        
+        </table>
+        <input type="hidden" name="gameID" id="gameID" value="Unchanged"></input>
+        <input type="hidden" name="playerName" id="playerName" value="Unchanged"></input>
+       
+
+    </form>
+    
+    <script type="text/javascript">
+        document.getElementById("startScreenErrorMessage").innerHTML = ErrorMessage
+        function createGame(){
+            let gameID = prompt("What is your game Code?");
+                let playerName = prompt("What is Your Name?")
+                document.getElementById("gameID").setAttribute("value",gameID) 
+                document.getElementById("playerName").setAttribute("value",playerName) 
+                let gameCredentials = {"gameID": gameID,"playerName": playerName}
+
+        }
+    </script>
+    </body>
+
+
+
+
+</html>
