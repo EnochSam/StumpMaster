@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<head>
+    <title>Enoch A Poopie</title>
+</head>
+<body>
+    <div id="Board">
+        
+    </div>
+    
+    <form method="get" action="MainMenu">
+    	<input type="submit" value="Quit Game">
+    </form>
+    <script>
+        //Creates board using javascript tags
+
+            //Create table
+             //<td> == column
+             //<tr> == row
+            let board = document.createElement("table");
+            board.style =
+            "display : grid;"+
+            "justify-content: space-around;"+
+            "border : 5px"+
+            "row-gap : 0px";
+            for(let y=0; y < 7; y++){
+                let tr = document.createElement("tr")
+                tr.style = "display :flex;";
+                let td = null;
+                let point = null;
+                for(let  x= 0; x < 7; x++){
+                    
+                    //create new space in x axis
+                    td = document.createElement("td");
+                    td.oncklick = "submit"
+                    td.style = "padding : 0px;"
+                    +"display : contents;"
+                    point = document.createElement("input")
+                    point.type = "button"
+                    point.value = ""
+                    point.name = x+":"+y;
+                    if((x+y) %2 == 0){
+                        color = "black"
+                    }else{
+                        color = "white"
+                    }
+
+                    point.style = 
+
+                    "border : 0px solid;"+
+                    "padding : 0px;"+
+                    "width : 50px;"+
+                    "height : 50px;"+
+                    //"float : left;"+
+                    "background-color :"+color+";";
+                    
+                    
+                    point.onclick = sendPost
+                    
+                   
+                    td.appendChild(point)
+                    tr.appendChild(td)
+                }
+
+                board.appendChild(tr)
+
+            }
+            document.getElementById("Board").appendChild(board)
+
+        function sendPost(){
+            console.log(document.activeElement.name)
+        }
+    </script>
+</body>
