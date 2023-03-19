@@ -1,6 +1,7 @@
 package chessGame;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -25,8 +26,24 @@ public class Game extends HttpServlet {
 		response.setContentType("text/html");
 		
 		// Get Board JSP File
-		RequestDispatcher rd = request.getRequestDispatcher("board.html");
+		RequestDispatcher rd = request.getRequestDispatcher("board.jsp");
+		
+		response.setContentType("text/html");
+		PrintWriter out=null;
+		try {
+			out=response.getWriter();
+			out.println("Hello, Here is the Print Request since Enoch is a Poopie: "+ request.getParameter("tile"));
+		}
+		catch(Exception e) {
+			out.println("Error: " + e.getMessage());
+		}
+		finally {
+			out.println("<br></br>");
+			out.println("To go to MainPage, <a href=index.html> ClICK HERE </a>");
+			out.println("</center>");
+		}
 		rd.include(request, response);
+		
 	}
 
 	/**
