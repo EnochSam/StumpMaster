@@ -56,8 +56,10 @@ public class Pawn extends Piece{
 				loc[1] = super.getXpos();
 				possibleMoves.add(loc);
 			}
+			
 			//check left diagonal
 			if(board[super.getYpos()+1][super.getXpos()-1] !=null){
+				
 				if(board[super.getYpos()+1][super.getXpos()-1].getColor() != super.getColor()){
 					loc = new Integer[2];
 					loc[0] = super.getYpos()+1;
