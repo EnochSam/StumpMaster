@@ -6,7 +6,7 @@ import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
-class RookTests {
+class BishopTests {
 	/*
 	@Test
 	void test() {
@@ -16,16 +16,16 @@ class RookTests {
 	
 	@Test
 	void testMovePossibleMoves(){
-		Rook testRook = new Rook(4,4,Piece.WHITE);
+		Bishop testBishop = new Bishop(4,4,Piece.WHITE);
 		Piece[][] board= new Piece[8][8];
-		Piece enemyPiece = new Rook(2,4,Piece.BLACK);
-		Piece friendlyPiece = new Rook(2,3,Piece.WHITE);
+		Piece enemyPiece = new Bishop(3,3,Piece.BLACK);
+		Piece friendlyPiece = new Bishop(2,2,Piece.WHITE);
 		board[enemyPiece.getYpos()][enemyPiece.getXpos()] = enemyPiece;
 		board[friendlyPiece.getYpos()][friendlyPiece.getXpos()] = friendlyPiece;
 		boolean foundPiece = false;
 		boolean pieceToLeftOfEnemy = false;
 		boolean friendlyPieceIsValidMove = false;
-		List<Integer[]>possibleMoves = testRook.getValidMoves(board);
+		List<Integer[]>possibleMoves = testBishop.getValidMoves(board);
 		for(int i = 0; i < possibleMoves.size(); i++) {
 			if(possibleMoves.get(i)[0].equals(enemyPiece.getXpos()) && possibleMoves.get(i)[1].equals(enemyPiece.getYpos())){
 				foundPiece = true;
