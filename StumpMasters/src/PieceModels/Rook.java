@@ -80,8 +80,7 @@ public class Rook extends Piece{
 			loc[0] = super.getXpos();
 			loc[1] = y;
 			possibleMoves.add(loc);
-			System.out.println("added:"+loc[0]+loc[1]);
-			System.out.println("added:"+possibleMoves.get(possibleMoves.size()-1)[0]+loc[1]);
+			
 			if(board[y][super.getXpos()] != null) {
 				if(board[y][super.getXpos()].getColor() != super.getColor()) y=7;
 			}
