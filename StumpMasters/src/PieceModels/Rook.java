@@ -19,14 +19,19 @@ public class Rook extends Piece{
 		
 		//Traverse Left of Rook
 		int x = super.getXpos();
+		Integer[] loc = {-1,-1};
 		while(x >= 0) {
 			if(board[super.getYpos()][x] != null) {
 				//checks if piece is same color
 				if(board[super.getYpos()][x].getColor() == super.getColor()) break;
 			}
-			Integer[] loc = {x,super.getYpos()};
+			loc = new Integer[2];
+			loc[0] = x;
+			loc[1] = super.getYpos();
 			possibleMoves.add(loc);
-			if(board[super.getYpos()][x].getColor() != super.getColor()) x=0;
+			if(board[super.getYpos()][x] != null) {
+				if(board[super.getYpos()][x].getColor() != super.getColor()) x=0;
+			}
 			x--;
 		}
 		
@@ -37,9 +42,13 @@ public class Rook extends Piece{
 				//checks if piece is same color
 				if(board[super.getYpos()][x].getColor() == super.getColor()) break;
 			}
-			Integer[] loc = {x,super.getYpos()};
+			loc = new Integer[2];
+			loc[0] = x;
+			loc[1] = super.getYpos();
 			possibleMoves.add(loc);
-			if(board[super.getYpos()][x].getColor() != super.getColor()) x=7;
+			if(board[super.getYpos()][x] != null) {
+				if(board[super.getYpos()][x].getColor() != super.getColor()) x=7;
+			}
 			x++;
 		}
 		
@@ -50,9 +59,13 @@ public class Rook extends Piece{
 		//checks if piece is same color
 		if(board[y][super.getXpos()].getColor() == super.getColor()) break;
 		}
-		Integer[] loc = {y,super.getXpos()};
+			loc = new Integer[2];
+			loc[0] = super.getXpos();
+			loc[1] = y;
 			possibleMoves.add(loc);
-			if(board[y][super.getXpos()].getColor() != super.getColor()) y=0;
+			if(board[y][super.getXpos()] != null) {
+				if(board[y][super.getXpos()].getColor() != super.getColor()) y=0;
+			}
 			y--;
 		}
 		
@@ -63,9 +76,15 @@ public class Rook extends Piece{
 		//checks if piece is same color
 		if(board[y][super.getXpos()].getColor() == super.getColor()) break;
 			}
-			Integer[] loc = {y,super.getXpos()};
+			loc = new Integer[2];
+			loc[0] = super.getXpos();
+			loc[1] = y;
 			possibleMoves.add(loc);
-			if(board[y][super.getXpos()].getColor() != super.getColor()) y=7;
+			System.out.println("added:"+loc[0]+loc[1]);
+			System.out.println("added:"+possibleMoves.get(possibleMoves.size()-1)[0]+loc[1]);
+			if(board[y][super.getXpos()] != null) {
+				if(board[y][super.getXpos()].getColor() != super.getColor()) y=7;
+			}
 			y++;
 		}
 		

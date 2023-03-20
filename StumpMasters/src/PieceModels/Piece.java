@@ -3,8 +3,8 @@ package PieceModels;
 import java.util.List;
 
 public abstract class Piece {
-	public final int BLACK = 0;
-	public final int WHITE = 1;
+	public final static int BLACK = 0;
+	public final static int WHITE = 1;
 	private int xpos;
 	private int ypos;
 	private int color;
