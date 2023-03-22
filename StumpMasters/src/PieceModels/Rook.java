@@ -88,7 +88,5 @@ public class Rook extends Piece{
 		}
 		
 		return possibleMoves;
-		
-		
 	}
 }
