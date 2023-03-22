@@ -1,4 +1,4 @@
-package chessGame;
+package controllers;
 
 public class GameController {
 

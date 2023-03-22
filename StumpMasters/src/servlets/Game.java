@@ -1,4 +1,4 @@
-package chessGame;
+package servlets;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -26,7 +26,7 @@ public class Game extends HttpServlet {
 		response.setContentType("text/html");
 		
 		// Get Board JSP File
-		RequestDispatcher rd = request.getRequestDispatcher("board.jsp");
+		RequestDispatcher rd = request.getRequestDispatcher("view/board.jsp");
 		
 		response.setContentType("text/html");
 		PrintWriter out=null;

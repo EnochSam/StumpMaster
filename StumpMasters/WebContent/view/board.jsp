@@ -7,12 +7,12 @@
 <title>Enoch a Bigger Poopie</title>
 </head>
 <body>
-    <form method="post" action="Game">
+    <form method="post" action="${pageContext.servletContext.contextPath}/Game">
     <div id="Board">
         
     </div>
     </form>
-    <form method="get" action="MainMenu">
+    <form method="get" action="${pageContext.servletContext.contextPath}/MainMenu">
     	<input type="submit" value="Quit Game">
     </form>
     <script>
