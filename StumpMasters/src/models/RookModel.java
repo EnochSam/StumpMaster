@@ -1,20 +1,20 @@
-package PieceModels;
+package models;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class Rook extends Piece{
+public class RookModel extends PieceModel{
 	
-	public Rook() {
+	public RookModel() {
 		super();
 		
 	}
 	
-	public Rook(int xpos, int ypos, int color){
+	public RookModel(int xpos, int ypos, int color){
 		super(xpos,ypos,color);
 	}
 	
-	public List<Integer[]> getValidMoves(Piece[][] board){
+	public List<Integer[]> getValidMoves(PieceModel[][] board){
 		List<Integer[]> possibleMoves = new ArrayList<Integer[]>();
 		
 		//Traverse Left of Rook

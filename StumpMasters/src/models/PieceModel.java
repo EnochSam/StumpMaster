@@ -1,20 +1,20 @@
-package PieceModels;
+package models;
 
 import java.util.List;
 
-public abstract class Piece {
+public abstract class PieceModel {
 	public final static int BLACK = 0;
 	public final static int WHITE = 1;
 	private int xpos;
 	private int ypos;
 	private int color;
 	
-	public Piece(){
+	public PieceModel(){
 		xpos = -1;
 		ypos = -1;
 	}
 	
-	public Piece(int xpos, int ypos, int color){
+	public PieceModel(int xpos, int ypos, int color){
 		this.xpos = xpos;
 		this.ypos = ypos;
 		this.color = color;
@@ -48,6 +48,6 @@ public abstract class Piece {
 		this.ypos = ypos;
 	}
 	
-	public abstract List<Integer[]> getValidMoves(Piece[][] board);
+	public abstract List<Integer[]> getValidMoves(PieceModel[][] board);
 	
 }

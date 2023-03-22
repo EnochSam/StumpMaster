@@ -1,4 +1,4 @@
-package menu;
+package servlets;
 
 import java.io.IOException;
 
@@ -22,7 +22,7 @@ public class MainMenu extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) 
 			throws ServletException, IOException {
 		//Get Menu JSP File
-		RequestDispatcher rd = request.getRequestDispatcher("menu.jsp");
+		RequestDispatcher rd = request.getRequestDispatcher("view/menu.jsp");
 		rd.forward(request, response);
 	}
 

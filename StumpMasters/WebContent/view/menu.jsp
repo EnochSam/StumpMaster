@@ -11,8 +11,12 @@
 <center>
 	<h1>Stump Masters</h1>
 	<br><br>
-	<form method="get" action="Game">
+	<form method="get" action="${pageContext.servletContext.contextPath}/Game">
 		<input type="submit" value="Create Game">
+	</form>
+	<br><br>
+	<form method="get" action="${pageContext.servletContext.contextPath}/Login">
+		<input type="submit" value="Log Out">
 	</form>
 </center>
     

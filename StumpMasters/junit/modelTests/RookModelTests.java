@@ -1,4 +1,4 @@
-package PieceModels;
+package modelTests;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -6,7 +6,10 @@ import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
-class BishopTests {
+import models.PieceModel;
+import models.RookModel;
+
+class RookModelTests {
 	/*
 	@Test
 	void test() {
@@ -16,16 +19,16 @@ class BishopTests {
 	
 	@Test
 	void testMovePossibleMoves(){
-		Bishop testBishop = new Bishop(4,4,Piece.WHITE);
-		Piece[][] board= new Piece[8][8];
-		Piece enemyPiece = new Bishop(3,3,Piece.BLACK);
-		Piece friendlyPiece = new Bishop(2,2,Piece.WHITE);
+		RookModel testRook = new RookModel(4,4,PieceModel.WHITE);
+		PieceModel[][] board= new PieceModel[8][8];
+		PieceModel enemyPiece = new RookModel(2,4,PieceModel.BLACK);
+		PieceModel friendlyPiece = new RookModel(2,3,PieceModel.WHITE);
 		board[enemyPiece.getYpos()][enemyPiece.getXpos()] = enemyPiece;
 		board[friendlyPiece.getYpos()][friendlyPiece.getXpos()] = friendlyPiece;
 		boolean foundPiece = false;
 		boolean pieceToLeftOfEnemy = false;
 		boolean friendlyPieceIsValidMove = false;
-		List<Integer[]>possibleMoves = testBishop.getValidMoves(board);
+		List<Integer[]>possibleMoves = testRook.getValidMoves(board);
 		for(int i = 0; i < possibleMoves.size(); i++) {
 			if(possibleMoves.get(i)[0].equals(enemyPiece.getXpos()) && possibleMoves.get(i)[1].equals(enemyPiece.getYpos())){
 				foundPiece = true;

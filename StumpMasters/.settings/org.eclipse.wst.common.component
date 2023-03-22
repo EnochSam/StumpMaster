@@ -2,6 +2,7 @@
     <wb-module deploy-name="StumpMasters">
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/src"/>
         <wb-resource deploy-path="/" source-path="/WebContent"/>
+        <wb-resource deploy-path="/WEB-INF/classes" source-path="/junit"/>
         <property name="context-root" value="StumpMasters"/>
         <property name="java-output-path" value="/StumpMasters/build/classes"/>
     </wb-module>

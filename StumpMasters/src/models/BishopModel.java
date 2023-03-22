@@ -1,20 +1,20 @@
-package PieceModels;
+package models;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class Bishop extends Piece{
+public class BishopModel extends PieceModel{
 	
-	public Bishop() {
+	public BishopModel() {
 		super();
 		
 	}
 	
-	public Bishop(int xpos, int ypos, int color){
+	public BishopModel(int xpos, int ypos, int color){
 		super(xpos,ypos,color);
 	}
 	
-	public List<Integer[]> getValidMoves(Piece[][] board){
+	public List<Integer[]> getValidMoves(PieceModel[][] board){
 		List<Integer[]> possibleMoves = new ArrayList<Integer[]>();
 		
 		//Traverse northwest of Rook
