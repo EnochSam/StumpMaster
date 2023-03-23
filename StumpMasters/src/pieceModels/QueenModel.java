@@ -15,7 +15,7 @@ public class QueenModel extends PieceModel{
 	}
 	
 	public List<Integer[]> getValidMoves(PieceModel[][] board){
-		List<Integer[]> possibleMoves = super.getDiagonalMoves(board);
+		List<Integer[]> possibleMoves = super.getVerticalMoves(board);
 		possibleMoves.addAll((Collection<Integer[]>)(super.getDiagonalMoves(board)));
 		return possibleMoves;
 	}
