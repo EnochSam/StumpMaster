@@ -18,11 +18,11 @@
   	<servlet-class>src.menu.MainMenu</servlet-class>
   </servlet>
   <servlet-mapping>
-  	<servlet-name>chessGameServlet</servlet-name>
-  	<url-pattern>/StumpMasters/Game</url-pattern>
+  	<servlet-name>default</servlet-name>
+  	<url-pattern>/StumpMasters/</url-pattern>
   </servlet-mapping>
   <servlet-mapping>
-  	<servlet-name>menu</servlet-name>
-  	<url-pattern>/menu</url-pattern>
+  	<servlet-name>default</servlet-name>
+  	<url-pattern>/resources/*</url-pattern>
   </servlet-mapping>
 </web-app>
