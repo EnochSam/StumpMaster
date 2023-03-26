@@ -19,7 +19,7 @@ public class KnightModel extends PieceModel{
 		List<Integer[]> possibleMoves = new ArrayList<Integer[]>();
 		
 		//X,Y locations to check are loaded into list
-		List<Integer> listOfLocationsToCheck = Arrays.asList(2,1,2,-1,1,2,1,-2,-1,2,-1,-2,-2,1-2,-1);
+		List<Integer> listOfLocationsToCheck = Arrays.asList(2,1,2,-1,1,2,1,-2,-1,2,-1,-2,-2,1,-2,-1);
 		Integer[] loc = {-1,-1};
 		for(int i = 0; i < listOfLocationsToCheck.size(); i+=2){
 			int x = super.getXpos()+listOfLocationsToCheck.get(i);
