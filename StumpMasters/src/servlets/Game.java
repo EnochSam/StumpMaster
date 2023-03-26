@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import pieceModels.BishopModel;
+import pieceModels.KnightModel;
 import pieceModels.PawnModel;
 import pieceModels.PieceModel;
 import pieceModels.QueenModel;
@@ -79,7 +80,7 @@ public class Game extends HttpServlet {
 						obj+="Bishop";
 				}else
 				//KnightModel
-				if(board[i][j] instanceof PieceModel) {
+				if(board[i][j] instanceof KnightModel) {
 						obj+="Knight";
 				}else
 					if(board[i][j] instanceof QueenModel) {
@@ -113,13 +114,13 @@ public class Game extends HttpServlet {
 		board[0][0] = new RookModel(0,0,PieceModel.WHITE);
 		board[0][7] = new RookModel(7,0,PieceModel.WHITE);
 		
-		board[0][1] = new QueenModel(0,0,PieceModel.WHITE);
-		board[0][6] = new QueenModel(7,0,PieceModel.WHITE);
+		board[0][1] = new KnightModel(0,0,PieceModel.WHITE);
+		board[0][6] = new KnightModel(7,0,PieceModel.WHITE);
 		
 		board[0][2] = new BishopModel(0,0,PieceModel.WHITE);
 		board[0][5] = new BishopModel(7,0,PieceModel.WHITE);
 		
-
+		board[0][4] = new QueenModel(4,0,PieceModel.WHITE);
 		return board;
 	}
 	/**
