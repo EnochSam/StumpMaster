@@ -2,10 +2,10 @@ package models;
 
 //import pieceModels.PieceModel;
 
-public class GameModel {
-	PlayerModel white;
-	PlayerModel black;
-	PlayerModel[] player= {white,black};
+public class Game {
+	Player white;
+	Player black;
+	Player[] player= {white,black};
 	int[][] board;
 	
 	public void createGame(){

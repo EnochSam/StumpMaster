@@ -18,13 +18,13 @@ import sun.security.util.Debug;
  * Servlet implementation class Login
  */
 @WebServlet("/Login")
-public class Login extends HttpServlet {
+public class LoginServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
     private LoginController controller = new LoginController();
     /**
      * @see HttpServlet#HttpServlet()
      */
-    public Login() {
+    public LoginServlet() {
         super();
         // TODO Auto-generated constructor stub
     }

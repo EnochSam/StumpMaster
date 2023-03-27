@@ -1,6 +1,6 @@
 package controllers;
 
-import models.UserModel;
+import models.User;
 import models.inputType;
 
 public class LoginController {
@@ -9,8 +9,8 @@ public class LoginController {
 		
 	}
 	
-	public UserModel createUser(String username, String password) {
-		UserModel user = new UserModel(username, password);
+	public User createUser(String username, String password) {
+		User user = new User(username, password);
 		return user;
 	}
 	

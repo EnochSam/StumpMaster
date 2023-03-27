@@ -4,18 +4,18 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class KnightModel extends PieceModel{
+public class Knight extends Piece{
 	
-	public KnightModel() {
+	public Knight() {
 		super();
 		
 	}
 	
-	public KnightModel(int xpos, int ypos, int color){
+	public Knight(int xpos, int ypos, int color){
 		super(xpos,ypos,color);
 	}
 	
-	public List<Integer[]> getValidMoves(PieceModel[][] board){
+	public List<Integer[]> getValidMoves(Piece[][] board){
 		List<Integer[]> possibleMoves = new ArrayList<Integer[]>();
 		
 		//X,Y locations to check are loaded into list

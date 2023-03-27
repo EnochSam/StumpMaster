@@ -3,24 +3,24 @@ package pieceModels;
 import java.util.ArrayList;
 import java.util.List;
 
-public class PawnModel extends PieceModel{
+public class Pawn extends Piece{
 	
-	public PawnModel() {
+	public Pawn() {
 		super();
 		
 	}
 	
-	public PawnModel(int xpos, int ypos, int color){
+	public Pawn(int xpos, int ypos, int color){
 		super(xpos,ypos,color);
 	}
 	
-	public List<Integer[]> getValidMoves(PieceModel[][] board){
+	public List<Integer[]> getValidMoves(Piece[][] board){
 		List<Integer[]> possibleMoves = new ArrayList<Integer[]>();
 		
 		Integer[] loc = {-1,-1};
 		
 		//White Pawn
-		if(super.getColor() == PieceModel.WHITE) {
+		if(super.getColor() == Piece.WHITE) {
 			if(board[super.getYpos()-1][super.getXpos()] ==null) {
 				loc = new Integer[2];
 				loc[0] = super.getYpos()-1;
@@ -49,7 +49,7 @@ public class PawnModel extends PieceModel{
 		}
 		
 		//Black Pawn
-		if(super.getColor() == PieceModel.BLACK) {
+		if(super.getColor() == Piece.BLACK) {
 			if(board[super.getYpos()+1][super.getXpos()] ==null) {
 				loc = new Integer[2];
 				loc[0] = super.getYpos()+1;

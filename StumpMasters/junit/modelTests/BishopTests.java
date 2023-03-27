@@ -6,10 +6,10 @@ import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
-import pieceModels.PieceModel;
-import pieceModels.QueenModel;
+import pieceModels.Bishop;
+import pieceModels.Piece;
 
-class QueenModelTests {
+class BishopTests {
 	/*
 	@Test
 	void test() {
@@ -19,16 +19,16 @@ class QueenModelTests {
 	
 	@Test
 	void testMovePossibleMoves(){
-		QueenModel testQueen = new QueenModel(4,4,PieceModel.WHITE);
-		PieceModel[][] board= new PieceModel[8][8];
-		PieceModel enemyPiece = new QueenModel(5,3,PieceModel.BLACK);
-		PieceModel friendlyPiece = new QueenModel(3,5,PieceModel.WHITE);
+		Bishop testBishop = new Bishop(4,4,Piece.WHITE);
+		Piece[][] board= new Piece[8][8];
+		Piece enemyPiece = new Bishop(3,3,Piece.BLACK);
+		Piece friendlyPiece = new Bishop(2,2,Piece.WHITE);
 		board[enemyPiece.getYpos()][enemyPiece.getXpos()] = enemyPiece;
 		board[friendlyPiece.getYpos()][friendlyPiece.getXpos()] = friendlyPiece;
 		boolean foundPiece = false;
 		boolean pieceToLeftOfEnemy = false;
 		boolean friendlyPieceIsValidMove = false;
-		List<Integer[]>possibleMoves = testQueen.getValidMoves(board);
+		List<Integer[]>possibleMoves = testBishop.getValidMoves(board);
 		for(int i = 0; i < possibleMoves.size(); i++) {
 			if(possibleMoves.get(i)[0].equals(enemyPiece.getXpos()) && possibleMoves.get(i)[1].equals(enemyPiece.getYpos())){
 				foundPiece = true;

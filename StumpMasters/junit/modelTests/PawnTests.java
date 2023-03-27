@@ -6,19 +6,19 @@ import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
-import pieceModels.PawnModel;
-import pieceModels.PieceModel;
-import pieceModels.RookModel;
+import pieceModels.Pawn;
+import pieceModels.Piece;
+import pieceModels.Rook;
 
-class PawnModelTest {
+class PawnTests {
 	
 	@Test
 	void testBlackPawn(){
-		PieceModel testPiece = new PawnModel(4,4,PieceModel.BLACK);
-		PieceModel[][] board= new PieceModel[8][8];
-		PieceModel enemyPiece = new RookModel(5,5,PieceModel.WHITE);
-		PieceModel enemyPiece2 = new PawnModel(4,5,PieceModel.WHITE);
-		PieceModel friendlyPiece = new RookModel(3,5,PieceModel.BLACK);
+		Piece testPiece = new Pawn(4,4,Piece.BLACK);
+		Piece[][] board= new Piece[8][8];
+		Piece enemyPiece = new Rook(5,5,Piece.WHITE);
+		Piece enemyPiece2 = new Pawn(4,5,Piece.WHITE);
+		Piece friendlyPiece = new Rook(3,5,Piece.BLACK);
 		board[enemyPiece.getYpos()][enemyPiece.getXpos()] = enemyPiece;
 		board[enemyPiece2.getYpos()][enemyPiece2.getXpos()] = enemyPiece2;
 		board[friendlyPiece.getYpos()][friendlyPiece.getXpos()] = friendlyPiece;
@@ -49,11 +49,11 @@ class PawnModelTest {
 	
 	@Test
 	void testWhitePawn(){
-		PieceModel testPiece = new PawnModel(4,4,PieceModel.WHITE);
-		PieceModel[][] board= new PieceModel[8][8];
-		PieceModel enemyPiece = new RookModel(3,3,PieceModel.BLACK);
-		PieceModel enemyPiece2 = new PawnModel(4,3,PieceModel.BLACK);
-		PieceModel friendlyPiece = new RookModel(2,3,PieceModel.WHITE);
+		Piece testPiece = new Pawn(4,4,Piece.WHITE);
+		Piece[][] board= new Piece[8][8];
+		Piece enemyPiece = new Rook(3,3,Piece.BLACK);
+		Piece enemyPiece2 = new Pawn(4,3,Piece.BLACK);
+		Piece friendlyPiece = new Rook(2,3,Piece.WHITE);
 		board[enemyPiece.getYpos()][enemyPiece.getXpos()] = enemyPiece;
 		board[enemyPiece2.getYpos()][enemyPiece2.getXpos()] = enemyPiece2;
 		board[friendlyPiece.getYpos()][friendlyPiece.getXpos()] = friendlyPiece;

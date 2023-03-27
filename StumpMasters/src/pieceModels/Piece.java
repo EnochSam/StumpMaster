@@ -3,19 +3,19 @@ package pieceModels;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class PieceModel {
+public abstract class Piece {
 	public final static int BLACK = 0;
 	public final static int WHITE = 1;
 	private int xpos;
 	private int ypos;
 	private int color;
 	
-	public PieceModel(){
+	public Piece(){
 		xpos = -1;
 		ypos = -1;
 	}
 	
-	public PieceModel(int xpos, int ypos, int color){
+	public Piece(int xpos, int ypos, int color){
 		this.xpos = xpos;
 		this.ypos = ypos;
 		this.color = color;
@@ -49,9 +49,9 @@ public abstract class PieceModel {
 		this.ypos = ypos;
 	}
 	
-	public abstract List<Integer[]> getValidMoves(PieceModel[][] board);
+	public abstract List<Integer[]> getValidMoves(Piece[][] board);
 	
-	public List<Integer[]> getVerticalMoves(PieceModel[][] board){
+	public List<Integer[]> getVerticalMoves(Piece[][] board){
 List<Integer[]> possibleMoves = new ArrayList<Integer[]>();
 		
 		//Traverse Left of Rook
@@ -129,7 +129,7 @@ List<Integer[]> possibleMoves = new ArrayList<Integer[]>();
 		
 	}
 	
-	public List<Integer[]> getDiagonalMoves(PieceModel[][] board){
+	public List<Integer[]> getDiagonalMoves(Piece[][] board){
 	List<Integer[]> possibleMoves = new ArrayList<Integer[]>();
 		
 		//Traverse northwest of Rook

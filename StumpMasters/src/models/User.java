@@ -1,11 +1,11 @@
 package models;
 
-public class UserModel {
+public class User {
 	private String username;
 	private String password;
 	
 	
-	public UserModel(String username, String password) {
+	public User(String username, String password) {
 		this.password = username;
 		this.password = password;
 	}

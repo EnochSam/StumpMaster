@@ -10,18 +10,18 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import pieceModels.BishopModel;
-import pieceModels.KnightModel;
-import pieceModels.PawnModel;
-import pieceModels.PieceModel;
-import pieceModels.QueenModel;
-import pieceModels.RookModel;
+import pieceModels.Bishop;
+import pieceModels.Knight;
+import pieceModels.Pawn;
+import pieceModels.Piece;
+import pieceModels.Queen;
+import pieceModels.Rook;
 
 /**
  * Servlet implementation class Game
  */
 @WebServlet("/Game")
-public class Game extends HttpServlet {
+public class GameServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
 	/**
@@ -50,14 +50,14 @@ public class Game extends HttpServlet {
 			out.println("</center>");
 		}
 
-		PieceModel[][] board = loadTestBoard();
+		Piece[][] board = loadTestBoard();
 		String[][] loadBoard = loadBoard(request,board);
 		request.setAttribute("board", loadBoard);
 		rd.include(request, response);
 	}
 
 	
-	protected String[][] loadBoard(HttpServletRequest req, PieceModel[][] board){
+	protected String[][] loadBoard(HttpServletRequest req, Piece[][] board){
 		String[][] pieceLocations = new String[board.length][board[0].length];
 		for(int j = 0; j < board.length; j++) {
 			for(int i = 0; i < board[0].length; i++) {
@@ -65,28 +65,28 @@ public class Game extends HttpServlet {
 				String obj;
 				if(board[i][j] != null) {
 				//selects color to put int obj String
-				if(board[i][j].getColor() == PieceModel.WHITE){
+				if(board[i][j].getColor() == Piece.WHITE){
 					obj = "White";
 				}else{
 					obj = "Black";
 				}
-				if(board[i][j] instanceof PawnModel) {
+				if(board[i][j] instanceof Pawn) {
 					obj+="Pawn";
 				}else
-				if(board[i][j] instanceof RookModel) {
+				if(board[i][j] instanceof Rook) {
 					obj+="Rook";
 				}else
-					if(board[i][j] instanceof BishopModel) {
+					if(board[i][j] instanceof Bishop) {
 						obj+="Bishop";
 				}else
 				//KnightModel
-				if(board[i][j] instanceof KnightModel) {
+				if(board[i][j] instanceof Knight) {
 						obj+="Knight";
 				}else
-					if(board[i][j] instanceof QueenModel) {
+					if(board[i][j] instanceof Queen) {
 						obj+="Queen";
 				//KingModel
-				}else if(board[i][j] instanceof PieceModel) {
+				}else if(board[i][j] instanceof Piece) {
 					obj+="King";
 				}
 				pieceLocations[j][i] = obj;
@@ -99,28 +99,28 @@ public class Game extends HttpServlet {
 		
 	}
 	
-	protected PieceModel[][] loadTestBoard() {
-		PieceModel board[][] = new PieceModel[8][8];
+	protected Piece[][] loadTestBoard() {
+		Piece board[][] = new Piece[8][8];
 		//Load White Pawn
-		board[1][0] = new PawnModel(0,1,PieceModel.WHITE);
-		board[1][1] = new PawnModel(1,1,PieceModel.WHITE);
-		board[1][2] = new PawnModel(2,1,PieceModel.WHITE);
-		board[1][3] = new PawnModel(3,1,PieceModel.WHITE);
-		board[1][4] = new PawnModel(4,1,PieceModel.WHITE);
-		board[1][5] = new PawnModel(5,1,PieceModel.WHITE);
-		board[1][6] = new PawnModel(6,1,PieceModel.WHITE);
-		board[1][7] = new PawnModel(7,1,PieceModel.WHITE);
+		board[1][0] = new Pawn(0,1,Piece.WHITE);
+		board[1][1] = new Pawn(1,1,Piece.WHITE);
+		board[1][2] = new Pawn(2,1,Piece.WHITE);
+		board[1][3] = new Pawn(3,1,Piece.WHITE);
+		board[1][4] = new Pawn(4,1,Piece.WHITE);
+		board[1][5] = new Pawn(5,1,Piece.WHITE);
+		board[1][6] = new Pawn(6,1,Piece.WHITE);
+		board[1][7] = new Pawn(7,1,Piece.WHITE);
 		
-		board[0][0] = new RookModel(0,0,PieceModel.WHITE);
-		board[0][7] = new RookModel(7,0,PieceModel.WHITE);
+		board[0][0] = new Rook(0,0,Piece.WHITE);
+		board[0][7] = new Rook(7,0,Piece.WHITE);
 		
-		board[0][1] = new KnightModel(0,0,PieceModel.WHITE);
-		board[0][6] = new KnightModel(7,0,PieceModel.WHITE);
+		board[0][1] = new Knight(0,0,Piece.WHITE);
+		board[0][6] = new Knight(7,0,Piece.WHITE);
 		
-		board[0][2] = new BishopModel(0,0,PieceModel.WHITE);
-		board[0][5] = new BishopModel(7,0,PieceModel.WHITE);
+		board[0][2] = new Bishop(0,0,Piece.WHITE);
+		board[0][5] = new Bishop(7,0,Piece.WHITE);
 		
-		board[0][4] = new QueenModel(4,0,PieceModel.WHITE);
+		board[0][4] = new Queen(4,0,Piece.WHITE);
 		return board;
 	}
 	/**
