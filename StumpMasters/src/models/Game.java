@@ -1,5 +1,13 @@
 package models;
 
+import pieceModels.Bishop;
+import pieceModels.King;
+import pieceModels.Knight;
+import pieceModels.Pawn;
+import pieceModels.Piece;
+import pieceModels.Queen;
+import pieceModels.Rook;
+
 //import pieceModels.PieceModel;
 
 public class Game {
@@ -8,12 +16,9 @@ public class Game {
 	Player[] player= {white,black};
 	int[][] board;
 	
-	public void createGame(){
-		/*
-		this.white = new PlayerModel(PieceModel.WHITE);
-		this.black = new PlayerModel(PieceModel.BLACK);
-		this.board = new int[8][8];
-		*/
-	}
+	
+	
+	
+
 	
 }

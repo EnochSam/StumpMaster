@@ -338,28 +338,30 @@
         	
         	if(pieceTxt == "BlackKing"){
         	//black king
-        	return"clip-path: inset(50px 250px 0px 0px); bottom 50px"
+        	return"clip-path: inset(50px 250px 0px 0px);  position: relative; bottom: 50px; "
         	}
         	
         	if(pieceTxt == "BlackQueen"){
         	//black Queen
-        	return "clip-path: inset(50px 200px 0px 50px); position: relative; right: 50px; bottom 50px"
+        	return "clip-path: inset(50px 200px 0px 50px); position: relative; right: 50px; bottom: 50px;";
         	}
         	
         	if(pieceTxt == "BlackBishop"){
         	//black Bishop
-        	"clip-path: inset(50px 150px 0px 100px); position: relative; right: 100px; bottom 50px"
+        	return "clip-path: inset(50px 150px 0px 100px); position: relative; right: 100px; bottom: 50px;";
         	}
         	if(pieceTxt == "BlackKnight"){
         	//black Knight
-        	return"clip-path: inset(50px 100px 0px 150px); position: relative; right: 150px; bottom 50px"
+        	return"clip-path: inset(50px 100px 0px 150px); position: relative; right: 150px; bottom: 50px;";
         	}
+        	if(pieceTxt == "BlackRook"){
         	//black Rook
-        	"clip-path: inset(50px 50px 0px 200px); position: relative; right: 200px; bottom 50px"
-
+        	return"clip-path: inset(50px 50px 0px 200px); position: relative; right: 200px; bottom: 50px;";
+        	}
+        	if(pieceTxt == "BlackPawn"){
         	//black Pawn
-        	"clip-path: inset(50px 0px 0px 250px); position: relative; right: 250px; bottom: 50px"
-
+        	return"clip-path: inset(50px 0px 0px 250px); position: relative; right: 250px; bottom: 50px;";
+        	}
         }
     </script>
 </body>
