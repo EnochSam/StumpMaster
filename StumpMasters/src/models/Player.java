@@ -11,7 +11,7 @@ public class Player {
 	private Piece[] pieces;
 	private boolean inCheck;
 	private boolean inCheckmate;
-	
+	private int color;
 	//PlayerModeld with no Parameter
 	public Player() {
 		//initializes Pieces
@@ -46,6 +46,7 @@ public class Player {
 	
 	//Construction with color Parameter
 	public Player(int color) {
+		this.color = color;
 		//initializes Pieces
 		pieces = new Piece[16];
 		

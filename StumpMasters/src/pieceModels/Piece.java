@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public abstract class Piece {
-	public final static int BLACK = 0;
-	public final static int WHITE = 1;
+	public final static int BLACK = 1;
+	public final static int WHITE = 0;
 	private int xpos;
 	private int ypos;
 	private int color;

@@ -16,6 +16,15 @@
     	<input type="submit" value="Quit Game">
     </form>
     <script>
+    	//Grabs from Servlet the GameMoves Data
+    	if(sessionStorage.getItem("gameMoves")!= null){
+    	sessionStorage.setItem("gameMoves",sessionStorage.getItem("gameMoves") +"${gameMoves}")
+    	console.log("PENIS")
+    	}else{
+    	sessionStorage.setItem("gameMoves","")
+    	}
+    
+    
         //Creates board using javascript tags
 
             //Create table
@@ -93,11 +102,20 @@
             document.getElementById("Board").appendChild(board)
 
         function sendPost(){
+            //Creates Tile Submission
             let submit = document.createElement("input")
             submit.name = "tile"
             submit.value = document.activeElement.name
             submit.type = "hidden"
+            
+            //Create Session Submission
+            let Sessionsubmit = document.createElement("input")
+            Sessionsubmit.name = "gameMoves"
+            Sessionsubmit.value = sessionStorage.getItem("gameMoves")
+            
+            //Add Submissions to submit
             document.getElementById("Board").appendChild(submit)
+            document.getElementById("Board").appendChild(Sessionsubmit)
         }
         
         function setImageId(x, y){

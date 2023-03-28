@@ -36,9 +36,23 @@ public class GameServlet extends HttpServlet {
 		Game model = new Game();
 		GameController controller = new GameController();
 		controller.setModel(model);
+		controller.setBoard("");
+		String gameMoves = "";
+		try {
+			gameMoves = request.getParameter("gameMoves");
+			System.out.println(gameMoves);
+		}catch(Exception e) {
+			System.out.println("Doesn't Exist");
+			gameMoves = "";
+		}
+		//.getSession().getAttribute("userData");
+
+		 
+		
+		
+		
 		
 		//let Controller Create Board
-		controller.setBoard();
 		
 		
 		/*
@@ -81,8 +95,9 @@ public class GameServlet extends HttpServlet {
 		}
 
 		Piece[][] board = loadTestBoard();
-		String[][] loadBoard = loadBoard(request,board);
+		String[][] loadBoard = loadBoard(request,model.getBoard());
 		request.setAttribute("board", loadBoard);
+		request.setAttribute("gameMoves", gameMoves);
 		rd.include(request, response);
 	}
 
