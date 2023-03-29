@@ -133,7 +133,22 @@
 
             }
             document.getElementById("Board").appendChild(board)
-
+		
+            //checks if Get Values exist
+            if(possibleMoves.length > 0){
+            	for(let i = 0; i < possibleMoves.length; i+=3){
+            		let x = parseInt(possibleMoves[i])
+            		console.log(x)
+            		let y = parseInt(possibleMoves[(i+1)])
+            		let elementName = ""+x+":"+y
+            		let shadedArea = document.createElement("shadedArea")
+            		shadedArea.style = "position: absolute; background: #00000030;"+
+            		"width: 50px;height: 50px; border-radius: 50%;"
+            		let buttonElement =document.getElementsByName(elementName)[0]
+            		buttonElement.prepend(shadedArea)
+					
+            	}
+            }
         
         function setImageId(x, y){
         	if(x == 1 && y == 1){
