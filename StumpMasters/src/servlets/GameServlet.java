@@ -36,41 +36,47 @@ public class GameServlet extends HttpServlet {
 		Game model = new Game();
 		GameController controller = new GameController();
 		controller.setModel(model);
-		controller.setBoard("");
+		//Variable From client to retrieve all moves made in the round
 		String gameMoves = "";
-		try {
+		//Variable From client to see whose turn it is
+		String playerTurn = "";
+		//Variable From client to see if the Player is in the "Selecting Piece" Phase
+		String selectingPiece = "";
+		//Varibale Form client to see if the Player is in the "SelectValidMoves"Phase
+		String selectValidMoves = "";
+		//Variable to retrieve which tile is being selected
+		String tileSelected = "";
+		controller.setBoard("");
+		//Grabs all variables from client
+			tileSelected = request.getParameter("tile");
+			if(tileSelected !=null) {
 			gameMoves = request.getParameter("gameMoves");
-			System.out.println(gameMoves);
-		}catch(Exception e) {
-			System.out.println("Doesn't Exist");
+			playerTurn = request.getParameter("playersTurn");
+			selectingPiece = request.getParameter("selectingPiece");
+			selectValidMoves = request.getParameter("selectValidMoves");
+			}else {
+			//If tileSelected == null, this is the creation of the Game
 			gameMoves = "";
-		}
-		//.getSession().getAttribute("userData");
-
-		 
+			playerTurn = "White";
+			selectingPiece = "True";
+			selectValidMoves = "False";
+			tileSelected = "START";
+			}	
+			//Checks if the Player is selecting a piece
+			if(selectingPiece.equals("True")) {
+				//Checks to see if there is a player's piece at specified location
+				try { 
+					//Grabs location from client
+					//sends string version of possible list to views
+					request.setAttribute("possibleMoves",controller.getPossibleMoves(tileSelected));
+				}catch(Exception e){
+				}
+				
+			}
+		
+		 //let Controller Create Board
 		
 		
-		
-		
-		//let Controller Create Board
-		
-		
-		/*
-		try {
-		//Use Pass in Variables to determine state of the Game
-		String playerTurn = request.getParameter("Player'sTurn");
-		
-		String selectingPiece = request.getParameter("selectingPiece");
-		
-		String selectValidMoves = request.getParameter("selectingPiece");
-		
-		if(selectingPiece.equals("True")) {
-			request.getParameter("tile");
-		}
-		}catch(Exception e) {
-		
-		}
-		*/
 		
 		
 		// Set Content Type
@@ -83,7 +89,7 @@ public class GameServlet extends HttpServlet {
 		PrintWriter out=null;
 		try {
 			out=response.getWriter();
-			out.println("Hello, Here is the Print Request since Enoch is a Poopie: "+ request.getParameter("tile"));
+			out.println("Hello, Here is the Print Request since Enoch is a Poopie: "+ tileSelected);
 		}
 		catch(Exception e) {
 			out.println("Error: " + e.getMessage());
@@ -94,10 +100,13 @@ public class GameServlet extends HttpServlet {
 			out.println("</center>");
 		}
 
-		Piece[][] board = loadTestBoard();
 		String[][] loadBoard = loadBoard(request,model.getBoard());
+		
+		//sends all atributes to client
 		request.setAttribute("board", loadBoard);
 		request.setAttribute("gameMoves", gameMoves);
+		request.setAttribute("playersTurn",playerTurn);
+		request.setAttribute("selectingPiece",selectingPiece);
 		rd.include(request, response);
 	}
 
@@ -144,52 +153,6 @@ public class GameServlet extends HttpServlet {
 		
 	}
 	
-	protected Piece[][] loadTestBoard() {
-		Piece board[][] = new Piece[8][8];
-		//Load White Pawn
-		board[1][0] = new Pawn(0,1,Piece.WHITE);
-		board[1][1] = new Pawn(1,1,Piece.WHITE);
-		board[1][2] = new Pawn(2,1,Piece.WHITE);
-		board[1][3] = new Pawn(3,1,Piece.WHITE);
-		board[1][4] = new Pawn(4,1,Piece.WHITE);
-		board[1][5] = new Pawn(5,1,Piece.WHITE);
-		board[1][6] = new Pawn(6,1,Piece.WHITE);
-		board[1][7] = new Pawn(7,1,Piece.WHITE);
-		
-		board[0][0] = new Rook(0,0,Piece.WHITE);
-		board[0][7] = new Rook(7,0,Piece.WHITE);
-		
-		board[0][1] = new Knight(0,0,Piece.WHITE);
-		board[0][6] = new Knight(7,0,Piece.WHITE);
-		
-		board[0][2] = new Bishop(0,0,Piece.WHITE);
-		board[0][5] = new Bishop(7,0,Piece.WHITE);
-		
-		board[0][4] = new Queen(4,0,Piece.WHITE);
-		board[0][3] = new King(5,0,Piece.WHITE);
-		
-		board[6][0] = new Pawn(0,1,Piece.BLACK);
-		board[6][1] = new Pawn(1,1,Piece.BLACK);
-		board[6][2] = new Pawn(2,1,Piece.BLACK);
-		board[6][3] = new Pawn(3,1,Piece.BLACK);
-		board[6][4] = new Pawn(4,1,Piece.BLACK);
-		board[6][5] = new Pawn(5,1,Piece.BLACK);
-		board[6][6] = new Pawn(6,1,Piece.BLACK);
-		board[6][7] = new Pawn(7,1,Piece.BLACK);
-		
-		board[7][0] = new Rook(0,0,Piece.BLACK);
-		board[7][7] = new Rook(7,0,Piece.BLACK);
-		
-		board[7][1] = new Knight(0,0,Piece.BLACK);
-		board[7][6] = new Knight(7,0,Piece.BLACK);
-		
-		board[7][2] = new Bishop(0,0,Piece.BLACK);
-		board[7][5] = new Bishop(7,0,Piece.BLACK);
-		
-		board[7][4] = new Queen(4,0,Piece.BLACK);
-		board[7][3] = new King(5,0,Piece.BLACK);
-		return board;
-	}
 	/**
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */

@@ -24,7 +24,7 @@ public class King extends Piece{
 		for(int i = 0; i < listOfLocationsToCheck.size(); i+=2){
 			int x = super.getXpos()+listOfLocationsToCheck.get(i);
 			int y = super.getYpos()+listOfLocationsToCheck.get(i+1);
-			if(y>0 && y < 8 && x>0 && x<8) {
+			if(y>=0 && y < 8 && x>=0 && x<8) {
 				if(board[y][x] !=null) {
 					if(board[y][x].getColor() != super.getColor()) {
 						loc = new Integer[2];

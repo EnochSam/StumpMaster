@@ -61,7 +61,6 @@ public class Game {
 			player[i].getPieces()[8+j].setColor(i);
 			player[i].getPieces()[8+j].setXpos(j);
 			player[i].getPieces()[8+j].setYpos(ypos);
-
 		}
 		}
 	}

@@ -14,8 +14,14 @@
     </form>
     <form method="get" action="${pageContext.servletContext.contextPath}/MainMenu">
     	<input type="submit" value="Quit Game">
+    	<input type = "hidden" value ="" id=possibleMoves >
     </form>
     <script>
+    	//Grabs Values passed from Servelt and store them in variables
+    	let possibleMoves = "${possibleMoves}"
+    	let playerTurn = "${playersTurn}";
+		let selectingPiece = "${selectingPiece}"
+		
     	//Grabs from Servlet the GameMoves Data
     	if(sessionStorage.getItem("gameMoves")!= null){
     	sessionStorage.setItem("gameMoves",sessionStorage.getItem("gameMoves") +"${gameMoves}")
@@ -24,7 +30,36 @@
     	sessionStorage.setItem("gameMoves","")
     	}
     
-    
+
+        function sendPost(){
+            //Creates Tile Submission
+            let submit = document.createElement("input")
+            submit.name = "tile"
+            submit.value = document.activeElement.name
+            submit.type = "hidden"
+            
+            //Create Session Submission
+            let Sessionsubmit = document.createElement("input")
+            Sessionsubmit.name = "gameMoves"
+            Sessionsubmit.value = sessionStorage.getItem("gameMoves")
+            Sessionsubmit.type = "hidden"
+            
+            //Create selectingPiece
+            let selectingPieceSubmission = document.createElement("input")
+            selectingPieceSubmission.name = "selectingPiece"
+            selectingPieceSubmission.value = selectingPiece
+            selectingPieceSubmission.type = "hidden"
+            //Create
+            
+            console.log(submit.value)
+            
+            //Add Submissions to submit
+            document.getElementById("Board").appendChild(submit)
+            document.getElementById("Board").appendChild(Sessionsubmit)
+            document.getElementById("Board").appendChild(selectingPieceSubmission)
+
+        }
+        
         //Creates board using javascript tags
 
             //Create table
@@ -79,15 +114,13 @@
                    //create imag to store in button
                     pieceimg = document.createElement("img")
                     pieceimg.src = "${pageContext.servletContext.contextPath}/resources/PiecesPNG.png"
-                    pieceimg.style = "width:300px;height:100px;"
+                    pieceimg.style = "width:300px;height:100px; height: 25px;"
                     //Gets String of Piece From Backend 
                     piece =setImageId(x,y)
                     //Picks cropping of Piece from Backend String
              		pieceimg.id = piece
              		pieceimg.style = "width: 300; height: 100;"+selectPieceImage(piece)
-                    "clip-path: inset(0px 250px 50px 0px);"
-                    /* clip: shape(top, right, bottom, left); NB 'rect' is the only available option */
-                    
+             		
                     point.appendChild(pieceimg)
                    //adds button to table row
                     td.appendChild(point)
@@ -101,22 +134,6 @@
             }
             document.getElementById("Board").appendChild(board)
 
-        function sendPost(){
-            //Creates Tile Submission
-            let submit = document.createElement("input")
-            submit.name = "tile"
-            submit.value = document.activeElement.name
-            submit.type = "hidden"
-            
-            //Create Session Submission
-            let Sessionsubmit = document.createElement("input")
-            Sessionsubmit.name = "gameMoves"
-            Sessionsubmit.value = sessionStorage.getItem("gameMoves")
-            
-            //Add Submissions to submit
-            document.getElementById("Board").appendChild(submit)
-            document.getElementById("Board").appendChild(Sessionsubmit)
-        }
         
         function setImageId(x, y){
         	if(x == 1 && y == 1){
@@ -381,6 +398,14 @@
         	return"clip-path: inset(50px 0px 0px 250px); position: relative; right: 250px; bottom: 50px;";
         	}
         }
+        
+        // SHADED CIRCLE
+        //MUST APPEND UNDER BUTTON
+            //position: absolute;
+    		//background: #00000030;
+   		 	//width: 50px;
+    		//height: 50px;
+    		//border-radius: 50%;
     </script>
 </body>
 </html>
