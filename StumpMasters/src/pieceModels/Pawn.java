@@ -38,7 +38,7 @@ public class Pawn extends Piece{
 				}
 			}
 			//check right diagonal
-			if(super.getXpos()+1 < 7) {
+			if(super.getXpos()+1 < 8) {
 			if(board[super.getYpos()+1][super.getXpos()+1] !=null){
 				if(board[super.getYpos()+1][super.getXpos()+1].getColor() != super.getColor()){
 					loc = new Integer[2];
@@ -60,23 +60,28 @@ public class Pawn extends Piece{
 			}
 			
 			//check left diagonal
-			if(board[super.getYpos()+1][super.getXpos()-1] !=null){
-				
-				if(board[super.getYpos()+1][super.getXpos()-1].getColor() != super.getColor()){
-					loc = new Integer[2];
-					loc[1] = super.getYpos()+1;
-					loc[0] = super.getXpos()-1;
-					possibleMoves.add(loc);
+			if(super.getXpos()-1 > 0) {
+
+				if(board[super.getYpos()+1][super.getXpos()-1] !=null){
+					if(board[super.getYpos()+1][super.getXpos()-1].getColor() != super.getColor()){
+						loc = new Integer[2];
+						loc[1] = super.getYpos()+1;
+						loc[0] = super.getXpos()-1;
+						possibleMoves.add(loc);
 					}
+				}
 			}
 					
 			//check right diagonal
-			if(board[super.getYpos()+1][super.getXpos()+1] !=null){
-				if(board[super.getYpos()+1][super.getXpos()+1].getColor() != super.getColor()){
-					loc = new Integer[2];
-					loc[1] = super.getYpos()+1;
-					loc[0] = super.getXpos()+1;
-					possibleMoves.add(loc);
+			if(super.getXpos()+1 < 8) {
+				if(board[super.getYpos()+1][super.getXpos()+1] !=null){
+
+					if(board[super.getYpos()+1][super.getXpos()+1].getColor() != super.getColor()){
+						loc = new Integer[2];
+						loc[1] = super.getYpos()+1;
+						loc[0] = super.getXpos()+1;
+						possibleMoves.add(loc);
+					}
 				}
 			}
 		}

@@ -63,21 +63,45 @@ public class GameController {
 		//4 = ypos of new location
 		//5 = space
 		for(int i = 0; i < boardLocations.length(); i+=5) {
-			int curx = Integer.parseInt(""+boardLocations.charAt(i));
-			int cury = Integer.parseInt(""+boardLocations.charAt(i+1));
-			int newx = Integer.parseInt(""+boardLocations.charAt(i+2));
-			int newy = Integer.parseInt(""+boardLocations.charAt(i+3));
-			
+			int curx = Integer.parseInt(""+boardLocations.charAt(i))-1;
+			int cury = Integer.parseInt(""+boardLocations.charAt(i+1))-1;
+			int newx = Integer.parseInt(""+boardLocations.charAt(i+2))-1;
+			int newy = Integer.parseInt(""+boardLocations.charAt(i+3))-1;
 			//if piece is on moved location set that piece to captured
 			if(board[cury][curx] != null) {
-				
+				board[cury][curx].setCaptured(true);
 			}
 			board[newy][newx] = board[cury][curx];
 			board[cury][curx] = null;
+			board[newy][newx].setXpos(newx);
+			board[newy][newx].setYpos(newy);
 		}
 		this.model.setBoard(board);
 			
 	}
 	
+	public boolean moveValidMove(String newPieceLoc, String attemptingToMove) {
+		int selectedPieceXpos = Integer.parseInt(""+attemptingToMove.charAt(0))-1;
+		int selectedPieceYpos = Integer.parseInt(""+attemptingToMove.charAt(1))-1;
+		
+		int newPieceXpos = Integer.parseInt(""+newPieceLoc.charAt(0))-1;
+		int newPieceYpos = Integer.parseInt(""+newPieceLoc.charAt(2))-1;
+		
+		Piece pieceAttemptingToMove = this.model.getBoard()[selectedPieceYpos][selectedPieceXpos];
+		List<Integer[]> possibleMoves = pieceAttemptingToMove.getValidMoves(this.model.getBoard());
+		for(Integer[] x : possibleMoves) {
+			
+
+			if(x[0] == newPieceXpos && x[1] == newPieceYpos) {
+				if(this.model.getBoard()[newPieceYpos][newPieceXpos] != null) {
+					this.model.getBoard()[newPieceYpos][newPieceXpos].setCaptured(true); 
+				}
+				this.model.getBoard()[newPieceYpos][newPieceXpos] = this.model.getBoard()[selectedPieceYpos][selectedPieceXpos];
+				this.model.getBoard()[selectedPieceYpos][selectedPieceXpos] = null;
+				return true;
+			}
+		}
+		return false;
+	}
 	
 }

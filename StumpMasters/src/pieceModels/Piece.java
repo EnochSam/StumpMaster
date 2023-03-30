@@ -9,16 +9,18 @@ public abstract class Piece {
 	private int xpos;
 	private int ypos;
 	private int color;
-	
+	private boolean captured;
 	public Piece(){
 		xpos = -1;
 		ypos = -1;
+		this.captured = false;
 	}
 	
 	public Piece(int xpos, int ypos, int color){
 		this.xpos = xpos;
 		this.ypos = ypos;
 		this.color = color;
+		this.captured = false;
 	}
 	
 	public int getXpos() {
@@ -49,13 +51,20 @@ public abstract class Piece {
 		this.ypos = ypos;
 	}
 	
+	public boolean getCaptured() {
+		return this.captured;
+	}
+	
+	public void setCaptured(boolean captured) {
+		this.captured = captured;
+	}
 	public abstract List<Integer[]> getValidMoves(Piece[][] board);
 	
 	public List<Integer[]> getVerticalMoves(Piece[][] board){
 List<Integer[]> possibleMoves = new ArrayList<Integer[]>();
 		
 		//Traverse Left of Rook
-		int x = xpos;
+		int x = xpos-1;
 		Integer[] loc = {-1,-1};
 		while(x >= 0) {
 			if(board[ypos][x] != null) {
@@ -73,7 +82,7 @@ List<Integer[]> possibleMoves = new ArrayList<Integer[]>();
 		}
 		
 		//Traverse Right of Rook
-		x = xpos;
+		x = xpos+1;
 		while(x <= 7){
 			if(board[ypos][x] != null) {
 				//checks if piece is same color
@@ -90,7 +99,7 @@ List<Integer[]> possibleMoves = new ArrayList<Integer[]>();
 		}
 		
 		//Traverse Up of Rook
-		int y = ypos;
+		int y = ypos-1;
 		while(y >= 0) {
 		if(board[y][xpos] != null) {
 		//checks if piece is same color
@@ -107,7 +116,7 @@ List<Integer[]> possibleMoves = new ArrayList<Integer[]>();
 		}
 		
 		//Traverse Down of Rook
-		y = ypos;
+		y = ypos+1;
 		while(y <= 7) {
 		if(board[y][xpos] != null) {
 		//checks if piece is same color
@@ -132,9 +141,9 @@ List<Integer[]> possibleMoves = new ArrayList<Integer[]>();
 	public List<Integer[]> getDiagonalMoves(Piece[][] board){
 	List<Integer[]> possibleMoves = new ArrayList<Integer[]>();
 		
-		//Traverse northwest of Rook
-		int x = xpos;
-		int y = ypos;
+		//Traverse southwest of Rook
+		int x = xpos-1;
+		int y = ypos-1;
 		Integer[] loc = {-1,-1};
 		while(y >= 0 && x >= 0) {
 			if(board[y][x] != null) {
@@ -152,9 +161,9 @@ List<Integer[]> possibleMoves = new ArrayList<Integer[]>();
 			y--;
 		}
 		
-		//Traverse northeast of Rook
-		x = xpos;
-		y = ypos;
+		//Traverse southeast of Rook
+		x = xpos+1;
+		y = ypos-1;
 		while(y >= 0 && x <= 7){
 			if(board[y][x] != null) {
 				//checks if piece is same color
@@ -172,13 +181,15 @@ List<Integer[]> possibleMoves = new ArrayList<Integer[]>();
 		}
 		
 		//Traverse southeast of Rook
-		y = ypos;
-		x = xpos;
+		y = ypos+1;
+		x = xpos+1;
 		while(y <= 7 && x <= 7) {
-		if(board[y][x] != null) {
-		//checks if piece is same color
-		if(board[y][x].getColor() == color) break;
-		}
+			if(board[y][x] != null) {
+				//checks if piece is same color
+				if(board[y][x].getColor() == color) {
+					break;
+				}
+			}
 			loc = new Integer[2];
 			loc[0] = x;
 			loc[1] = y;
@@ -191,8 +202,8 @@ List<Integer[]> possibleMoves = new ArrayList<Integer[]>();
 		}
 		
 		//Traverse souhtwest of Rook
-		y = ypos;
-		x = xpos;
+		y = ypos+1;
+		x = xpos-1;
 		while(y <= 7 && x >= 0) {
 		if(board[y][x] != null) {
 		//checks if piece is same color

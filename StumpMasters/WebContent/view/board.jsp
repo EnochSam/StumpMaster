@@ -21,11 +21,12 @@
     	let possibleMoves = "${possibleMoves}"
     	let playerTurn = "${playersTurn}";
 		let selectingPiece = "${selectingPiece}"
+		let selectValidMoves = "${selectValidMoves}"
+		let tileStart = ${beginningOfGame}
 		
     	//Grabs from Servlet the GameMoves Data
-    	if(sessionStorage.getItem("gameMoves")!= null){
-    	sessionStorage.setItem("gameMoves",sessionStorage.getItem("gameMoves") +"${gameMoves}")
-    	console.log("PENIS")
+    	if(sessionStorage.getItem("gameMoves")!= null && !tileStart){
+    	console.log(sessionStorage.getItem("gameMoves"))
     	}else{
     	sessionStorage.setItem("gameMoves","")
     	}
@@ -38,6 +39,24 @@
             submit.value = document.activeElement.name
             submit.type = "hidden"
             
+            //Switches Attributes 
+            if(selectingPiece == "True"){
+           		//Player just selected a piece, and next needs to click valid move
+           		var locx = parseInt(submit.value[0])
+           		var locy = parseInt(submit.value[2])
+            	//if the selecting piece has gone from false to true, add lastmove to game moves
+            	if(sessionStorage.getItem("lastSelectingPieceState")=="False" && !tileStart){
+            		var lastMovex = sessionStorage.getItem("lastMove")[0]
+            		var lastMovey = sessionStorage.getItem("lastMove")[2]
+            		sessionStorage.setItem("gameMoves",sessionStorage.getItem("gameMoves")+lastMovex+""+lastMovey+" ")
+            	}
+            	sessionStorage.setItem("gameMoves",sessionStorage.getItem("gameMoves")+locx+""+locy)	
+
+            }else
+            if(selectValidMoves == "True"){
+            }
+            sessionStorage.setItem("lastSelectingPieceState",selectingPiece)	
+            sessionStorage.setItem("lastMove",submit.value)
             //Create Session Submission
             let Sessionsubmit = document.createElement("input")
             Sessionsubmit.name = "gameMoves"
@@ -45,18 +64,23 @@
             Sessionsubmit.type = "hidden"
             
             //Create selectingPiece
+            let selectValidMovesSubmission = document.createElement("input")
+            selectValidMovesSubmission.name = "selectValidMoves"
+            selectValidMovesSubmission.value = selectValidMoves
+            selectValidMovesSubmission.type = "hidden"
+            
+            //Create selectValidMoves
             let selectingPieceSubmission = document.createElement("input")
             selectingPieceSubmission.name = "selectingPiece"
             selectingPieceSubmission.value = selectingPiece
             selectingPieceSubmission.type = "hidden"
-            //Create
-            
             console.log(submit.value)
             
             //Add Submissions to submit
             document.getElementById("Board").appendChild(submit)
             document.getElementById("Board").appendChild(Sessionsubmit)
             document.getElementById("Board").appendChild(selectingPieceSubmission)
+            document.getElementById("Board").appendChild(selectValidMovesSubmission)
 
         }
         

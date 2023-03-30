@@ -46,7 +46,6 @@ public class GameServlet extends HttpServlet {
 		String selectValidMoves = "";
 		//Variable to retrieve which tile is being selected
 		String tileSelected = "";
-		controller.setBoard("");
 		//Grabs all variables from client
 			tileSelected = request.getParameter("tile");
 			if(tileSelected !=null) {
@@ -54,6 +53,8 @@ public class GameServlet extends HttpServlet {
 			playerTurn = request.getParameter("playersTurn");
 			selectingPiece = request.getParameter("selectingPiece");
 			selectValidMoves = request.getParameter("selectValidMoves");
+			//to tell client to save session data
+			request.setAttribute("beginningOfGame", false);
 			}else {
 			//If tileSelected == null, this is the creation of the Game
 			gameMoves = "";
@@ -61,18 +62,37 @@ public class GameServlet extends HttpServlet {
 			selectingPiece = "True";
 			selectValidMoves = "False";
 			tileSelected = "START";
+			//to tell Servlet to save the sessionData
+			request.setAttribute("beginningOfGame", true);
 			}	
+			controller.setBoard(gameMoves.substring(0, gameMoves.length()-(gameMoves.length()%5)));
+			
 			//Checks if the Player is selecting a piece
-			if(selectingPiece.equals("True")) {
+			if(selectingPiece.equals("True") && !(tileSelected.equals("START"))) {
 				//Checks to see if there is a player's piece at specified location
 				try { 
 					//Grabs location from client
 					//sends string version of possible list to views
 					request.setAttribute("possibleMoves",controller.getPossibleMoves(tileSelected));
+					selectingPiece = "False";
+					selectValidMoves = "True";
 				}catch(Exception e){
+					PrintWriter write = response.getWriter();
+					write.println(e.toString()+"<br></br>");
+				}
+				
+			}else
+			if(selectValidMoves.equals("True")) {
+				if(!controller.moveValidMove(tileSelected,gameMoves.substring(gameMoves.length()-2, gameMoves.length()))) {
+					selectValidMoves = "True";
+					selectingPiece ="False";
+				}else {
+					selectValidMoves = "False";
+					selectingPiece = "True";
 				}
 				
 			}
+			
 		
 		 //let Controller Create Board
 		
@@ -107,6 +127,7 @@ public class GameServlet extends HttpServlet {
 		request.setAttribute("gameMoves", gameMoves);
 		request.setAttribute("playersTurn",playerTurn);
 		request.setAttribute("selectingPiece",selectingPiece);
+		request.setAttribute("selectValidMoves",selectValidMoves);
 		rd.include(request, response);
 	}
 
