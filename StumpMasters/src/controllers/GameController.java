@@ -24,15 +24,20 @@ public class GameController {
 	}
 	
 	public String getPossibleMoves(String clickedOnLocation) {
+		String listOfLocations = "";
+		try {
 		int pieceXpos = Integer.parseInt(""+clickedOnLocation.charAt(0))-1;
 		int pieceYpos = Integer.parseInt(""+clickedOnLocation.charAt(2))-1;
-		String listOfLocations = "";
+		
 		Piece selectedPiece = this.model.getBoard()[pieceYpos][pieceXpos];
 		List<Integer[]> possibleMoves = selectedPiece.getValidMoves(this.model.getBoard());
 		for(Integer[] loc : possibleMoves) {
 			listOfLocations+= ""+(loc[0]+1);
 			listOfLocations+= ""+(loc[1]+1);
 			listOfLocations+=" ";
+		}
+		}catch(Exception e) {
+			return "False";
 		}
 
 		return listOfLocations;
@@ -86,7 +91,9 @@ public class GameController {
 		
 		int newPieceXpos = Integer.parseInt(""+newPieceLoc.charAt(0))-1;
 		int newPieceYpos = Integer.parseInt(""+newPieceLoc.charAt(2))-1;
-		
+		if(selectedPieceXpos == newPieceXpos && selectedPieceYpos == newPieceYpos) {
+			return true;
+		}
 		Piece pieceAttemptingToMove = this.model.getBoard()[selectedPieceYpos][selectedPieceXpos];
 		List<Integer[]> possibleMoves = pieceAttemptingToMove.getValidMoves(this.model.getBoard());
 		for(Integer[] x : possibleMoves) {

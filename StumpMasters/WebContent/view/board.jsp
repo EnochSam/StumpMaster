@@ -46,9 +46,22 @@
            		var locy = parseInt(submit.value[2])
             	//if the selecting piece has gone from false to true, add lastmove to game moves
             	if(sessionStorage.getItem("lastSelectingPieceState")=="False" && !tileStart){
+            		if("${AddMove}"!="No"){
             		var lastMovex = sessionStorage.getItem("lastMove")[0]
             		var lastMovey = sessionStorage.getItem("lastMove")[2]
             		sessionStorage.setItem("gameMoves",sessionStorage.getItem("gameMoves")+lastMovex+""+lastMovey+" ")
+            		}else{
+            			var gameMoves = sessionStorage.getItem("gameMoves");
+                		gameMoves = gameMoves.substring(0,gameMoves.length -2)
+                		sessionStorage.setItem("gameMoves",gameMoves)
+            		}
+            	}else{
+            		if(sessionStorage.getItem("lastSelectingPieceState")=="True" && !tileStart){
+            		//If selecetingPieces is true twice in a row, remove the previously added piece, as that is a wrong input
+            		var gameMoves = sessionStorage.getItem("gameMoves");
+            		gameMoves = gameMoves.substring(0,gameMoves.length -2)
+            		sessionStorage.setItem("gameMoves",gameMoves)
+            		}
             	}
             	sessionStorage.setItem("gameMoves",sessionStorage.getItem("gameMoves")+locx+""+locy)	
 
@@ -76,11 +89,18 @@
             selectingPieceSubmission.type = "hidden"
             console.log(submit.value)
             
+            //Create LastMove Submit
+            let LastMovesubmit = document.createElement("input")
+            LastMovesubmit.name = "lastMove"
+            LastMovesubmit.value = sessionStorage.getItem("lastMove")
+            LastMovesubmit.type = "hidden"
+            
             //Add Submissions to submit
             document.getElementById("Board").appendChild(submit)
             document.getElementById("Board").appendChild(Sessionsubmit)
             document.getElementById("Board").appendChild(selectingPieceSubmission)
             document.getElementById("Board").appendChild(selectValidMovesSubmission)
+            document.getElementById("Board").appendChild(LastMovesubmit)
 
         }
         

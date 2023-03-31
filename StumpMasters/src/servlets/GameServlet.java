@@ -73,25 +73,44 @@ public class GameServlet extends HttpServlet {
 				try { 
 					//Grabs location from client
 					//sends string version of possible list to views
-					request.setAttribute("possibleMoves",controller.getPossibleMoves(tileSelected));
-					selectingPiece = "False";
-					selectValidMoves = "True";
+					String getPossibleMoves = controller.getPossibleMoves(tileSelected);
+					if(!getPossibleMoves.equals("False")) {
+						request.setAttribute("possibleMoves",getPossibleMoves);
+						selectingPiece = "False";
+						selectValidMoves = "True";
+					}else {
+						selectingPiece = "True";
+						selectValidMoves = "False";
+					}
+					
 				}catch(Exception e){
 					PrintWriter write = response.getWriter();
 					write.println(e.toString()+"<br></br>");
 				}
 				
-			}else
-			if(selectValidMoves.equals("True")) {
-				if(!controller.moveValidMove(tileSelected,gameMoves.substring(gameMoves.length()-2, gameMoves.length()))) {
-					selectValidMoves = "True";
-					selectingPiece ="False";
-				}else {
-					selectValidMoves = "False";
-					selectingPiece = "True";
+		}else
+		if(selectValidMoves.equals("True")) {
+			String pieceAttemptingToMove = gameMoves.substring(gameMoves.length()-2, gameMoves.length());
+			Boolean isMoveValid = controller.moveValidMove(tileSelected,pieceAttemptingToMove);
+			String previousTitle = ""+pieceAttemptingToMove.charAt(0)+":"+pieceAttemptingToMove.charAt(1);
+			if(!isMoveValid) {
+				selectValidMoves = "True";
+				selectingPiece = "False";
+				//Convert Piece into a tile to pass to getPossibleMoves;
+				
+				request.setAttribute("possibleMoves",controller.getPossibleMoves(previousTitle));
+					
+			}else 
+			{
+				if(previousTitle.equals(tileSelected)){
+					request.setAttribute("AddMove","No");
 				}
+				selectValidMoves = "False";
+				selectingPiece = "True";
 				
 			}
+			
+		}
 			
 		
 		 //let Controller Create Board
