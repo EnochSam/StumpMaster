@@ -80,6 +80,7 @@ public class GameController {
 			board[cury][curx] = null;
 			board[newy][newx].setXpos(newx);
 			board[newy][newx].setYpos(newy);
+			board[newy][newx].setHasMovedAlready(true);
 		}
 		this.model.setBoard(board);
 			
