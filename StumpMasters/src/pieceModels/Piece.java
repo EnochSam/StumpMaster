@@ -205,7 +205,7 @@ List<Integer[]> possibleMoves = new ArrayList<Integer[]>();
 			loc[1] = y;
 			possibleMoves.add(loc);
 			if(board[y][x] != null) {
-				if(board[y][x].getColor() != color) y=0;
+				if(board[y][x].getColor() != color) y=7;
 			}
 			y++;
 			x++;

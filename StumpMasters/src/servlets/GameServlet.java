@@ -102,6 +102,7 @@ public class GameServlet extends HttpServlet {
 					
 			}else 
 			{
+				
 				if(previousTitle.equals(tileSelected)){
 					request.setAttribute("AddMove","No");
 				}

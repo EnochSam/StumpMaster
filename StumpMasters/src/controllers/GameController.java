@@ -73,8 +73,8 @@ public class GameController {
 			int newx = Integer.parseInt(""+boardLocations.charAt(i+2))-1;
 			int newy = Integer.parseInt(""+boardLocations.charAt(i+3))-1;
 			//if piece is on moved location set that piece to captured
-			if(board[cury][curx] != null) {
-				board[cury][curx].setCaptured(true);
+			if(board[newy][newx] != null) {
+				board[newy][newx].setCaptured(true);
 			}
 			board[newy][newx] = board[cury][curx];
 			board[cury][curx] = null;

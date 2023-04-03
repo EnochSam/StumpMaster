@@ -5,7 +5,8 @@ import java.util.Arrays;
 import java.util.List;
 
 public class King extends Piece{
-	
+	boolean inCheck;
+	boolean inCheckMate;
 	public King() {
 		super();
 		
@@ -15,6 +16,34 @@ public class King extends Piece{
 		super(xpos,ypos,color);
 	}
 	
+	public boolean checkForCheckMate(Piece[][] board){	
+		//3 WAYS TO Instances of Checkmate:
+		//1. Can the king move out of the way
+		//2. Can a piece of same color reach the opposing location reach opposing piece
+		
+		//1. create list of pieces of opposing team that can reach king
+		List<Piece> piecesthatcanReachKing = new ArrayList<Piece>();
+		for(int j = 0; j < 8; j++) {
+			for(int i = 0; i < 8; i++) {
+				if(board[j][i] != null) {
+					boolean canreach = false;
+					for(Integer[] loc : board[j][i].getValidMoves(board)) {
+						if(loc[0] == super.getXpos() && loc[1] == super.getYpos()) {
+							canreach = true;
+						}
+					}
+					if(canreach) {
+						piecesthatcanReachKing.add(board[j][i]);
+					}
+				}
+			}
+		}
+		if(piecesthatcanReachKing.size() == 0) {
+			return false;
+		}
+		this.inCheck = true;
+		return false;
+	}
 	public List<Integer[]> getValidMoves(Piece[][] board){
 		List<Integer[]> possibleMoves = new ArrayList<Integer[]>();
 		
