@@ -25,13 +25,19 @@ public class King extends Piece{
 			int x = super.getXpos()+listOfLocationsToCheck.get(i);
 			int y = super.getYpos()+listOfLocationsToCheck.get(i+1);
 			if(y>=0 && y < 8 && x>=0 && x<8) {
-				if(board[y][x] !=null) {
+				if(board[y][x] !=null ) {
 					if(board[y][x].getColor() != super.getColor()) {
 						loc = new Integer[2];
 						loc[0] = x;
 						loc[1] = y;
 						possibleMoves.add(loc);
 					}
+					
+				}else {
+					loc = new Integer[2];
+					loc[0] = x;
+					loc[1] = y;
+					possibleMoves.add(loc);
 				}
 			}
 		}
