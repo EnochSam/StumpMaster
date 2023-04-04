@@ -29,11 +29,14 @@ public class King extends Piece{
 					boolean canreach = false;
 					for(Integer[] loc : board[j][i].getValidMoves(board)) {
 						if(loc[0] == super.getXpos() && loc[1] == super.getYpos()) {
+							
 							canreach = true;
+
 						}
 					}
 					if(canreach) {
 						piecesthatcanReachKing.add(board[j][i]);
+
 					}
 				}
 			}
@@ -43,6 +46,12 @@ public class King extends Piece{
 		}
 		this.inCheck = true;
 		return false;
+	}
+	public Boolean getInCheck() {
+		return inCheck;
+	}
+	public void setInCheck(boolean inCheck) {
+		this.inCheck = inCheck;
 	}
 	public List<Integer[]> getValidMoves(Piece[][] board){
 		List<Integer[]> possibleMoves = new ArrayList<Integer[]>();

@@ -50,7 +50,7 @@ public class GameServlet extends HttpServlet {
 			tileSelected = request.getParameter("tile");
 			if(tileSelected !=null) {
 			gameMoves = request.getParameter("gameMoves");
-			playerTurn = request.getParameter("playersTurn");
+			playerTurn = request.getParameter("playerTurn");
 			selectingPiece = request.getParameter("selectingPiece");
 			selectValidMoves = request.getParameter("selectValidMoves");
 			//to tell client to save session data
@@ -73,7 +73,7 @@ public class GameServlet extends HttpServlet {
 				try { 
 					//Grabs location from client
 					//sends string version of possible list to views
-					String getPossibleMoves = controller.getPossibleMoves(tileSelected);
+					String getPossibleMoves = controller.getPossibleMoves(tileSelected,playerTurn);
 					if(!getPossibleMoves.equals("False")) {
 						request.setAttribute("possibleMoves",getPossibleMoves);
 						selectingPiece = "False";
@@ -97,8 +97,7 @@ public class GameServlet extends HttpServlet {
 				selectValidMoves = "True";
 				selectingPiece = "False";
 				//Convert Piece into a tile to pass to getPossibleMoves;
-				
-				request.setAttribute("possibleMoves",controller.getPossibleMoves(previousTitle));
+				request.setAttribute("possibleMoves",controller.getPossibleMoves(previousTitle,playerTurn));
 					
 			}else 
 			{
@@ -108,14 +107,18 @@ public class GameServlet extends HttpServlet {
 				}
 				selectValidMoves = "False";
 				selectingPiece = "True";
-				
+				if(playerTurn.equals("White")){
+					playerTurn = "Black";
+				}else {
+					playerTurn = "White";
+				}
 			}
 			
 		}
 			
 		
 		 //let Controller Create Board
-		
+
 		
 		
 		
@@ -145,9 +148,12 @@ public class GameServlet extends HttpServlet {
 		//sends all atributes to client
 		request.setAttribute("board", loadBoard);
 		request.setAttribute("gameMoves", gameMoves);
-		request.setAttribute("playersTurn",playerTurn);
+		request.setAttribute("playerTurn",playerTurn);
 		request.setAttribute("selectingPiece",selectingPiece);
 		request.setAttribute("selectValidMoves",selectValidMoves);
+		if(model.getInCheck()) {
+			request.setAttribute("inCheck", true);
+		}
 		rd.include(request, response);
 	}
 

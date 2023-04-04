@@ -8,7 +8,7 @@
 <title>Enoch a Bigger Poopie</title>
 </head>
 <body>
-    <form method="post" action="${pageContext.servletContext.contextPath}/Game">
+    <form method="post" id= "form" action="${pageContext.servletContext.contextPath}/Game">
     <div id="Board">
         
     </div>
@@ -20,11 +20,20 @@
     <script>
     	//Grabs Values passed from Servelt and store them in variables
     	let possibleMoves = "${possibleMoves}"
-    	let playerTurn = "${playersTurn}";
+    	let playerTurn = "${playerTurn}";
 		let selectingPiece = "${selectingPiece}"
 		let selectValidMoves = "${selectValidMoves}"
+		let inCheck = "${inCheck}"
 		let tileStart = ${beginningOfGame}
 		
+		//Displays if a player is in Check
+		if(inCheck == "true"){
+			let inCheckSign = document.createElement("div")
+			inCheckSign.id = "inCheck"
+			inCheckSign.innerHTML = "Check";
+			document.getElementById("form").prepend(inCheckSign)
+			
+		}
     	//Grabs from Servlet the GameMoves Data
     	if(sessionStorage.getItem("gameMoves")!= null && !tileStart){
     	console.log(sessionStorage.getItem("gameMoves"))
@@ -96,12 +105,19 @@
             LastMovesubmit.value = sessionStorage.getItem("lastMove")
             LastMovesubmit.type = "hidden"
             
+            //Create PlayerTurn Submit
+            let PlayerMovesubmit = document.createElement("input")
+            PlayerMovesubmit.name = "playerTurn"
+            PlayerMovesubmit.value = playerTurn
+            PlayerMovesubmit.type = "hidden"
+            
             //Add Submissions to submit
             document.getElementById("Board").appendChild(submit)
             document.getElementById("Board").appendChild(Sessionsubmit)
             document.getElementById("Board").appendChild(selectingPieceSubmission)
             document.getElementById("Board").appendChild(selectValidMovesSubmission)
             document.getElementById("Board").appendChild(LastMovesubmit)
+            document.getElementById("Board").appendChild(PlayerMovesubmit)
 
         }
         

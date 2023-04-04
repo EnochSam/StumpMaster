@@ -5,6 +5,7 @@ import java.util.List;
 
 import models.Game;
 import models.Player;
+import pieceModels.King;
 import pieceModels.Pawn;
 import pieceModels.Piece;
 
@@ -23,24 +24,24 @@ public class GameController {
 		
 	}
 	
-	public String getPossibleMoves(String clickedOnLocation) {
+	public String getPossibleMoves(String clickedOnLocation, String playerTurn) {
 		String listOfLocations = "";
-		try {
 		int pieceXpos = Integer.parseInt(""+clickedOnLocation.charAt(0))-1;
 		int pieceYpos = Integer.parseInt(""+clickedOnLocation.charAt(2))-1;
 		
 		Piece selectedPiece = this.model.getBoard()[pieceYpos][pieceXpos];
+		if((playerTurn.equals("White") && selectedPiece.getColor() == Piece.WHITE) || (playerTurn.equals("Black") && selectedPiece.getColor() == Piece.BLACK)) {
 		List<Integer[]> possibleMoves = selectedPiece.getValidMoves(this.model.getBoard());
 		for(Integer[] loc : possibleMoves) {
 			listOfLocations+= ""+(loc[0]+1);
 			listOfLocations+= ""+(loc[1]+1);
 			listOfLocations+=" ";
 		}
-		}catch(Exception e) {
-			return "False";
-		}
 
 		return listOfLocations;
+		}else {
+			return "False";
+		}
 	}
 	
 	public void setBoard(String boardLocations) {
@@ -83,7 +84,6 @@ public class GameController {
 			board[newy][newx].setHasMovedAlready(true);
 		}
 		this.model.setBoard(board);
-			
 	}
 	
 	public boolean moveValidMove(String newPieceLoc, String attemptingToMove) {
@@ -106,10 +106,22 @@ public class GameController {
 				}
 				this.model.getBoard()[newPieceYpos][newPieceXpos] = this.model.getBoard()[selectedPieceYpos][selectedPieceXpos];
 				this.model.getBoard()[selectedPieceYpos][selectedPieceXpos] = null;
+				this.model.getBoard()[newPieceYpos][newPieceXpos].setXpos(newPieceXpos);
+				this.model.getBoard()[newPieceYpos][newPieceXpos].setYpos(newPieceYpos);
+				checkForCheck();
 				return true;
 			}
 		}
 		return false;
+	}
+	public void checkForCheck() {
+		King WhiteKing = (King) this.model.getWhitePlayer().getPieces()[0];
+		King BlackKing = (King) this.model.getBlackPlayer().getPieces()[0];
+		WhiteKing.checkForCheckMate(this.model.getBoard());
+		BlackKing.checkForCheckMate(this.model.getBoard());
+		if(WhiteKing.getInCheck() || BlackKing.getInCheck()) {
+			this.model.setInCheck(true);
+		}
 	}
 	
 }

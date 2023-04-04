@@ -15,7 +15,7 @@ public class Game {
 	private Player black;
 	private Player[] player;
 	private Piece[][] board;
-	
+	private boolean inCheck;
 	public Game() {
 		white = new Player(Piece.WHITE);
 		black = new Player(Piece.BLACK);
@@ -93,7 +93,13 @@ public class Game {
 		return player;
 	}
 	
+	public void setInCheck(boolean inCheck) {
+		this.inCheck = inCheck;
+	}
 	
+	public boolean getInCheck() {
+		return this.inCheck;
+	}
 	
 
 	
