@@ -96,6 +96,7 @@ public class GameServlet extends HttpServlet {
 			if(!isMoveValid) {
 				selectValidMoves = "True";
 				selectingPiece = "False";
+				
 				//Convert Piece into a tile to pass to getPossibleMoves;
 				request.setAttribute("possibleMoves",controller.getPossibleMoves(previousTitle,playerTurn));
 					
@@ -104,14 +105,16 @@ public class GameServlet extends HttpServlet {
 				
 				if(previousTitle.equals(tileSelected)){
 					request.setAttribute("AddMove","No");
+					
 				}
-				selectValidMoves = "False";
-				selectingPiece = "True";
-				if(playerTurn.equals("White")){
+				else if(playerTurn.equals("White")){
 					playerTurn = "Black";
 				}else {
 					playerTurn = "White";
 				}
+				selectValidMoves = "False";
+				selectingPiece = "True";
+				
 			}
 			
 		}

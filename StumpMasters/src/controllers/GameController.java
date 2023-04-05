@@ -37,7 +37,30 @@ public class GameController {
 			listOfLocations+= ""+(loc[1]+1);
 			listOfLocations+=" ";
 		}
+		
+		if(this.model.getInCheck()) {
+			//if the player is in check, we will resize the list of moves to only show moves that can reach opposing piece
+			String stringOfAvailableMoves = "";
+			//Grabs list of AvailaleMoves from Model
+			List<Integer[]> availableMoves = this.model.getAvailableMoves();
+			
+			//If Location != location of attackingPiece, remove from list
+			for(int i = 0; i < listOfLocations.length(); i+=3){
+				boolean inListOfAvailableLocations = false;
+				for(Integer[] x : availableMoves) {
+					String locx = (""+(x[0]+1));
+					String locy = (""+(x[1]+1));
+					if(locx.equals(""+listOfLocations.charAt(i)) && locy.equals(""+listOfLocations.charAt(i+1))) {
+						inListOfAvailableLocations = true;
+					}
+				}
+				if(inListOfAvailableLocations){
+					stringOfAvailableMoves+= ""+listOfLocations.charAt(i)+""+listOfLocations.charAt(i+1);
+				}
+			}
+			return stringOfAvailableMoves;
 
+		}
 		return listOfLocations;
 		}else {
 			return "False";
@@ -84,6 +107,7 @@ public class GameController {
 			board[newy][newx].setHasMovedAlready(true);
 		}
 		this.model.setBoard(board);
+		checkForCheck();
 	}
 	
 	public boolean moveValidMove(String newPieceLoc, String attemptingToMove) {
@@ -114,13 +138,25 @@ public class GameController {
 		}
 		return false;
 	}
+	
 	public void checkForCheck() {
+		//Creates King of Both Players
 		King WhiteKing = (King) this.model.getWhitePlayer().getPieces()[0];
 		King BlackKing = (King) this.model.getBlackPlayer().getPieces()[0];
+		
+		//Checks Both Kings to See if they Are in Check
 		WhiteKing.checkForCheckMate(this.model.getBoard());
 		BlackKing.checkForCheckMate(this.model.getBoard());
-		if(WhiteKing.getInCheck() || BlackKing.getInCheck()) {
+		
+		if(WhiteKing.getInCheck()) {
+			//if the WhiteKing is in Check, set list of availableMoves to Kings getOutOfCheckList
+			this.model.setAvailableMoves(WhiteKing.getGetOutOfCheckMoves());
 			this.model.setInCheck(true);
+		}else if(BlackKing.getInCheck()) {
+			this.model.setAvailableMoves(BlackKing.getGetOutOfCheckMoves());
+			this.model.setInCheck(true);
+		}else {
+			this.model.setInCheck(false);
 		}
 	}
 	

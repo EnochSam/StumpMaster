@@ -5,8 +5,9 @@ import java.util.Arrays;
 import java.util.List;
 
 public class King extends Piece{
-	boolean inCheck;
-	boolean inCheckMate;
+	private boolean inCheck;
+	private boolean inCheckMate;
+	private List<Integer[]> getOutOfCheckMoves;
 	public King() {
 		super();
 		
@@ -22,7 +23,7 @@ public class King extends Piece{
 		//2. Can a piece of same color reach the opposing location reach opposing piece
 		
 		//1. create list of pieces of opposing team that can reach king
-		List<Piece> piecesthatcanReachKing = new ArrayList<Piece>();
+		Piece piecesthatcanReachKing = null;
 		for(int j = 0; j < 8; j++) {
 			for(int i = 0; i < 8; i++) {
 				if(board[j][i] != null) {
@@ -35,16 +36,24 @@ public class King extends Piece{
 						}
 					}
 					if(canreach) {
-						piecesthatcanReachKing.add(board[j][i]);
-
+						piecesthatcanReachKing = board[j][i];
 					}
 				}
 			}
 		}
-		if(piecesthatcanReachKing.size() == 0) {
+		if(piecesthatcanReachKing == null) {
+			//If the King was in check, it no longer is, so set inCheck to false
+			if(this.inCheck){
+				this.inCheck = false;
+			}
 			return false;
 		}
+		// There is an opposing Piece, So the Player is in Check
 		this.inCheck = true;
+		//Adds Location of attacking Piece to getOutOfCheckMovesList
+		Integer[] availableMove = {piecesthatcanReachKing.getXpos(),piecesthatcanReachKing.getYpos()};
+		getOutOfCheckMoves = new ArrayList<Integer[]>();
+		getOutOfCheckMoves.add(availableMove);
 		return false;
 	}
 	public Boolean getInCheck() {
@@ -52,6 +61,9 @@ public class King extends Piece{
 	}
 	public void setInCheck(boolean inCheck) {
 		this.inCheck = inCheck;
+	}
+	public List<Integer[]> getGetOutOfCheckMoves(){
+		return this.getOutOfCheckMoves;
 	}
 	public List<Integer[]> getValidMoves(Piece[][] board){
 		List<Integer[]> possibleMoves = new ArrayList<Integer[]>();

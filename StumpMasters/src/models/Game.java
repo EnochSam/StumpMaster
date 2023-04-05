@@ -1,5 +1,7 @@
 package models;
 
+import java.util.List;
+
 import pieceModels.Bishop;
 import pieceModels.King;
 import pieceModels.Knight;
@@ -16,6 +18,7 @@ public class Game {
 	private Player[] player;
 	private Piece[][] board;
 	private boolean inCheck;
+	private List<Integer[]> availableMoves = null;
 	public Game() {
 		white = new Player(Piece.WHITE);
 		black = new Player(Piece.BLACK);
@@ -99,6 +102,12 @@ public class Game {
 	
 	public boolean getInCheck() {
 		return this.inCheck;
+	}
+	public void setAvailableMoves(List<Integer[]> availableMoves){
+		this.availableMoves = availableMoves;
+	}
+	public List<Integer[]> getAvailableMoves(){
+		return this.availableMoves;
 	}
 	
 
