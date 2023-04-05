@@ -2,18 +2,36 @@ package controllers;
 
 import models.User;
 import models.inputType;
+import database.FakeUserDatabase;
 
 public class LoginController {
+	private FakeUserDatabase db = new FakeUserDatabase();
 	
 	public LoginController() {
 		
 	}
 	
-	public User createUser(String username, String password) {
-		User user = new User(username, password);
-		return user;
+	// Add new User
+	public void createUser(String username, String password) {
+		db.createUser(username, password);
 	}
 	
+	// Check if User exists
+	public boolean checkExists(String username, String password) {
+		return db.checkExists(username, password);
+	}
+	
+	// Check if username exists
+	public boolean checkUsernameExists(String username) {
+		return db.checkUsernameExists(username);
+	}
+	
+	// Get Specific user
+	public User getUser(String username, String password) {
+		return db.getUser(username, password);
+	}
+	
+	// Validate input
 	public boolean validate(String input, inputType type) {
 		boolean isValid = false;
 		

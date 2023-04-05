@@ -36,7 +36,7 @@ public class LoginServlet extends HttpServlet {
 
 
 		RequestDispatcher rd = request.getRequestDispatcher("view/Login.jsp");
-		rd.include(request, response);
+		rd.forward(request, response);
 		
 	}
 
@@ -44,39 +44,71 @@ public class LoginServlet extends HttpServlet {
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		
+			
 		PrintWriter out = null;
-		// Get parameters
-		// Get Username
-		String username = request.getParameter("username");		
-		//Get Password
-		String password = request.getParameter("password");
-		
-		// Validate Username and password
-		boolean isValid = (controller.validate(username, inputType.USERNAME) && controller.validate(password, inputType.PASSWORD));
-		
-		// Username and password are valid
-		if(isValid) {
-			// Create new user
-			controller.createUser(username, password);
+		String errorMessage = null;
+		String username = null;
+		String password = null;
+		boolean login = false;
+		boolean exists = false;
+		// Display username and password
+		try {
+			// Get parameters
+			// Get Username
+			username = request.getParameter("username");
+			System.out.println("Username: " + username);
+			//Get Password
+			password = request.getParameter("password");
+			System.out.println("Password: " + password);
 			
-			// Display username and password
-			try {
-				out=response.getWriter();
-			
-				out.println("<center>");
-				out.println("Username" + username);
-			}
-			catch(Exception e) {
-				out.println("Error: " + e.getMessage());
-			}
-			finally {
-				out.println("<br></br>");
-				out.println("</center>");
-			}
+			//User clicked login button
+			login = (request.getParameter("login") != null);
+		}
+		catch(Exception e) {
+			System.out.println("Error: " + e.getMessage());
+		}
+		
+		if(login)
+		{
+			//Check if user exists
+			exists = controller.checkExists(username, password);
+		}	//User clicked create account button
+		else {
+			// Validate Username and password
+			boolean isValid = (controller.validate(username, inputType.USERNAME) && controller.validate(password, inputType.PASSWORD));
+			if(isValid) {
+					//Username already exists
+					if(controller.checkUsernameExists(username) == false) {
+						controller.createUser(username, password);
+						// Pass user object to main menu
+						request.setAttribute("user", controller.getUser(username, password));
+						request.setAttribute("username", username);
+						
+						// Forward to Main menu
+						request.getRequestDispatcher("view/menu.jsp").forward(request, response);
+					}
+					else {
+						request.setAttribute("error", "Username is taken, please enter a different username");
+						doGet(request, response);
+					}
+				}
+				else {
+					request.setAttribute("error", "Please enter valid username and password");
+					doGet(request, response);
+				}
+		}
+		
+		if(exists) {
+			// Pass user object to main menu
+			request.setAttribute("user", controller.getUser(username, password));
+			request.setAttribute("username", username);
 			
 			// Forward to Main menu
 			request.getRequestDispatcher("view/menu.jsp").forward(request, response);
+		}
+		else {
+			request.setAttribute("error", "The username or password is not correct");
+			doGet(request, response);
 		}
 	}
 
