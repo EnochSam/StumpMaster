@@ -1,6 +1,7 @@
 package controllers;
 
 
+import java.util.ArrayList;
 import java.util.List;
 
 import models.Game;
@@ -110,20 +111,29 @@ public class GameController {
 		checkForCheck();
 	}
 	
-	public boolean moveValidMove(String newPieceLoc, String attemptingToMove) {
+	public boolean moveValidMove(String newPieceLoc, String attemptingToMove,String player) {
+		String validMoves = getPossibleMoves(attemptingToMove,player);
+		
 		int selectedPieceXpos = Integer.parseInt(""+attemptingToMove.charAt(0))-1;
-		int selectedPieceYpos = Integer.parseInt(""+attemptingToMove.charAt(1))-1;
+		int selectedPieceYpos = Integer.parseInt(""+attemptingToMove.charAt(2))-1;
 		
 		int newPieceXpos = Integer.parseInt(""+newPieceLoc.charAt(0))-1;
 		int newPieceYpos = Integer.parseInt(""+newPieceLoc.charAt(2))-1;
+		System.out.println("loc: "+newPieceXpos+":"+newPieceYpos);
 		if(selectedPieceXpos == newPieceXpos && selectedPieceYpos == newPieceYpos) {
 			return true;
 		}
-		Piece pieceAttemptingToMove = this.model.getBoard()[selectedPieceYpos][selectedPieceXpos];
-		List<Integer[]> possibleMoves = pieceAttemptingToMove.getValidMoves(this.model.getBoard());
+		Integer[] loc;
+		List<Integer[]> possibleMoves = new ArrayList<Integer[]>(); 
+		for(int i = 0; i < validMoves.length(); i+=3) {
+			loc = new Integer[2];
+			loc[0] = Integer.parseInt(""+validMoves.charAt(i))-1;
+			loc[1] = Integer.parseInt(""+validMoves.charAt(i+1))-1;
+			System.out.println(loc[0]+":"+loc[1]);
+			possibleMoves.add(loc);
+		}
 		for(Integer[] x : possibleMoves) {
-			
-
+			System.out.println(x[0]+"=="+newPieceXpos+"  "+x[1]+"=="+newPieceYpos);
 			if(x[0] == newPieceXpos && x[1] == newPieceYpos) {
 				if(this.model.getBoard()[newPieceYpos][newPieceXpos] != null) {
 					this.model.getBoard()[newPieceYpos][newPieceXpos].setCaptured(true); 
@@ -133,6 +143,7 @@ public class GameController {
 				this.model.getBoard()[newPieceYpos][newPieceXpos].setXpos(newPieceXpos);
 				this.model.getBoard()[newPieceYpos][newPieceXpos].setYpos(newPieceYpos);
 				checkForCheck();
+				System.out.println("Passed");
 				return true;
 			}
 		}

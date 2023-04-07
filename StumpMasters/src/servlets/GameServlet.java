@@ -74,7 +74,7 @@ public class GameServlet extends HttpServlet {
 					//Grabs location from client
 					//sends string version of possible list to views
 					String getPossibleMoves = controller.getPossibleMoves(tileSelected,playerTurn);
-					if(!getPossibleMoves.equals("False")) {
+					if(!getPossibleMoves.equals("False") && !getPossibleMoves.contentEquals("")) {
 						request.setAttribute("possibleMoves",getPossibleMoves);
 						selectingPiece = "False";
 						selectValidMoves = "True";
@@ -91,8 +91,8 @@ public class GameServlet extends HttpServlet {
 		}else
 		if(selectValidMoves.equals("True")) {
 			String pieceAttemptingToMove = gameMoves.substring(gameMoves.length()-2, gameMoves.length());
-			Boolean isMoveValid = controller.moveValidMove(tileSelected,pieceAttemptingToMove);
 			String previousTitle = ""+pieceAttemptingToMove.charAt(0)+":"+pieceAttemptingToMove.charAt(1);
+			Boolean isMoveValid = controller.moveValidMove(tileSelected,previousTitle,playerTurn );
 			if(!isMoveValid) {
 				selectValidMoves = "True";
 				selectingPiece = "False";
