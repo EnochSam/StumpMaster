@@ -296,8 +296,8 @@ public class GameController {
 					for(int k = 0; k < getOutOfCheckMoves.length(); k+=3){
 						int possibleMovesXpos = Integer.parseInt(""+possibleMoves.charAt(j)) -1;
 						int possibleMovesYpos = Integer.parseInt(""+possibleMoves.charAt(j+1)) -1;
-						int getOutofCheckXpos = Integer.parseInt(""+possibleMoves.charAt(k));
-						int getOutofCheckYpos = Integer.parseInt(""+possibleMoves.charAt(k+1));
+						int getOutofCheckXpos = Integer.parseInt(""+getOutOfCheckMoves.charAt(k));
+						int getOutofCheckYpos = Integer.parseInt(""+getOutOfCheckMoves.charAt(k+1));
 						if(possibleMovesXpos == getOutofCheckXpos && possibleMovesYpos == getOutofCheckYpos) {
 							return false;
 						}
