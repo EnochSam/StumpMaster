@@ -154,7 +154,11 @@ public class GameServlet extends HttpServlet {
 		request.setAttribute("playerTurn",playerTurn);
 		request.setAttribute("selectingPiece",selectingPiece);
 		request.setAttribute("selectValidMoves",selectValidMoves);
-		if(model.getInCheck()) {
+		if(model.getInCheckmate()) {
+			request.setAttribute("inCheckmate", true);
+		}
+		else 
+			if(model.getInCheck()) {
 			request.setAttribute("inCheck", true);
 		}
 		rd.include(request, response);

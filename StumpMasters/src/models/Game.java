@@ -18,6 +18,7 @@ public class Game {
 	private Player[] player;
 	private Piece[][] board;
 	private boolean inCheck;
+	private boolean inCheckmate;
 	private List<Integer[]> availableMoves = null;
 	public Game() {
 		white = new Player(Piece.WHITE);
@@ -27,11 +28,11 @@ public class Game {
 		for(int i = 0; i <= 1; i++) {
 		//Kings	
 		player[i].getPieces()[0].setColor(i);
-		player[i].getPieces()[0].setXpos(3);
+		player[i].getPieces()[0].setXpos(4);
 		player[i].getPieces()[0].setYpos(i*7);
 		//Queens
 		player[i].getPieces()[1].setColor(i);
-		player[i].getPieces()[1].setXpos(4);
+		player[i].getPieces()[1].setXpos(3);
 		player[i].getPieces()[1].setYpos(i*7);
 		
 		//Rooks
@@ -110,6 +111,13 @@ public class Game {
 		return this.availableMoves;
 	}
 	
+	public void setInCheckmate(boolean inCheckmate) {
+		this.inCheckmate = inCheckmate;
+	}
+	
+	public boolean getInCheckmate() {
+		return this.inCheckmate;
+	}
 
 	
 }

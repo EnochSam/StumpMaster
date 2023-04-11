@@ -2,7 +2,7 @@ package controllers;
 
 import models.User;
 import models.inputType;
-import database.FakeUserDatabase;
+import Database.FakeUserDatabase;
 
 public class LoginController {
 	private FakeUserDatabase db = new FakeUserDatabase();

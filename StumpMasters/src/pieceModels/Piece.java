@@ -235,5 +235,16 @@ List<Integer[]> possibleMoves = new ArrayList<Integer[]>();
 		
 		
 	}
+
+	public King getKing(Piece[][] board) {
+		for(int j = 0; j < 8; j++) {
+			for(int i = 0; i < 8; i++) {
+				if(board[j][i] instanceof King && board[j][i].getColor() == color) {
+					return (King)board[j][i];
+				}
+			}
+		}
+		return null;
+	}
 	
 }

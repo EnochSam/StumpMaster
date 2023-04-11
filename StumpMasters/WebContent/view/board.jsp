@@ -24,10 +24,25 @@
 		let selectingPiece = "${selectingPiece}"
 		let selectValidMoves = "${selectValidMoves}"
 		let inCheck = "${inCheck}"
+		let inCheckmate = "${inCheckmate}"
 		let tileStart = ${beginningOfGame}
 		
+		//Displays if a player is in Checkmate
+		if(inCheckmate == "true"){
+			let inCheckSign = document.createElement("div")
+			inCheckSign.id = "inCheck"
+			inCheckSign.innerHTML = "Checkmate";
+			//Prints Winner
+			if(playerTurn == "White"){
+				inCheckSign.innerHTML+=" Black Wins!"
+			}else{
+				inCheckSign.innerHTML+=" White Wins!"
+
+			}
+			document.getElementById("form").prepend(inCheckSign)
+		}
 		//Displays if a player is in Check
-		if(inCheck == "true"){
+		else if(inCheck == "true"){
 			let inCheckSign = document.createElement("div")
 			inCheckSign.id = "inCheck"
 			inCheckSign.innerHTML = "Check";

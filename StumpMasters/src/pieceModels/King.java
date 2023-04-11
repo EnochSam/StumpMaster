@@ -48,6 +48,8 @@ public class King extends Piece{
 			}
 			//The King will now determine the distance between the attacking Piece by checking its position
 			
+			//Check if the Piece is Attacking Vertically
+			
 			return false;
 		}
 		// There is an opposing Piece, So the Player is in Check
@@ -56,7 +58,42 @@ public class King extends Piece{
 		Integer[] availableMove = {piecesthatcanReachKing.getXpos(),piecesthatcanReachKing.getYpos()};
 		getOutOfCheckMoves = new ArrayList<Integer[]>();
 		getOutOfCheckMoves.add(availableMove);
-		return false;
+		//Check if the piece is attacking vertically or diagonal horizontally 
+		if(piecesthatcanReachKing.getXpos() == super.getXpos() || piecesthatcanReachKing.getYpos() == super.getYpos()
+			|| Math.abs(piecesthatcanReachKing.getXpos() - super.getXpos())
+			== Math.abs(piecesthatcanReachKing.getYpos() - super.getYpos())) {
+			int xincrement = 0;
+			if(piecesthatcanReachKing.getXpos() - super.getXpos() > 0) xincrement = 1;
+			if(piecesthatcanReachKing.getXpos() - super.getXpos() < 0) xincrement = -1;
+			int yincrement = 0;
+			if(piecesthatcanReachKing.getYpos() - super.getYpos() > 0) yincrement = 1;
+			if(piecesthatcanReachKing.getYpos() - super.getYpos() < 0) yincrement = -1;
+			int x = super.getXpos()+xincrement;
+			int y = super.getYpos()+yincrement;
+
+			while(board[y][x] != piecesthatcanReachKing) {
+				Integer[] loc = {x,y};
+				this.getOutOfCheckMoves.add(loc);
+				x+=xincrement;
+				y+=yincrement;
+			}
+		}
+		//finally, check all pieces to see if any piece is able to reach any moves
+		for(int j = 0; j < 8; j++) {
+			for(int i = 0; i < 8; i++) {
+				if(board[j][i] != null) {
+					for(Integer[] loc : board[j][i].getValidMoves(board)) {
+						for(Integer[] possibleMoves : this.getOutOfCheckMoves) {
+							if(loc[0] == possibleMoves[0] && loc[1] == possibleMoves[1]) {			
+								return false;
+							}
+						}
+					}
+				}
+			}
+		}
+		System.out.println("CHECKMATE");
+		return true;
 	}
 	public Boolean getInCheck() {
 		return inCheck;
@@ -77,7 +114,7 @@ public class King extends Piece{
 			int x = super.getXpos()+listOfLocationsToCheck.get(i);
 			int y = super.getYpos()+listOfLocationsToCheck.get(i+1);
 			if(y>=0 && y < 8 && x>=0 && x<8) {
-				if(this.checkIfOpenMove(x, y, board)){
+				//if(this.checkIfOpenMove(x, y, board)){
 				if(board[y][x] !=null ) {
 					if(board[y][x].getColor() != super.getColor()) {
 						loc = new Integer[2];
@@ -91,30 +128,12 @@ public class King extends Piece{
 					loc[0] = x;
 					loc[1] = y;
 					possibleMoves.add(loc);
-				}
+				//}
 				}
 			}
 		}
 		return possibleMoves;
 	}
 	
-	public boolean checkIfOpenMove(int xpos, int ypos, Piece[][] board) {
-		//Checks if the piece that you 
-		for(int j = 0; j < 8; j++) {
-			for(int i = 0; i < 8; i++) {
-				//Move Check
-				// Checks all pieces on the Board that ISNT the King in Question
-				if(board[j][i] != null) {
-					if(!(board[j][i] instanceof King) && board[j][i].getColor() != super.getColor() ){
-					for(Integer[] checkingLoc : board[j][i].getValidMoves(board)) {
-						if(checkingLoc[0] == xpos && checkingLoc[1] == ypos) {
-							return false;
-						}
-					}
-					}
-				}
-			}
-		}
-		return true;
-	}
+	
 }
