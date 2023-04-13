@@ -19,6 +19,7 @@ public class Game {
 	private Piece[][] board;
 	private boolean inCheck;
 	private boolean inCheckmate;
+	private boolean pawnPromotion;
 	private List<Integer[]> availableMoves = null;
 	public Game() {
 		white = new Player(Piece.WHITE);
@@ -119,5 +120,11 @@ public class Game {
 		return this.inCheckmate;
 	}
 
+	public boolean getPawnPromotion() {
+		return this.pawnPromotion;
+	}
 	
+	public void setPawnPromotion(boolean pp) {
+		this.pawnPromotion = pp;
+	}
 }

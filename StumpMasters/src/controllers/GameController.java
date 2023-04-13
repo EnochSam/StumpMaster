@@ -6,9 +6,13 @@ import java.util.List;
 
 import models.Game;
 import models.Player;
+import pieceModels.Bishop;
 import pieceModels.King;
+import pieceModels.Knight;
 import pieceModels.Pawn;
 import pieceModels.Piece;
+import pieceModels.Queen;
+import pieceModels.Rook;
 
 public class GameController {
 	/*
@@ -99,6 +103,8 @@ public class GameController {
 		//initialize the Pieces and Board
 		Piece[][] board = new Piece[8][8];
 		Player[] players = model.getBothPlayers();
+		System.out.println(boardLocations);
+
 		
 		//load initially on board
 		for(int i = 0; i < players.length; i++){
@@ -119,11 +125,13 @@ public class GameController {
 		//3= xpos of new location
 		//4 = ypos of new location
 		//5 = space
-		for(int i = 0; i < boardLocations.length(); i+=5) {
+
+		for(int i = 0; i < boardLocations.length() & boardLocations.length()-i >5; i+=5) {
 			int curx = Integer.parseInt(""+boardLocations.charAt(i))-1;
 			int cury = Integer.parseInt(""+boardLocations.charAt(i+1))-1;
 			int newx = Integer.parseInt(""+boardLocations.charAt(i+2))-1;
 			int newy = Integer.parseInt(""+boardLocations.charAt(i+3))-1;
+			
 			//if piece is on moved location set that piece to captured
 			if(board[newy][newx] != null) {
 				board[newy][newx].setCaptured(true);
@@ -133,6 +141,38 @@ public class GameController {
 			board[newy][newx].setXpos(newx);
 			board[newy][newx].setYpos(newy);
 			board[newy][newx].setHasMovedAlready(true);
+			
+			//Check For Pawn Promotion
+			if(i+4 <boardLocations.length() ) {
+				if(!(""+boardLocations.charAt(i+4)).equals(" ")) {
+					//Check Which Character the Pawn is Set To
+					if((""+boardLocations.charAt(i+4)).equals("Q")){
+						board[newy][newx] = new Queen();
+						board[newy][newx].setXpos(newx);
+						board[newy][newx].setYpos(newy);
+						board[newy][newx].setHasMovedAlready(true);
+					}
+					if((""+boardLocations.charAt(i+4)).equals("R")){
+						board[newy][newx] = new Rook();
+						board[newy][newx].setXpos(newx);
+						board[newy][newx].setYpos(newy);
+						board[newy][newx].setHasMovedAlready(true);
+					}
+					if((""+boardLocations.charAt(i+4)).equals("K")){
+						board[newy][newx] = new Knight();
+						board[newy][newx].setXpos(newx);
+						board[newy][newx].setYpos(newy);
+						board[newy][newx].setHasMovedAlready(true);
+					}
+					if((""+boardLocations.charAt(i+4)).equals("B")){
+						board[newy][newx] = new Bishop();
+						board[newy][newx].setXpos(newx);
+						board[newy][newx].setYpos(newy);
+						board[newy][newx].setHasMovedAlready(true);
+					}
+					i++;
+				}
+			}
 		}
 		this.model.setBoard(board);
 		checkForCheck();
@@ -166,9 +206,13 @@ public class GameController {
 				this.model.getBoard()[selectedPieceYpos][selectedPieceXpos] = null;
 				this.model.getBoard()[newPieceYpos][newPieceXpos].setXpos(newPieceXpos);
 				this.model.getBoard()[newPieceYpos][newPieceXpos].setYpos(newPieceYpos);
-				King possibleCheckedKing = checkForCheck();
-				if(possibleCheckedKing!= null) {
-					checkForCheckMate(possibleCheckedKing);
+				checkForCheck();
+				System.out.println(this.model.getBoard()[newPieceYpos][newPieceXpos].getYpos());
+				if(this.model.getBoard()[newPieceYpos][newPieceXpos] instanceof Pawn && 
+						(this.model.getBoard()[newPieceYpos][newPieceXpos].getYpos() == 0
+						|| this.model.getBoard()[newPieceYpos][newPieceXpos].getYpos() == 7)) {
+					this.model.setPawnPromotion(true);
+					System.out.println("PAWN Promotion");
 				}
 				return true;
 			}
@@ -176,7 +220,7 @@ public class GameController {
 		return false;
 	}
 	
-	private King checkForCheck() {
+	private void checkForCheck() {
 		//Creates King of Both Players
 		King WhiteKing = (King) this.model.getWhitePlayer().getPieces()[0];
 		King BlackKing = (King) this.model.getBlackPlayer().getPieces()[0];
@@ -189,14 +233,13 @@ public class GameController {
 			//if the WhiteKing is in Check, set list of availableMoves to Kings getOutOfCheckList
 			this.model.setAvailableMoves(WhiteKing.getGetOutOfCheckMoves());
 			this.model.setInCheck(true);
-			return WhiteKing;
+			this.checkForCheckMate(WhiteKing);
 		}else if(BlackKing.getInCheck()) {
 			this.model.setAvailableMoves(BlackKing.getGetOutOfCheckMoves());
 			this.model.setInCheck(true);
-			return BlackKing;
+			this.checkForCheckMate(BlackKing);
 		}else {
 			this.model.setInCheck(false);
-			return null;
 		}
 		
 	}
@@ -246,6 +289,7 @@ public class GameController {
 		Piece piecesthatcanReachKing = null;
 		for(int j = 0; j < 8; j++) {
 			for(int i = 0; i < 8; i++) {
+				
 				if(this.model.getBoard()[j][i] != null) {
 					boolean canreach = false;
 					for(Integer[] loc : this.model.getBoard()[j][i].getValidMoves(this.model.getBoard())) {
@@ -312,5 +356,6 @@ public class GameController {
 			this.model.setInCheckmate(true);
 			return true;
 		}
+	
 	
 }

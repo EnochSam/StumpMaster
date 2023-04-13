@@ -8,16 +8,17 @@
 <title>Enoch a Bigger Poopie</title>
 </head>
 <body>
-    <form method="post" id= "form" action="${pageContext.servletContext.contextPath}/Game">
+    <form method="post" id= "gameForm" action="${pageContext.servletContext.contextPath}/Game">
     <div id="Board">
         
     </div>
     </form>
-    <form method="get" action="${pageContext.servletContext.contextPath}/MainMenu">
+    <form id ="form" method="get" action="${pageContext.servletContext.contextPath}/MainMenu">
     	<input type="submit" value="Quit Game">
     	<input type = "hidden" value ="" id=possibleMoves >
     </form>
     <script>
+    
     	//Grabs Values passed from Servelt and store them in variables
     	let possibleMoves = "${possibleMoves}"
     	let playerTurn = "${playerTurn}";
@@ -25,10 +26,11 @@
 		let selectValidMoves = "${selectValidMoves}"
 		let inCheck = "${inCheck}"
 		let inCheckmate = "${inCheckmate}"
-		let tileStart = ${beginningOfGame}
+		let tileStart = ${beginningOfGame};
+		let pawnPromotion = "${PawnPromotion}";
 		
 		//Displays if a player is in Checkmate
-		if(inCheckmate == "true"){
+				if(inCheckmate == "true"){
 			let inCheckSign = document.createElement("div")
 			inCheckSign.id = "inCheck"
 			inCheckSign.innerHTML = "Checkmate";
@@ -39,14 +41,14 @@
 				inCheckSign.innerHTML+=" White Wins!"
 
 			}
-			document.getElementById("form").prepend(inCheckSign)
+			document.getElementById("gameForm").prepend(inCheckSign)
 		}
 		//Displays if a player is in Check
 		else if(inCheck == "true"){
 			let inCheckSign = document.createElement("div")
 			inCheckSign.id = "inCheck"
 			inCheckSign.innerHTML = "Check";
-			document.getElementById("form").prepend(inCheckSign)
+			document.getElementById("gameForm").prepend(inCheckSign)
 			
 		}
     	//Grabs from Servlet the GameMoves Data
@@ -54,6 +56,7 @@
     	console.log(sessionStorage.getItem("gameMoves"))
     	}else{
     	sessionStorage.setItem("gameMoves","")
+    	sessionStorage.setItem("lastMove","")
     	}
     
 
@@ -88,10 +91,20 @@
             		sessionStorage.setItem("gameMoves",gameMoves)
             		}
             	}
+           		//Pawn Promotion
+            	if(sessionStorage.getItem("lastMove").length == 4){
+            		var pawnPromotedChar = sessionStorage.getItem("lastMove")
+            		pawnPromotedChar = pawnPromotedChar[pawnPromotedChar.length-1]
+            	 	var gameMovesStr = sessionStorage.getItem("gameMoves")
+            		sessionStorage.setItem("gameMoves",gameMovesStr.substring(0,
+           					sessionStorage.getItem("gameMoves").length-1)+pawnPromotedChar+" ")
+            		
+            	}
             	sessionStorage.setItem("gameMoves",sessionStorage.getItem("gameMoves")+locx+""+locy)	
 
-            }else
+            }
             if(selectValidMoves == "True"){
+            	
             }
             sessionStorage.setItem("lastSelectingPieceState",selectingPiece)	
             sessionStorage.setItem("lastMove",submit.value)
@@ -489,6 +502,45 @@
         	return"clip-path: inset(50px 0px 0px 250px); position: relative; right: 250px; bottom: 50px;";
         	}
         }
+	
+
+		if(pawnPromotion){
+			setTimeout( (e)=>{
+				let askpp = ""
+					while(askpp != "Queen" && askpp != "Knight" && askpp != "Rook" && askpp != "Bishop" ){
+						askpp =prompt("What are you promoting your prompt to?")
+					}
+					if(askpp == "Queen"){
+						askpp = "Q"
+					}
+					else
+					if(askpp == "Knight"){
+						askpp = "K"
+					} 
+					else
+					if(askpp == "Rook"){
+						askpp = "R" 
+					}else{
+						askpp = "B"
+					}
+					let postPP = document.createElement("input")
+					postPP.type = "hidden"
+					postPP.name = "pawnPromotion"
+					postPP.value = askpp
+					
+					let newActiveElement = sessionStorage.getItem("lastMove")
+					//adds to sessions lastMove
+					sessionStorage.setItem("lastMove",sessionStorage.getItem("lastMove")+askpp)
+					//grabs Tile element that is existing
+					document.getElementById("gameForm").appendChild(postPP)
+					document.getElementsByName(newActiveElement)[0].focus()
+					document.getElementsByName(newActiveElement)[0].click()
+					
+					
+					
+			}, 100)
+		}
+		
         
         // SHADED CIRCLE
         //MUST APPEND UNDER BUTTON

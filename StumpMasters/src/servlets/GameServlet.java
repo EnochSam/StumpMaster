@@ -46,15 +46,21 @@ public class GameServlet extends HttpServlet {
 		String selectValidMoves = "";
 		//Variable to retrieve which tile is being selected
 		String tileSelected = "";
-		//Grabs all variables from client
+		
+		//Variable to retrieve which Piece the Queen is getting promoted to 
+		String pawnPromotion = "";
+			//Grabs all variables from client
+			pawnPromotion = request.getParameter("pawnPromotion");
 			tileSelected = request.getParameter("tile");
-			if(tileSelected !=null) {
+			System.out.println(pawnPromotion);
+			if(tileSelected !=null || pawnPromotion!= null ) {
 			gameMoves = request.getParameter("gameMoves");
 			playerTurn = request.getParameter("playerTurn");
 			selectingPiece = request.getParameter("selectingPiece");
 			selectValidMoves = request.getParameter("selectValidMoves");
 			//to tell client to save session data
 			request.setAttribute("beginningOfGame", false);
+			
 			}else {
 			//If tileSelected == null, this is the creation of the Game
 			gameMoves = "";
@@ -65,8 +71,8 @@ public class GameServlet extends HttpServlet {
 			//to tell Servlet to save the sessionData
 			request.setAttribute("beginningOfGame", true);
 			}	
-			controller.setBoard(gameMoves.substring(0, gameMoves.length()-(gameMoves.length()%5)));
 			
+			controller.setBoard(gameMoves);
 			//Checks if the Player is selecting a piece
 			if(selectingPiece.equals("True") && !(tileSelected.equals("START"))) {
 				//Checks to see if there is a player's piece at specified location
@@ -114,7 +120,9 @@ public class GameServlet extends HttpServlet {
 				}
 				selectValidMoves = "False";
 				selectingPiece = "True";
-				
+				if(model.getPawnPromotion()) {
+					request.setAttribute("PawnPromotion",true);
+				}
 			}
 			
 		}
