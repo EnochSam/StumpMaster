@@ -21,7 +21,7 @@ class KingTests {
 	void testMovePossibleMoves(){
 		King testKing = new King(4,4,Piece.WHITE);
 		Piece[][] board= new Piece[8][8];
-		Piece enemyPiece = new King(2,4,Piece.BLACK);
+		Piece enemyPiece = new King(7,7,Piece.BLACK);
 		Piece friendlyPiece = new King(2,3,Piece.WHITE);
 		board[enemyPiece.getYpos()][enemyPiece.getXpos()] = enemyPiece;
 		board[friendlyPiece.getYpos()][friendlyPiece.getXpos()] = friendlyPiece;
