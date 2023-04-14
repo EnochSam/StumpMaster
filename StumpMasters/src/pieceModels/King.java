@@ -134,6 +134,12 @@ public class King extends Piece{
 		}
 		return possibleMoves;
 	}
+
+	
+	@Override
+	public String type() {
+		return "King";
+	}
 	
 	
 }

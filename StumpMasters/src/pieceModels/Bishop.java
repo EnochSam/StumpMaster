@@ -16,4 +16,9 @@ public class Bishop extends Piece{
 	public List<Integer[]> getValidMoves(Piece[][] board){
 		return super.getDiagonalMoves(board);
 	}
+
+	@Override
+	public String type() {
+		return "Bishop";
+	}
 }

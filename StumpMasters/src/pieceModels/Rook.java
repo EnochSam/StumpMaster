@@ -16,4 +16,9 @@ public class Rook extends Piece{
 	public List<Integer[]> getValidMoves(Piece[][] board){
 		return super.getVerticalMoves(board);
 	}
+
+	@Override
+	public String type() {
+		return "Rook";
+	}
 }

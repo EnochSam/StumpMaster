@@ -1,0 +1,13 @@
+----------------------------------------------------------------
+Fri Apr 14 00:27:27 EDT 2023:
+Booting Derby version The Apache Software Foundation - Apache Derby - 10.10.2.0 - (1582446): instance a816c00e-0187-7e04-a93c-0000064538c0 
+on database directory C:\Users\rober\git\StumpMaster\StumpMasters\test.db with class loader sun.misc.Launcher$AppClassLoader@73d16e93 
+Loaded from file:/C:/Users/rober/OneDrive%20-%20ycp.edu/YCP/Sophmore%20Spring%202023/CS320/Labs/CS320_Derby/lib/derby.jar
+java.vendor=Oracle Corporation
+java.runtime.version=1.8.0_301-b09
+user.dir=C:\Users\rober\git\StumpMaster\StumpMasters
+os.name=Windows 10
+os.arch=amd64
+os.version=10.0
+derby.system.home=null
+Database Class Loader started - derby.database.classpath=''

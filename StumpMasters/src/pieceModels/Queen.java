@@ -19,4 +19,9 @@ public class Queen extends Piece{
 		possibleMoves.addAll((Collection<Integer[]>)(super.getDiagonalMoves(board)));
 		return possibleMoves;
 	}
+
+	@Override
+	public String type() {
+		return "Queen";
+	}
 }

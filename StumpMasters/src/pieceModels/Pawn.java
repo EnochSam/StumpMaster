@@ -14,6 +14,7 @@ public class Pawn extends Piece{
 		super(xpos,ypos,color);
 	}
 	
+	@Override
 	public List<Integer[]> getValidMoves(Piece[][] board){
 		List<Integer[]> possibleMoves = new ArrayList<Integer[]>();
 		Integer[] loc = {-1,-1};
@@ -107,5 +108,11 @@ public class Pawn extends Piece{
 		return possibleMoves;
 		
 		
+	}
+
+	
+	@Override
+	public String type() {
+		return "Pawn";
 	}
 }

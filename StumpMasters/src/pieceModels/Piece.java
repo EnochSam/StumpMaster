@@ -14,7 +14,10 @@ public abstract class Piece {
 	public Piece(){
 		xpos = -1;
 		ypos = -1;
+		this.color = -1;
 		this.captured = false;
+		this.hasMovedAlready = false; 
+
 	}
 	
 	public Piece(int xpos, int ypos, int color){
@@ -69,6 +72,9 @@ public abstract class Piece {
 		return this.hasMovedAlready;
 	}
 	public abstract List<Integer[]> getValidMoves(Piece[][] board);
+	
+	//Used i Database
+	public abstract String type();
 	
 	public List<Integer[]> getVerticalMoves(Piece[][] board){
 List<Integer[]> possibleMoves = new ArrayList<Integer[]>();
@@ -243,6 +249,29 @@ List<Integer[]> possibleMoves = new ArrayList<Integer[]>();
 					return (King)board[j][i];
 				}
 			}
+		}
+		return null;
+	}
+	
+	//used in the load initial data of the Database
+	public static Piece findPiece(String pieceName) {
+		if(pieceName.equals("King")){
+			return new King();
+		}
+		if(pieceName.equals("Queen")){
+			return new Queen();
+		}
+		if(pieceName.equals("Bishop")) {
+			return new Bishop();
+		}
+		if(pieceName.equals("Rook")) {
+			return new Rook();
+		}
+		if(pieceName.equals("Knight")){
+			return new Knight();
+		}
+		if(pieceName.equals("Pawn")) {
+			return new Pawn();
 		}
 		return null;
 	}

@@ -12,6 +12,7 @@ public class Player {
 	private boolean inCheck;
 	private boolean inCheckmate;
 	private int color;
+	private String type;
 	//PlayerModeld with no Parameter
 	public Player() {
 		//initializes Pieces
@@ -107,5 +108,19 @@ public class Player {
 		this.pieces = pieces;
 	}
 
+	public void setColor(int color) {
+		this.color = color;
+	}
 	
+	public int getColor() {
+		return this.color;
+	}
+	
+	public void setType(String type) {
+		this.type = type;
+	}
+	
+	public String getType() {
+		return this.type;
+	}
 }
