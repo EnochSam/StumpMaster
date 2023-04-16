@@ -28,6 +28,7 @@
 		let inCheckmate = "${inCheckmate}"
 		let tileStart = ${beginningOfGame};
 		let pawnPromotion = "${PawnPromotion}";
+		let gameMoves = "${gameMoves}"
 		
 		//Displays if a player is in Checkmate
 				if(inCheckmate == "true"){
@@ -51,9 +52,10 @@
 			document.getElementById("gameForm").prepend(inCheckSign)
 			
 		}
+		
     	//Grabs from Servlet the GameMoves Data
     	if(sessionStorage.getItem("gameMoves")!= null && !tileStart){
-    	console.log(sessionStorage.getItem("gameMoves"))
+    		sessionStorage.setItem("gameMoves",gameMoves)
     	}else{
     	sessionStorage.setItem("gameMoves","")
     	sessionStorage.setItem("lastMove","")

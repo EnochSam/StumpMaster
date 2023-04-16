@@ -52,7 +52,6 @@ public class GameServlet extends HttpServlet {
 			//Grabs all variables from client
 			pawnPromotion = request.getParameter("pawnPromotion");
 			tileSelected = request.getParameter("tile");
-			System.out.println(pawnPromotion);
 			if(tileSelected !=null || pawnPromotion!= null ) {
 			gameMoves = request.getParameter("gameMoves");
 			playerTurn = request.getParameter("playerTurn");
@@ -90,8 +89,8 @@ public class GameServlet extends HttpServlet {
 					}
 					
 				}catch(Exception e){
-					PrintWriter write = response.getWriter();
-					write.println(e.toString()+"<br></br>");
+					//PrintWriter write = response.getWriter();
+					//write.println(e.toString()+"<br></br>");
 				}
 				
 		}else
@@ -126,8 +125,6 @@ public class GameServlet extends HttpServlet {
 			}
 			
 		}
-			
-		
 		 //let Controller Create Board
 
 		
@@ -158,7 +155,7 @@ public class GameServlet extends HttpServlet {
 		
 		//sends all atributes to client
 		request.setAttribute("board", loadBoard);
-		request.setAttribute("gameMoves", gameMoves);
+		request.setAttribute("gameMoves", model.getGameMoves());
 		request.setAttribute("playerTurn",playerTurn);
 		request.setAttribute("selectingPiece",selectingPiece);
 		request.setAttribute("selectValidMoves",selectValidMoves);

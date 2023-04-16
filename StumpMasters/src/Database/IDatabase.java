@@ -1,9 +1,8 @@
 package Database;
 
-
-import pieceModels.Piece;
-
 public interface IDatabase {
-	public Piece[][] loadBoard();
+	public String getPossibleMoves(String clickedOnLocation, String playerTurn);
+	public void setBoard(String boardLocations);
+	public boolean moveValidMove(String newPieceLoc, String attemptingToMove,String player);
 	
 }

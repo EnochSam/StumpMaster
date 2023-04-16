@@ -8,6 +8,9 @@ public class King extends Piece{
 	private boolean inCheck;
 	private boolean inCheckMate;
 	private List<Integer[]> getOutOfCheckMoves;
+	//Due to the amount of times the castling function is con due to the set board method,
+	//The CastlingLocatoin needs to be an array contain the left and right locations
+	private String[] castlingLocation = new String[2];
 	public King() {
 		super();
 		
@@ -46,14 +49,12 @@ public class King extends Piece{
 			if(this.inCheck){
 				this.inCheck = false;
 			}
-			//The King will now determine the distance between the attacking Piece by checking its position
-			
-			//Check if the Piece is Attacking Vertically
-			
 			return false;
 		}
 		// There is an opposing Piece, So the Player is in Check
+		if(piecesthatcanReachKing.getColor() != super.getColor()) {
 		this.inCheck = true;
+		}
 		//Adds Location of attacking Piece to getOutOfCheckMovesList
 		Integer[] availableMove = {piecesthatcanReachKing.getXpos(),piecesthatcanReachKing.getYpos()};
 		getOutOfCheckMoves = new ArrayList<Integer[]>();
@@ -78,21 +79,6 @@ public class King extends Piece{
 				y+=yincrement;
 			}
 		}
-		//finally, check all pieces to see if any piece is able to reach any moves
-		for(int j = 0; j < 8; j++) {
-			for(int i = 0; i < 8; i++) {
-				if(board[j][i] != null) {
-					for(Integer[] loc : board[j][i].getValidMoves(board)) {
-						for(Integer[] possibleMoves : this.getOutOfCheckMoves) {
-							if(loc[0] == possibleMoves[0] && loc[1] == possibleMoves[1]) {			
-								return false;
-							}
-						}
-					}
-				}
-			}
-		}
-		System.out.println("CHECKMATE");
 		return true;
 	}
 	public Boolean getInCheck() {
@@ -132,13 +118,111 @@ public class King extends Piece{
 				}
 			}
 		}
+		
+		//Checks For Castling
+		for(Integer[] castleLoc : this.castling(board)) {
+			possibleMoves.add(castleLoc);
+		}
 		return possibleMoves;
 	}
 
+	public List<Integer[]> castling(Piece board[][]) {
+		List<Integer[]> locs = new ArrayList<Integer[]>();
+		//check for of Castling
+		if(!super.getHasMovedAlready() && !this.inCheck) {
+			//check Left of King
+			//assuming that the king hasn't move, if theres a rook at a specific x pos, then the rook hasnt moved either
+			if(board[super.getYpos()][0] != null) {
+				if(board[super.getYpos()][0] instanceof Rook && board[super.getYpos()][0].getColor() == super.getColor()) {
+					//traverses to the Rook
+					int origX = super.getXpos();
+					//Removing King from current location
+					Piece self = board[super.getYpos()][origX];
+					board[super.getYpos()][origX] = null;
+					
+					int i = super.getXpos();
+					boolean allowedToCastle = true;
+					while(i > 0) {
+						//move King over to make sure it wouldn't be in check
+						super.setXpos(i);
+						if(board[super.getYpos()][super.getXpos()] != null) {
+							allowedToCastle = false;
+							break;
+						}
+						//NOT ADDING KING BACK TO BOARD to Call the Check For Check Function
+						this.checkForCheckMate(board);
+						//If King Can Be Put in Check, set Boolean to false 
+						if(this.inCheck){
+							allowedToCastle =  false;
+						}
+						i--;
+						 
+					}
+					//Add King Back to board and set check back to 0
+					board[super.getYpos()][origX] = self;
+					super.setXpos(origX);
+					this.inCheck = false;
+					
+					//At This Point, King Is Allowed to Castle, So add new position to list
+					if(allowedToCastle) {
+					Integer[] castleToLeft= {super.getXpos()-2,super.getYpos()};
+					locs.add(castleToLeft);
+					
+					castlingLocation[0] = (castleToLeft[0]+""+castleToLeft[1]);
+					}
+				}
+			} 
+			if(board[super.getYpos()][7] != null) {
+				if(board[super.getYpos()][7] instanceof Rook && board[super.getYpos()][7].getColor() == super.getColor()) {
+					//traverses to Right of the Rook
+					int origX = super.getXpos();
+					//Removing King from current location
+					Piece self = board[super.getYpos()][origX];
+					board[super.getYpos()][origX] = null;
+					
+					int i = super.getXpos();
+					boolean allowedToCastle = true;
+					while(i < 7  ) {
+						//move King over to make sure it wouldn't be in check
+						super.setXpos(i);
+						
+						if(board[super.getYpos()][super.getXpos()] != null) {
+							allowedToCastle = false;
+							break;
+						}
+						//NOT ADDING KING BACK TO BOARD to Call the Check For Check Function
+						this.checkForCheckMate(board);
+						//If King Can Be Put in Check, set Boolean to false 
+						if(this.inCheck){
+							allowedToCastle =  false;
+						}
+						i++;
+						 
+					}
+					//Add King Back to board and set check back to 0
+					board[super.getYpos()][origX] = self;
+					super.setXpos(origX);
+					this.inCheck = false;
+					
+					//At This Point, King Is Allowed to Castle, So add new position to list
+					if(allowedToCastle) {
+					Integer[] castleToRigt= {super.getXpos()+2,super.getYpos()};
+					locs.add(castleToRigt);
+					castlingLocation[1]=(castleToRigt[0]+""+castleToRigt[1]);
+					}
+				}
+			} 
+		}
+		return locs;
+	}
 	
 	@Override
 	public String type() {
 		return "King";
+	}
+	
+	public String[] getCastlingLocation() {
+		return this.castlingLocation;
 	}
 	
 	

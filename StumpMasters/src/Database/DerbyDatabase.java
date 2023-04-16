@@ -186,11 +186,23 @@ public class DerbyDatabase implements IDatabase {
 		
 		System.out.println("Success!");
 	}
-
+	
 	@Override
-	public Piece[][] loadBoard() {
+	public String getPossibleMoves(String clickedOnLocation, String playerTurn) {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public void setBoard(String boardLocations) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public boolean moveValidMove(String newPieceLoc, String attemptingToMove, String player) {
+		// TODO Auto-generated method stub
+		return false;
 	}
 
 }

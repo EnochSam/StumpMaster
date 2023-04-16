@@ -62,6 +62,7 @@ public class Pawn extends Piece{
 		}
 		
 		//Black Pawn
+		if(super.getYpos()-1 >= 0) {
 		if(super.getColor() == Piece.BLACK) {
 			if(board[super.getYpos()-1][super.getXpos()] ==null) {
 				loc = new Integer[2];
@@ -103,6 +104,7 @@ public class Pawn extends Piece{
 					}
 				}
 			}
+		}
 			
 		}
 		return possibleMoves;

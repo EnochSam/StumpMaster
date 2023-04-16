@@ -20,7 +20,6 @@ public class GameController {
 	 * 
 	 */
 	private Game model;
-	
 	public void setModel(Game model){
 		this.model = model;
 	}
@@ -46,6 +45,16 @@ public class GameController {
 		}else {
 			king = (King) this.model.getBlackPlayer().getPieces()[0];
 		}
+		//looks for EnPassant
+		//if() {
+			
+		//}
+		
+		// Looks to see if Castling is allowed
+		//if(selectedPiece instanceof King) {
+			//check 
+		//}
+
 		List<Integer[]> possibleMoves = selectedPiece.getValidMoves(this.model.getBoard());
 		for(Integer[] loc : possibleMoves) {
 			//Temporarily changes board to make sure that moving the piece does not put the King in Check
@@ -100,10 +109,10 @@ public class GameController {
 	}
 	
 	public void setBoard(String boardLocations) {
+		this.model.setGameMoves(boardLocations);
 		//initialize the Pieces and Board
 		Piece[][] board = new Piece[8][8];
 		Player[] players = model.getBothPlayers();
-		System.out.println(boardLocations);
 
 		
 		//load initially on board
@@ -145,16 +154,19 @@ public class GameController {
 			//Check For Pawn Promotion
 			if(i+4 <boardLocations.length() ) {
 				if(!(""+boardLocations.charAt(i+4)).equals(" ")) {
+					int color = board[newy][newx].getColor();
 					//Check Which Character the Pawn is Set To
 					if((""+boardLocations.charAt(i+4)).equals("Q")){
 						board[newy][newx] = new Queen();
 						board[newy][newx].setXpos(newx);
 						board[newy][newx].setYpos(newy);
+						board[newy][newx].setColor(color);
 						board[newy][newx].setHasMovedAlready(true);
 					}
 					if((""+boardLocations.charAt(i+4)).equals("R")){
 						board[newy][newx] = new Rook();
 						board[newy][newx].setXpos(newx);
+						board[newy][newx].setColor(color);
 						board[newy][newx].setYpos(newy);
 						board[newy][newx].setHasMovedAlready(true);
 					}
@@ -162,12 +174,14 @@ public class GameController {
 						board[newy][newx] = new Knight();
 						board[newy][newx].setXpos(newx);
 						board[newy][newx].setYpos(newy);
+						board[newy][newx].setColor(color);
 						board[newy][newx].setHasMovedAlready(true);
 					}
 					if((""+boardLocations.charAt(i+4)).equals("B")){
 						board[newy][newx] = new Bishop();
 						board[newy][newx].setXpos(newx);
 						board[newy][newx].setYpos(newy);
+						board[newy][newx].setColor(color);
 						board[newy][newx].setHasMovedAlready(true);
 					}
 					i++;
@@ -207,12 +221,45 @@ public class GameController {
 				this.model.getBoard()[newPieceYpos][newPieceXpos].setXpos(newPieceXpos);
 				this.model.getBoard()[newPieceYpos][newPieceXpos].setYpos(newPieceYpos);
 				checkForCheck();
-				System.out.println(this.model.getBoard()[newPieceYpos][newPieceXpos].getYpos());
+				//Checks for Pawn Promotion
 				if(this.model.getBoard()[newPieceYpos][newPieceXpos] instanceof Pawn && 
 						(this.model.getBoard()[newPieceYpos][newPieceXpos].getYpos() == 0
-						|| this.model.getBoard()[newPieceYpos][newPieceXpos].getYpos() == 7)) {
+					  || this.model.getBoard()[newPieceYpos][newPieceXpos].getYpos() == 7)) {
 					this.model.setPawnPromotion(true);
-					System.out.println("PAWN Promotion");
+				}else
+				//Checks for Castling
+				if(this.model.getBoard()[newPieceYpos][newPieceXpos] instanceof King) {
+					King king =(King) this.model.getBoard()[newPieceYpos][newPieceXpos];
+					for(String castleLoc : king.getCastlingLocation()) {
+						if(castleLoc != null) {
+							int rookOldXpos = -1;
+							int rookNewXpos = -1;
+							if(castleLoc.charAt(0) == '8') {
+								if( this.model.getBoard()[newPieceYpos][7] instanceof Rook && !this.model.getBoard()[newPieceYpos][7].getHasMovedAlready()) {
+								//Rook is on the Right and needs to be moved to the Left
+								Piece rook = this.model.getBoard()[newPieceYpos][7];
+								this.model.getBoard()[newPieceYpos][7] = null;
+								this.model.getBoard()[newPieceYpos][newPieceXpos-1] = rook;
+								rookOldXpos = 8;
+								rookNewXpos = 6;
+								}
+							}else {
+								if( this.model.getBoard()[newPieceYpos][0] instanceof Rook && !this.model.getBoard()[newPieceYpos][0].getHasMovedAlready()) {
+								//Rook is on the Left and needs to be moved to the left
+								Piece rook = this.model.getBoard()[newPieceYpos][0];
+								this.model.getBoard()[newPieceYpos][0] = null;
+								this.model.getBoard()[newPieceYpos][newPieceXpos+1] = rook;							
+								rookOldXpos = 1;
+								rookNewXpos = 4;
+								}
+							}
+							//Split String into 2 and add the string into GameMoves
+							String leftOfSplit = this.model.getGameMoves().substring(0, this.model.getGameMoves().length() -2 );
+							String rightOfSplit = this.model.getGameMoves().substring(this.model.getGameMoves().length() -2 );
+							this.model.setGameMoves( leftOfSplit+rookOldXpos+(newPieceYpos+1)+rookNewXpos+(newPieceYpos+1)+" "+rightOfSplit);
+						}
+					}
+					
 				}
 				return true;
 			}

@@ -21,6 +21,7 @@ public class Game {
 	private boolean inCheckmate;
 	private boolean pawnPromotion;
 	private List<Integer[]> availableMoves = null;
+	private String gameMoves;
 	public Game() {
 		white = new Player(Piece.WHITE);
 		black = new Player(Piece.BLACK);
@@ -126,5 +127,13 @@ public class Game {
 	
 	public void setPawnPromotion(boolean pp) {
 		this.pawnPromotion = pp;
+	}
+	
+	public String getGameMoves() {
+		return gameMoves;
+	}
+	
+	public void setGameMoves(String gameMoves) {
+		this.gameMoves = gameMoves;
 	}
 }
