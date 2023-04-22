@@ -2,6 +2,7 @@ package servlets;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.sql.SQLException;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -10,6 +11,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import Database.DerbyDatabase;
+import Database.IDatabase;
 import controllers.GameController;
 import models.Game;
 import pieceModels.Bishop;
@@ -34,7 +37,8 @@ public class GameServlet extends HttpServlet {
 			throws ServletException, IOException {
 		//Set Controller and Models
 		Game model = new Game();
-		GameController controller = new GameController();
+		//GameController controller = new GameController();
+		IDatabase controller = new DerbyDatabase();
 		controller.setModel(model);
 		//Variable From client to retrieve all moves made in the round
 		String gameMoves = "";
@@ -71,7 +75,12 @@ public class GameServlet extends HttpServlet {
 			request.setAttribute("beginningOfGame", true);
 			}	
 			
-			controller.setBoard(gameMoves);
+			try {
+				controller.setBoard(gameMoves);
+			} catch (SQLException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
 			//Checks if the Player is selecting a piece
 			if(selectingPiece.equals("True") && !(tileSelected.equals("START"))) {
 				//Checks to see if there is a player's piece at specified location
