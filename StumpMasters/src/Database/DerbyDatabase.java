@@ -182,7 +182,7 @@ public class DerbyDatabase implements IDatabase {
 	
 	// The main method creates the database tables and loads the initial data.
 	public static void main(String[] args) throws IOException {
-		//System.out.println("Creating tables...");
+		System.out.println("Creating tables...");
 		DerbyDatabase db = new DerbyDatabase();
 		Game model = new Game();
 		db.setModel(model);
@@ -196,7 +196,7 @@ public class DerbyDatabase implements IDatabase {
 		//db.loadInitialData();
 		
 		System.out.println("Success!");
-		//*/
+		//
 	}
 	
 	@Override
@@ -207,40 +207,97 @@ public class DerbyDatabase implements IDatabase {
 
 	@Override
 	public void setBoard(String boardLocations) {
-		
+		System.out.println(boardLocations.length());
 		if(boardLocations.length() == 0) {
 		executeTransaction(new Transaction<Boolean>() {
 			@Override
 			public Boolean execute(Connection conn) throws SQLException {
 				PreparedStatement stmt1 = null;
 				PreparedStatement stmt2 = null;
-				ResultSet resultSet = null;		
-				DerbyDatabase db = new DerbyDatabase();				
-
-				//if gameMoves.length is = 0, drop tables
-				if(boardLocations.length() ==  0) {
+				PreparedStatement stmt3 = null;
+				PreparedStatement stmt4 = null;
+				boolean tableExistPi = true;
+				boolean tableExistPl = true;
+				try {
 					try {
-						stmt1 = conn.prepareStatement(
+					stmt1 = conn.prepareStatement(
+							"select * from pieces"
+					);
+					stmt1.executeQuery();
+					}
+					catch(SQLException e) {
+
+						tableExistPi = false;
+					}
+				}finally {
+					DBUtil.closeQuietly(stmt1);;
+
+				}
+				
+
+				try {
+					stmt2 = conn.prepareStatement(
+							"select * from players"
+					);
+					stmt2.executeQuery();
+				}
+				catch(SQLException e) {
+					tableExistPl = false;
+				}
+				finally {
+					DBUtil.closeQuietly(stmt2);;
+				}
+				
+				
+				//if gameMoves.length is = 0, drop tables
+				if(tableExistPi && tableExistPl) {
+					try {					
+						stmt3 = conn.prepareStatement(
 								"drop table pieces"
 						);
-						stmt1.executeUpdate();
+						stmt3.executeUpdate();
 						System.out.println("Statement 1 Executed");
-						stmt2 = conn.prepareStatement(
+						stmt4 = conn.prepareStatement(
 								"drop table players"
 						);
-						stmt2.executeUpdate();
+						stmt4.executeUpdate();
 						System.out.println("Statement 2 Executed");
 						
-						DBUtil.closeQuietly(stmt1);
-						DBUtil.closeQuietly(stmt2);
+						DBUtil.closeQuietly(stmt3);
+						DBUtil.closeQuietly(stmt4);
 						
-						
-					
 						return true;
 					}
+					
 					finally {
-						DBUtil.closeQuietly(stmt1);
-						DBUtil.closeQuietly(stmt2);
+						DBUtil.closeQuietly(stmt3);
+						DBUtil.closeQuietly(stmt4);
+					}
+				}
+				else if(tableExistPi) {
+					try {
+						stmt3 = conn.prepareStatement(
+							"drop table pieces"
+					);
+					stmt3.executeUpdate();
+					System.out.println("Statement 1 Executed");
+					DBUtil.closeQuietly(stmt3);
+					}
+					finally {
+						DBUtil.closeQuietly(stmt3);
+					}
+				}
+				else if(tableExistPl) {
+					try {
+						stmt4 = conn.prepareStatement(
+								"drop table players"
+						);
+						stmt4.executeUpdate();
+						System.out.println("Statement 2 Executed");
+						DBUtil.closeQuietly(stmt4);
+					}
+					finally {
+						DBUtil.closeQuietly(stmt4);
 					}
 				}
 				return false;
@@ -257,7 +314,6 @@ public class DerbyDatabase implements IDatabase {
 			Piece[][] board = new Piece[8][8];
 			public Boolean execute(Connection conn) throws SQLException {
 				PreparedStatement stmt1 = null;
-				PreparedStatement stmt2 = null;
 				ResultSet resultSet = null;					
 				try {
 			
