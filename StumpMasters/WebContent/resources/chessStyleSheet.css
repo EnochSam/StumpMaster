@@ -1,0 +1,122 @@
+.TitleScreen{
+    position: relative;
+    margin-left: 100px;
+    margin-right:100px;
+    padding-left: 20px;
+    text-align: center;
+    color:white;
+    font-family : Helvetica;
+    background-color: black; 
+    font-size: 10vw;
+    
+}
+
+.ButtonLayout{
+    border : 4px;
+    width : 10px;
+    border-spacing : 10px;
+    margin-left:auto; 
+    margin-right:auto;
+}
+
+#brown{
+	border : 0px solid;
+	padding : 0px;
+	width : 50px;
+	height : 50px;
+	background-color : brown;	
+}
+
+#green{
+	border : 0px solid;
+	padding : 0px;
+	width : 50px;
+	height : 50px;
+	background-color : green;	
+}
+
+#board table{
+	display : grid;
+	justify-content: space-around;
+	border : 5px;
+	row-gap : 0px;
+}
+
+#board piece {
+	width : 300;
+	height : 100;	
+}
+
+#board img{
+	width : 300;
+	height : 100;
+}
+
+#board shadedArea{
+	position: absolute;
+	background: #00000030;
+	width: 50px;
+	height: 50px;
+	border-radius: 50%;
+}
+
+#board td{
+	padding : 0px;
+	display : contents;
+}
+
+#board tr{
+	display :flex;
+}
+
+#nothing{
+	clip-path: inset(0px 250px 250px 0px);
+}
+
+#WhiteKing{
+	clip-path: inset(0px 250px 50px 0px);
+}
+
+#WhiteQueen{
+	clip-path: inset(0px 200px 50px 50px); position: relative; right: 50px;
+}
+
+#WhiteBishop{
+	clip-path: inset(0px 150px 50px 100px); position: relative; right: 100px;
+}
+
+#WhiteKnight{
+	clip-path: inset(0px 100px 50px 150px); position: relative; right: 150px;
+}
+
+#WhiteRook{
+	clip-path: inset(0px 50px 50px 200px); position: relative; right: 200px;
+}
+
+#WhitePawn{
+	clip-path: inset(0px 0px 50px 250px); position: relative; right: 250px;
+}
+
+#BlackKing{
+	clip-path: inset(50px 250px 0px 0px);  position: relative; bottom: 50px;
+}
+
+#BlackQueen{
+	clip-path: inset(50px 200px 0px 50px); position: relative; right: 50px; bottom: 50px;
+}
+
+#BlackBishop{
+	clip-path: inset(50px 150px 0px 100px); position: relative; right: 100px; bottom: 50px;
+}
+
+#BlackKnight{
+	clip-path: inset(50px 100px 0px 150px); position: relative; right: 150px; bottom: 50px;
+}
+
+#BlackRook{
+	clip-path: inset(50px 50px 0px 200px); position: relative; right: 200px; bottom: 50px;
+}
+
+#BlackPawn{
+	clip-path: inset(50px 0px 0px 250px); position: relative; right: 250px; bottom: 50px;
+}

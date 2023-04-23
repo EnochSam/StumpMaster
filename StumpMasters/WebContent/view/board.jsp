@@ -6,6 +6,7 @@
 <head>
 <meta charset="ISO-8859-1">
 <title>Enoch a Bigger Poopie</title>
+<link rel="stylesheet" href="${pageContext.servletContext.contextPath}/resources/chessStyleSheet.css">
 </head>
 <body>
     <form method="post" id= "gameForm" action="${pageContext.servletContext.contextPath}/Game">
@@ -157,15 +158,11 @@
              //<td> == column
              //<tr> == row
             let board = document.createElement("table");
-            board.style =
-            "display : grid;"+
-            "justify-content: space-around;"+
-            "border : 5px"+
-            "row-gap : 0px";
+            board.style = "${pageContext.servletContext.contextPath}/resources/chessStyleSheet.css"
             for(let y=8; y >= 1; y--){
             	//create individual spaces on table
                 let tr = document.createElement("tr")
-                tr.style = "display :flex;";
+                tr.style = "${pageContext.servletContext.contextPath}/resources/chessStyleSheet.css"
                 let td = null;
                 let point = null;
                 for(let  x= 1; x <= 8; x++){
@@ -173,8 +170,7 @@
                     //create new space in x axis
                     td = document.createElement("td");
                     td.oncklick = "submit"
-                    td.style = "padding : 0px;"
-                    +"display : contents;"
+                    td.style = "${pageContext.servletContext.contextPath}/resources/chessStyleSheet.css"
                     
                     //create submit button
                     point = document.createElement("button")
@@ -187,17 +183,9 @@
                     }else{
                         //White Spaces
                         color = "green"
-                    }
-
-                    point.style = 
-
-                    "border : 0px solid;"+
-                    "padding : 0px;"+
-                    "width : 50px;"+
-                    "height : 50px;"+
-                    //"float : left;"+
-                    "background-color :"+color+";";
-                    
+                    }                 
+                    point.id = color;
+                    color.style = "${pageContext.servletContext.contextPath}/resources/chessStyleSheet.css"
                     
                     point.onclick = sendPost
                     point.type = "submit"
@@ -205,12 +193,11 @@
                    //create imag to store in button
                     pieceimg = document.createElement("img")
                     pieceimg.src = "${pageContext.servletContext.contextPath}/resources/PiecesPNG.png"
-                    pieceimg.style = "width:300px;height:100px; height: 25px;"
                     //Gets String of Piece From Backend 
                     piece =setImageId(x,y)
                     //Picks cropping of Piece from Backend String
-             		pieceimg.id = piece
-             		pieceimg.style = "width: 300; height: 100;"+selectPieceImage(piece)
+             		pieceimg.id = piece;
+             		piece.style = "${pageContext.servletContext.contextPath}/resources/chessStyleSheet.css"
              		
                     point.appendChild(pieceimg)
                    //adds button to table row
@@ -233,8 +220,7 @@
             		let y = parseInt(possibleMoves[(i+1)])
             		let elementName = ""+x+":"+y
             		let shadedArea = document.createElement("shadedArea")
-            		shadedArea.style = "position: absolute; background: #00000030;"+
-            		"width: 50px;height: 50px; border-radius: 50%;"
+            		shadedArea.style = "${pageContext.servletContext.contextPath}/resources/chessStyleSheet.css"
             		let buttonElement =document.getElementsByName(elementName)[0]
             		buttonElement.prepend(shadedArea)
 					
@@ -447,63 +433,6 @@
         	
         		
         }
-        //used to submit string to clip correct part of png
-        function selectPieceImage(pieceTxt){
-        	if(pieceTxt == "nothing"){
-        		return "clip-path: inset(0px 250px 250px 0px);"
-        	}
-        	if(pieceTxt == "WhiteKing"){
-            //white king
-        	return "clip-path: inset(0px 250px 50px 0px);"
-        	}
-        	if(pieceTxt == "WhiteQueen"){
-        	//white Queen
-        	return "clip-path: inset(0px 200px 50px 50px); position: relative; right: 50px"
-        	}
-        	if(pieceTxt == "WhiteBishop"){
-        	//white Bishop
-        	return "clip-path: inset(0px 150px 50px 100px); position: relative; right: 100px"
-        	}
-        	if(pieceTxt == "WhiteKnight"){
-        	//white Knight
-        	return"clip-path: inset(0px 100px 50px 150px); position: relative; right: 150px"
-        	}
-        	if(pieceTxt == "WhiteRook"){
-        	//white Rook
-        	return"clip-path: inset(0px 50px 50px 200px); position: relative; right: 200px"
-        	}
-        	if(pieceTxt == "WhitePawn"){
-        	//white Pawn
-        	return"clip-path: inset(0px 0px 50px 250px); position: relative; right: 250px"
-        	}
-        	
-        	if(pieceTxt == "BlackKing"){
-        	//black king
-        	return"clip-path: inset(50px 250px 0px 0px);  position: relative; bottom: 50px; "
-        	}
-        	
-        	if(pieceTxt == "BlackQueen"){
-        	//black Queen
-        	return "clip-path: inset(50px 200px 0px 50px); position: relative; right: 50px; bottom: 50px;";
-        	}
-        	
-        	if(pieceTxt == "BlackBishop"){
-        	//black Bishop
-        	return "clip-path: inset(50px 150px 0px 100px); position: relative; right: 100px; bottom: 50px;";
-        	}
-        	if(pieceTxt == "BlackKnight"){
-        	//black Knight
-        	return"clip-path: inset(50px 100px 0px 150px); position: relative; right: 150px; bottom: 50px;";
-        	}
-        	if(pieceTxt == "BlackRook"){
-        	//black Rook
-        	return"clip-path: inset(50px 50px 0px 200px); position: relative; right: 200px; bottom: 50px;";
-        	}
-        	if(pieceTxt == "BlackPawn"){
-        	//black Pawn
-        	return"clip-path: inset(50px 0px 0px 250px); position: relative; right: 250px; bottom: 50px;";
-        	}
-        }
 	
 
 		if(pawnPromotion){
@@ -542,15 +471,6 @@
 					
 			}, 100)
 		}
-		
-        
-        // SHADED CIRCLE
-        //MUST APPEND UNDER BUTTON
-            //position: absolute;
-    		//background: #00000030;
-   		 	//width: 50px;
-    		//height: 50px;
-    		//border-radius: 50%;
     </script>
 </body>
 </html>
