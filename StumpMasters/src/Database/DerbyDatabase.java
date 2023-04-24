@@ -12,7 +12,9 @@ import java.util.List;
 import models.Game;
 import models.Player;
 import pieceModels.King;
+import pieceModels.Pawn;
 import pieceModels.Piece;
+import pieceModels.Rook;
 
 public class DerbyDatabase implements IDatabase {
 	static {
@@ -93,6 +95,7 @@ public class DerbyDatabase implements IDatabase {
 
 	
 	public void createTables() {
+		
 		executeTransaction(new Transaction<Boolean>() {
 			@Override
 			public Boolean execute(Connection conn) throws SQLException {
@@ -205,6 +208,122 @@ public class DerbyDatabase implements IDatabase {
 		return true;
 	}
 	
+	private void checkForCheck() {
+		//Creates King of Both Players
+		King WhiteKing = (King) this.model.getWhitePlayer().getPieces()[0];
+		King BlackKing = (King) this.model.getBlackPlayer().getPieces()[0];
+		
+		//Checks Both Kings to See if they Are in Check
+		WhiteKing.checkForCheckMate(this.model.getBoard());
+		BlackKing.checkForCheckMate(this.model.getBoard());
+		
+		if(WhiteKing.getInCheck()) {
+			//if the WhiteKing is in Check, set list of availableMoves to Kings getOutOfCheckList
+			this.model.setAvailableMoves(WhiteKing.getGetOutOfCheckMoves());
+			this.model.setInCheck(true);
+			this.checkForCheckMate(WhiteKing);
+		}else if(BlackKing.getInCheck()) {
+			this.model.setAvailableMoves(BlackKing.getGetOutOfCheckMoves());
+			this.model.setInCheck(true);
+			this.checkForCheckMate(BlackKing);
+		}else {
+			this.model.setInCheck(false);
+		}
+		
+	}
+	
+	private Boolean checkForCheckMate(King king) {
+		//Check if king can move
+		String checkKingTile = ""+(king.getXpos()+1)+":"+(king.getYpos()+1);
+		Player player;
+		String playerTurn;
+		if(king.getColor() == Piece.WHITE) {
+			player = this.model.getWhitePlayer();
+			playerTurn ="White";
+		}
+		else{
+			player = this.model.getBlackPlayer();
+			playerTurn = "Black";
+		}
+		if(this.getPossibleMoves(checkKingTile, playerTurn)!="") {
+			return false;
+		}
+		//3 WAYS TO Instances of Checkmate:
+		//1. Can the king move out of the way
+		//2. Can a piece of same color reach the opposing location reach opposing piece
+			
+		//1. Find the piece of opposing team that can reach king
+		Piece piecesthatcanReachKing = null;
+		for(int j = 0; j < 8; j++) {
+			for(int i = 0; i < 8; i++) {
+				
+				if(this.model.getBoard()[j][i] != null) {
+					boolean canreach = false;
+					for(Integer[] loc : this.model.getBoard()[j][i].getValidMoves(this.model.getBoard())) {
+						if(loc[0] == king.getXpos() && loc[1] == king.getYpos()) {
+						
+							canreach = true;
+
+							}
+						}
+						if(canreach) {
+							piecesthatcanReachKing = this.model.getBoard()[j][i];
+						}
+					}
+				}
+			}
+			
+			//Adds Location of attacking Piece to getOutOfCheckMovesList
+			Integer[] availableMove = {};
+			String getOutOfCheckMoves = ""+piecesthatcanReachKing.getXpos()+""+piecesthatcanReachKing.getYpos()+" ";
+			//Check if the piece is attacking vertically or diagonal horizontally 
+			if(piecesthatcanReachKing.getXpos() == king.getXpos() || piecesthatcanReachKing.getYpos() == king.getYpos()
+				|| Math.abs(piecesthatcanReachKing.getXpos() - king.getXpos())
+				== Math.abs(piecesthatcanReachKing.getYpos() - king.getYpos())) {
+				int xincrement = 0;
+				if(piecesthatcanReachKing.getXpos() - king.getXpos() > 0) xincrement = 1;
+				if(piecesthatcanReachKing.getXpos() - king.getXpos() < 0) xincrement = -1;
+				int yincrement = 0;
+				if(piecesthatcanReachKing.getYpos() - king.getYpos() > 0) yincrement = 1;
+				if(piecesthatcanReachKing.getYpos() - king.getYpos() < 0) yincrement = -1;
+				int x = king.getXpos()+xincrement;
+				int y = king.getYpos()+yincrement;
+
+				while(this.model.getBoard()[y][x] != piecesthatcanReachKing) {
+					getOutOfCheckMoves+=""+x+""+y+" ";
+					x+=xincrement;
+					y+=yincrement;
+				}
+			}
+			//finally, check all pieces to see if any piece is able to reach any moves
+			
+			for(int i = 1; i < player.getPieces().length; i++) {
+				Piece testingPiece = player.getPieces()[i];
+				if(testingPiece.getCaptured() == false) {
+				String tileSelected = ""+(testingPiece.getXpos()+1)+":"+(testingPiece.getYpos()+1);
+				String possibleMoves = this.getPossibleMoves(tileSelected, playerTurn);
+				try{
+				for(int j = 0; j < possibleMoves.length(); j+=3) {
+					for(int k = 0; k < getOutOfCheckMoves.length(); k+=3){
+						int possibleMovesXpos = Integer.parseInt(""+possibleMoves.charAt(j)) -1;
+						int possibleMovesYpos = Integer.parseInt(""+possibleMoves.charAt(j+1)) -1;
+						int getOutofCheckXpos = Integer.parseInt(""+getOutOfCheckMoves.charAt(k));
+						int getOutofCheckYpos = Integer.parseInt(""+getOutOfCheckMoves.charAt(k+1));
+						if(possibleMovesXpos == getOutofCheckXpos && possibleMovesYpos == getOutofCheckYpos) {
+							return false;
+						}
+					}
+				
+				}
+				}catch(NumberFormatException e) {
+					
+				}
+				}
+			}	
+			this.model.setInCheckmate(true);
+			return true;
+		}
+	
 	// The main method creates the database tables and loads the initial data.
 	public static void main(String[] args) throws IOException {
 		DerbyDatabase db = new DerbyDatabase();
@@ -308,6 +427,7 @@ public class DerbyDatabase implements IDatabase {
 
 	@Override
 	public void setBoard(String boardLocations) {
+		this.model.setGameMoves(boardLocations);
 		if(boardLocations.length() == 0) {
 		executeTransaction(new Transaction<Boolean>() {
 			@Override
@@ -448,7 +568,159 @@ public class DerbyDatabase implements IDatabase {
 		
 	@Override
 	public boolean moveValidMove(String newPieceLoc, String attemptingToMove, String player) {
-		return false;
-	}
+		return (boolean)executeTransaction(new Transaction<Boolean>() {
+			@Override
+			public Boolean execute(Connection conn) throws SQLException {
+				String validMoves = getPossibleMoves(attemptingToMove,player);
+				
+				int selectedPieceXpos = Integer.parseInt(""+attemptingToMove.charAt(0))-1;
+				int selectedPieceYpos = Integer.parseInt(""+attemptingToMove.charAt(2))-1;
+				
+				int newPieceXpos = Integer.parseInt(""+newPieceLoc.charAt(0))-1;
+				int newPieceYpos = Integer.parseInt(""+newPieceLoc.charAt(2))-1;
+				if(selectedPieceXpos == newPieceXpos && selectedPieceYpos == newPieceYpos) {
+					return true;
+				}
+				Integer[] loc;
+				List<Integer[]> possibleMoves = new ArrayList<Integer[]>(); 
+				for(int i = 0; i < validMoves.length(); i+=3) {
+					loc = new Integer[2];
+					loc[0] = Integer.parseInt(""+validMoves.charAt(i))-1;
+					loc[1] = Integer.parseInt(""+validMoves.charAt(i+1))-1;
+					possibleMoves.add(loc);
+				}
+				for(Integer[] x : possibleMoves) {
+					if(x[0] == newPieceXpos && x[1] == newPieceYpos) {
+						if(model.getBoard()[newPieceYpos][newPieceXpos] != null) {
+							model.getBoard()[newPieceYpos][newPieceXpos].setCaptured(true); 
+						}
+						model.getBoard()[newPieceYpos][newPieceXpos] = model.getBoard()[selectedPieceYpos][selectedPieceXpos];
+						model.getBoard()[selectedPieceYpos][selectedPieceXpos] = null;
+						model.getBoard()[newPieceYpos][newPieceXpos].setXpos(newPieceXpos);
+						model.getBoard()[newPieceYpos][newPieceXpos].setYpos(newPieceYpos);
+						checkForCheck();
+						//Checks for Pawn Promotion
+						if(model.getBoard()[newPieceYpos][newPieceXpos] instanceof Pawn && 
+								(model.getBoard()[newPieceYpos][newPieceXpos].getYpos() == 0
+							  || model.getBoard()[newPieceYpos][newPieceXpos].getYpos() == 7)) {
+							model.setPawnPromotion(true);
+						}else
+						//Checks for Castling
+						if(model.getBoard()[newPieceYpos][newPieceXpos] instanceof King) {
+							King king =(King) model.getBoard()[newPieceYpos][newPieceXpos];
+							for(String castleLoc : king.getCastlingLocation()) {
+								if(castleLoc != null) {
+									int rookOldXpos = -1;
+									int rookNewXpos = -1;
+									if(castleLoc.charAt(0) == '8') {
+										if( model.getBoard()[newPieceYpos][7] instanceof Rook && !model.getBoard()[newPieceYpos][7].getHasMovedAlready()) {
+										//Rook is on the Right and needs to be moved to the Left
+										Piece rook = model.getBoard()[newPieceYpos][7];
+										model.getBoard()[newPieceYpos][7] = null;
+										model.getBoard()[newPieceYpos][newPieceXpos-1] = rook;
+										rookOldXpos = 8;
+										rookNewXpos = 6;
+										}
+									}else {
+										if( model.getBoard()[newPieceYpos][0] instanceof Rook && !model.getBoard()[newPieceYpos][0].getHasMovedAlready()) {
+										//Rook is on the Left and needs to be moved to the left
+										Piece rook = model.getBoard()[newPieceYpos][0];
+										model.getBoard()[newPieceYpos][0] = null;
+										model.getBoard()[newPieceYpos][newPieceXpos+1] = rook;							
+										rookOldXpos = 1;
+										rookNewXpos = 4;
+										}
+									}
+									//Split String into 2 and add the string into GameMoves
+									String leftOfSplit = model.getGameMoves().substring(0, model.getGameMoves().length() -2 );
+									String rightOfSplit = model.getGameMoves().substring(model.getGameMoves().length() -2 );
+									model.setGameMoves( leftOfSplit+rookOldXpos+(newPieceYpos+1)+rookNewXpos+(newPieceYpos+1)+" "+rightOfSplit);
+								}
+							}
+							
+						}
+						
+						//Get piece color
+						PreparedStatement getColor = conn.prepareStatement(
+								"select pieces.color from pieces "
+								+ " where pieces.x = ? and pieces.y = ? ");
+						
+						// Substitute values into query
+						getColor.setInt(1, selectedPieceXpos);
+						getColor.setInt(2, selectedPieceYpos);
+						
+						// Execute query
+						ResultSet resultSet = getColor.executeQuery();
+						int color = 2;
+						
+						// get color
+						if(resultSet.next()) {
+							color = resultSet.getInt(1);
+						}
+						
+						// Update captured Piece
+						PreparedStatement getCapturedPiece = conn.prepareStatement(
+								"select pieces.piece_id from pieces "
+								+ " where pieces.x = ? and pieces.y = ? "
+								+ " and pieces.isCaptured = 'false' and not pieces.color =  ?"
+							);
+						
+						// Substitute values into query
+						getCapturedPiece.setInt(1, newPieceXpos);
+						getCapturedPiece.setInt(2, newPieceYpos);
+						getCapturedPiece.setInt(3, color);
+						
+						// Execute Query
+						resultSet = getCapturedPiece.executeQuery();
+						
+						if(resultSet.next()) {
+							// Mark piece as captured
+							PreparedStatement setCaptured = conn.prepareStatement(
+									"update pieces "
+									+ " set pieces.isCaptured = 'true' "
+									+ " where pieces.piece_id = ? ");
+							setCaptured.setInt(1, resultSet.getInt(1));
+							int updateCapture = setCaptured.executeUpdate();
+						}
+						
+						// Get the selected piece id
+						PreparedStatement getPieceId = conn.prepareStatement(
+								"select pieces.piece_id from pieces"
+								+ " where pieces.x = ? and pieces.y = ? "
+								+ " and pieces.isCaptured = 'false' ");
+						
+						// Substitute selected piece x and y positions into query
+						getPieceId.setInt(1, selectedPieceXpos);
+						getPieceId.setInt(2, selectedPieceYpos);
+						
+						// Execute Query
+						resultSet = getPieceId.executeQuery();
+						
+						//Set id
+						int id = 0;
+						if(resultSet.next()) {
+							id = resultSet.getInt(1);
+						}
+						// Update the selected piece location
+						PreparedStatement updatePiece = conn.prepareStatement(
+								"update pieces "
+								+ " set pieces.x = ?, pieces.y = ? "
+								+ " where piece_id = ?");
+						
+						//Substitute id into query
+						updatePiece.setInt(1, newPieceXpos);
+						updatePiece.setInt(2, newPieceYpos);
+						updatePiece.setInt(3, id);
+						
+						// Execute Query
+						int update = updatePiece.executeUpdate();
+						
+						return true;
+					}
+				}
+				return false;
+			}
+		});
+		}
 
 }
