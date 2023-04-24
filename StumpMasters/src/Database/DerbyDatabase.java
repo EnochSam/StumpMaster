@@ -120,7 +120,8 @@ public class DerbyDatabase implements IDatabase {
 						"	type varchar(40)," +
 						"	x integer," +
 						"	y integer,"+
-						"	isCaptured varchar(10)"+
+						"	isCaptured varchar(10),"+
+						"	movedAlready varchar(10)"+
 						
 						")"
 					);	
@@ -166,7 +167,7 @@ public class DerbyDatabase implements IDatabase {
 					
 					// populate books table (do this after authors table,
 					// since author_id must exist in authors table before inserting book)
-					insertPiece = conn.prepareStatement("insert into pieces (color, type, x, y, isCaptured) values (?, ?, ?, ?,?)");
+					insertPiece = conn.prepareStatement("insert into pieces (color, type, x, y, isCaptured, movedAlready) values (?, ?, ?, ?,?, ?)");
 					for (Piece piece : pieceList) {
 //						insertBook.setInt(1, book.getBookId());		// auto-generated primary key, don't insert this
 						insertPiece.setInt(1, piece.getColor());
@@ -174,6 +175,7 @@ public class DerbyDatabase implements IDatabase {
 						insertPiece.setInt(3, piece.getXpos());
 						insertPiece.setInt(4,  piece.getYpos());
 						insertPiece.setString(5,  ""+piece.getCaptured());
+						insertPiece.setString(6,  ""+piece.getHasMovedAlready());
 						insertPiece.addBatch();
 					}
 					insertPiece.executeBatch();
@@ -350,6 +352,27 @@ public class DerbyDatabase implements IDatabase {
 				int pieceYpos = Integer.parseInt(""+clickedOnLocation.charAt(2))-1;
 				
 				Piece selectedPiece = model.getBoard()[pieceYpos][pieceXpos];
+				
+				// Check if moved already
+				PreparedStatement getMovedAlready = conn.prepareStatement(
+						"select pieces.movedAlready from pieces "
+						+ " where pieces.x = ? and pieces.y = ? ");
+				
+				// Substitute x and y values into call
+				getMovedAlready.setInt(1, pieceXpos);
+				getMovedAlready.setInt(2, pieceYpos);
+				
+				ResultSet resultSet = getMovedAlready.executeQuery();
+				
+				// Load has moved already into piece object
+				if(resultSet.next()) {
+					if(resultSet.getString(1).equals("false")) {
+						selectedPiece.setHasMovedAlready(false);
+					}
+					else {
+						selectedPiece.setHasMovedAlready(true);
+					}
+				}
 				//checks to make sure that the piece selected is the of the same color 
 				if((playerTurn.equals("White") && selectedPiece.getColor() == Piece.WHITE) || (playerTurn.equals("Black") && selectedPiece.getColor() == Piece.BLACK)) {
 				//Checks if the piece is pinned
@@ -704,7 +727,7 @@ public class DerbyDatabase implements IDatabase {
 						// Update the selected piece location
 						PreparedStatement updatePiece = conn.prepareStatement(
 								"update pieces "
-								+ " set pieces.x = ?, pieces.y = ? "
+								+ " set pieces.x = ?, pieces.y = ?, movedAlready = 'true' "
 								+ " where piece_id = ?");
 						
 						//Substitute id into query
