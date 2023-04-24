@@ -182,7 +182,6 @@ public class DerbyDatabase implements IDatabase {
 	
 	// The main method creates the database tables and loads the initial data.
 	public static void main(String[] args) throws IOException {
-		System.out.println("Creating tables...");
 		DerbyDatabase db = new DerbyDatabase();
 		Game model = new Game();
 		db.setModel(model);
@@ -192,11 +191,8 @@ public class DerbyDatabase implements IDatabase {
 		//DerbyDatabase db = new DerbyDatabase();
 		//db.createTables();
 		
-		//System.out.println("Loading initial data...");
 		//db.loadInitialData();
 		
-		System.out.println("Success!");
-		//
 	}
 	
 	@Override
@@ -207,7 +203,6 @@ public class DerbyDatabase implements IDatabase {
 
 	@Override
 	public void setBoard(String boardLocations) {
-		System.out.println(boardLocations.length());
 		if(boardLocations.length() == 0) {
 		executeTransaction(new Transaction<Boolean>() {
 			@Override
@@ -256,12 +251,10 @@ public class DerbyDatabase implements IDatabase {
 								"drop table pieces"
 						);
 						stmt3.executeUpdate();
-						System.out.println("Statement 1 Executed");
 						stmt4 = conn.prepareStatement(
 								"drop table players"
 						);
 						stmt4.executeUpdate();
-						System.out.println("Statement 2 Executed");
 						
 						DBUtil.closeQuietly(stmt3);
 						DBUtil.closeQuietly(stmt4);
@@ -280,7 +273,6 @@ public class DerbyDatabase implements IDatabase {
 							"drop table pieces"
 					);
 					stmt3.executeUpdate();
-					System.out.println("Statement 1 Executed");
 					DBUtil.closeQuietly(stmt3);
 					}
 					finally {
@@ -293,7 +285,6 @@ public class DerbyDatabase implements IDatabase {
 								"drop table players"
 						);
 						stmt4.executeUpdate();
-						System.out.println("Statement 2 Executed");
 						DBUtil.closeQuietly(stmt4);
 					}
 					finally {
@@ -307,7 +298,6 @@ public class DerbyDatabase implements IDatabase {
 		
 		//create tables by create table function in this file
 		createTables();
-		System.out.println("Tables Created");
 		loadInitialData();
 		}
 		executeTransaction(new Transaction<Boolean>() {
@@ -353,7 +343,6 @@ public class DerbyDatabase implements IDatabase {
 		
 	@Override
 	public boolean moveValidMove(String newPieceLoc, String attemptingToMove, String player) {
-		// TODO Auto-generated method stub
 		return false;
 	}
 

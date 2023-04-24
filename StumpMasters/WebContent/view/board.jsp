@@ -9,6 +9,7 @@
 <link rel="stylesheet" href="${pageContext.servletContext.contextPath}/resources/chessStyleSheet.css">
 </head>
 <body>
+	<
     <form method="post" id= "gameForm" action="${pageContext.servletContext.contextPath}/Game">
     <div id="Board">
         
@@ -19,6 +20,7 @@
     	<input type = "hidden" value ="" id=possibleMoves >
     </form>
     <script>
+    	let pieceImg = ${jsonstring};
     
     	//Grabs Values passed from Servelt and store them in variables
     	let possibleMoves = "${possibleMoves}"
@@ -185,7 +187,6 @@
                         color = "green"
                     }                 
                     point.id = color;
-                    color.style = "${pageContext.servletContext.contextPath}/resources/chessStyleSheet.css"
                     
                     point.onclick = sendPost
                     point.type = "submit"
@@ -194,11 +195,8 @@
                     pieceimg = document.createElement("img")
                     pieceimg.src = "${pageContext.servletContext.contextPath}/resources/PiecesPNG.png"
                     //Gets String of Piece From Backend 
-                    piece =setImageId(x,y)
                     //Picks cropping of Piece from Backend String
-             		pieceimg.id = piece;
-             		piece.style = "${pageContext.servletContext.contextPath}/resources/chessStyleSheet.css"
-             		
+             		pieceimg.id = pieceImg["board"][x-1][y-1];             		
                     point.appendChild(pieceimg)
                    //adds button to table row
                     td.appendChild(point)
@@ -220,219 +218,11 @@
             		let y = parseInt(possibleMoves[(i+1)])
             		let elementName = ""+x+":"+y
             		let shadedArea = document.createElement("shadedArea")
-            		shadedArea.style = "${pageContext.servletContext.contextPath}/resources/chessStyleSheet.css"
             		let buttonElement =document.getElementsByName(elementName)[0]
             		buttonElement.prepend(shadedArea)
 					
             	}
             }
-        
-        function setImageId(x, y){
-        	if(x == 1 && y == 1){
-        		return "${board[0][0]}"
-        	}
-        	if(x == 1 && y == 2){
-        		return "${board[0][1]}"
-        	}
-        	if(x == 1 && y == 3){
-        		return "${board[0][2]}"
-        	}
-        	if(x == 1 && y == 4){
-        		return "${board[0][3]}"
-        	}
-        	if(x == 1 && y == 5){
-        		return "${board[0][4]}"
-        	}
-        	if(x == 1 && y == 6){
-        		return "${board[0][5]}"
-        	}
-        	if(x == 1 && y == 7){
-        		return "${board[0][6]}"
-        	}
-        	if(x == 1 && y == 8){
-        		return "${board[0][7]}"
-        	}
-        	
-        	if(x == 2 && y == 1){
-        		return "${board[1][0]}"
-        	}
-        	if(x == 2 && y == 2){
-        		return "${board[1][1]}"
-        	}
-        	if(x == 2 && y == 3){
-        		return "${board[1][2]}"
-        	}
-        	if(x == 2 && y == 4){
-        		return "${board[1][3]}"
-        	}
-        	if(x == 2 && y == 5){
-        		return "${board[1][4]}"
-        	}
-        	if(x == 2 && y == 6){
-        		return "${board[1][5]}"
-        	}
-        	if(x == 2 && y == 7){
-        		return "${board[1][6]}"
-        	}
-        	if(x == 2 && y == 8){
-        		return "${board[1][7]}"
-        	}
-        	
-        	
-        
-        	if(x == 3 && y == 1){
-        		return "${board[2][0]}"
-        	}
-        	if(x == 3 && y == 2){
-        		return "${board[2][1]}"
-        	}
-        	if(x == 3 && y == 3){
-        		return "${board[2][2]}"
-        	}
-        	if(x == 3 && y == 4){
-        		return "${board[2][3]}"
-        	}
-        	if(x == 3 && y == 5){
-        		return "${board[2][4]}"
-        	}
-        	if(x == 3 && y == 6){
-        		return "${board[2][5]}"
-        	}
-        	if(x == 3 && y == 7){
-        		return "${board[2][6]}"
-        	}
-        	if(x == 3 && y == 8){
-        		return "${board[2][7]}"
-        	}
-        	
-        	if(x == 4 && y == 1){
-        		return "${board[3][0]}"
-        	}
-        	if(x == 4 && y == 2){
-        		return "${board[3][1]}"
-        	}
-        	if(x == 4 && y == 3){
-        		return "${board[3][2]}"
-        	}
-        	if(x == 4 && y == 4){
-        		return "${board[3][3]}"
-        	}
-        	if(x == 4 && y == 5){
-        		return "${board[3][4]}"
-        	}
-        	if(x == 4 && y == 6){
-        		return "${board[3][5]}"
-        	}
-        	if(x == 4 && y == 7){
-        		return "${board[3][6]}"
-        	}
-        	if(x == 4 && y == 8){
-        		return "${board[3][7]}"
-        	}
-        	
-        	if(x == 5 && y == 1){
-        		return "${board[4][0]}"
-        	}
-        	if(x == 5 && y == 2){
-        		return "${board[4][1]}"
-        	}
-        	if(x == 5 && y == 3){
-        		return "${board[4][2]}"
-        	}
-        	if(x == 5 && y == 4){
-        		return "${board[4][3]}"
-        	}
-        	if(x == 5 && y == 5){
-        		return "${board[4][4]}"
-        	}
-        	if(x == 5 && y == 6){
-        		return "${board[4][5]}"
-        	}
-        	if(x == 5 && y == 7){
-        		return "${board[4][6]}"
-        	}
-        	if(x == 5 && y == 8){
-        		return "${board[4][7]}"
-        	}
-        	
-        	
-        	if(x == 6 && y == 1){
-        		return "${board[5][0]}"
-        	}
-        	if(x == 6 && y == 2){
-        		return "${board[5][1]}"
-        	}
-        	if(x == 6 && y == 3){
-        		return "${board[5][2]}"
-        	}
-        	if(x == 6 && y == 4){
-        		return "${board[5][3]}"
-        	}
-        	if(x == 6 && y == 5){
-        		return "${board[5][4]}"
-        	}
-        	if(x == 6 && y == 6){
-        		return "${board[5][5]}"
-        	}
-        	if(x == 6 && y == 7){
-        		return "${board[5][6]}"
-        	}
-        	if(x == 6 && y == 8){
-        		return "${board[5][7]}"
-        	}
-        	
-        	if(x == 7 && y == 1){
-        		return "${board[6][0]}"
-        	}
-        	if(x == 7 && y == 2){
-        		return "${board[6][1]}"
-        	}
-        	if(x == 7 && y == 3){
-        		return "${board[6][2]}"
-        	}
-        	if(x == 7 && y == 4){
-        		return "${board[6][3]}"
-        	}
-        	if(x == 7 && y == 5){
-        		return "${board[6][4]}"
-        	}
-        	if(x == 7 && y == 6){
-        		return "${board[6][5]}"
-        	}
-        	if(x == 7 && y == 7){
-        		return "${board[6][6]}"
-        	}
-        	if(x == 7 && y == 8){
-        		return "${board[6][7]}"
-        	}
-        	
-        	if(x == 8 && y == 1){
-        		return "${board[7][0]}"
-        	}
-        	if(x == 8 && y == 2){
-        		return "${board[7][1]}"
-        	}
-        	if(x == 8 && y == 3){
-        		return "${board[7][2]}"
-        	}
-        	if(x == 8 && y == 4){
-        		return "${board[7][3]}"
-        	}
-        	if(x == 8 && y == 5){
-        		return "${board[7][4]}"
-        	}
-        	if(x == 8 && y == 6){
-        		return "${board[7][5]}"
-        	}
-        	if(x == 8 && y == 7){
-        		return "${board[7][6]}"
-        	}
-        	if(x == 8 && y == 8){
-        		return "${board[7][7]}"
-        	}
-        	
-        		
-        }
 	
 
 		if(pawnPromotion){

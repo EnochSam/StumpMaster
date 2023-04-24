@@ -1,6 +1,9 @@
 package servlets;
 
 import java.io.IOException;
+
+//import org.json.JSONException;
+import org.json.JSONObject;    
 import java.io.PrintWriter;
 import java.sql.SQLException;
 
@@ -160,7 +163,16 @@ public class GameServlet extends HttpServlet {
 			out.println("</center>");
 		}
 
+		JSONObject obj = new JSONObject();
 		String[][] loadBoard = loadBoard(request,model.getBoard());
+		try {
+			obj.put("board", loadBoard);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		request.setAttribute("jsonstring", obj.toString());
+
 		
 		//sends all atributes to client
 		request.setAttribute("board", loadBoard);
