@@ -4,6 +4,7 @@ package controllers;
 import java.util.ArrayList;
 import java.util.List;
 
+import Database.DerbyDatabase;
 import models.Game;
 import models.Player;
 import pieceModels.Bishop;
@@ -19,16 +20,17 @@ public class GameController {
 	 * loadBoard
 	 * 
 	 */
+	private DerbyDatabase db = null;
 	private Game model;
 	public void setModel(Game model){
 		this.model = model;
 	}
 	
 	public GameController() {
-		
 	}
 	
 	public String getPossibleMoves(String clickedOnLocation, String playerTurn) {
+		//return db.getPossibleMoves(clickedOnLocation, playerTurn);
 		String listOfLocations = "";
 		int pieceXpos = Integer.parseInt(""+clickedOnLocation.charAt(0))-1;
 		int pieceYpos = Integer.parseInt(""+clickedOnLocation.charAt(2))-1;
@@ -108,9 +110,10 @@ public class GameController {
 		}
 	}
 	
-	public void setBoard(String boardLocations) {
+	public void setBoard(String boardLocations) {		
+//		db.setBoard(boardLocations);
 		this.model.setGameMoves(boardLocations);
-		//initialize the Pieces and Board
+//		//initialize the Pieces and Board
 		Piece[][] board = new Piece[8][8];
 		Player[] players = model.getBothPlayers();
 

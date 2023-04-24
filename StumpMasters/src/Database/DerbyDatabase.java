@@ -11,6 +11,7 @@ import java.util.List;
 
 import models.Game;
 import models.Player;
+import pieceModels.King;
 import pieceModels.Piece;
 
 public class DerbyDatabase implements IDatabase {
@@ -32,6 +33,9 @@ public class DerbyDatabase implements IDatabase {
 	
 	public void setModel(Game model) {
 		this.model = model;
+	}
+	public Game getModel() {
+		return this.model;
 	}
 	
 	public<ResultType> ResultType executeTransaction(Transaction<ResultType> txn) {
@@ -180,12 +184,34 @@ public class DerbyDatabase implements IDatabase {
 		});
 	}
 	
+	private boolean checkIfOpenMove(King king, Piece[][] board) {
+		for(int j = 0; j < 8; j++) {
+			for(int i = 0; i < 8; i++) {
+				//Move Check
+				// Checks all pieces on the Board that ISNT the King in Question
+				if(board[j][i] != null) {
+					if(king.getColor() != board[j][i].getColor() ){
+
+					for(Integer[] checkingLoc : board[j][i].getValidMoves(board)) {
+
+						if(checkingLoc[0] == king.getXpos() && checkingLoc[1] == king.getYpos()) {
+							return false;
+						}
+					}
+					}
+				}
+			}
+		}
+		return true;
+	}
+	
 	// The main method creates the database tables and loads the initial data.
 	public static void main(String[] args) throws IOException {
 		DerbyDatabase db = new DerbyDatabase();
 		Game model = new Game();
 		db.setModel(model);
 		db.setBoard("");
+			
 		
 		
 		//DerbyDatabase db = new DerbyDatabase();
@@ -197,9 +223,88 @@ public class DerbyDatabase implements IDatabase {
 	
 	@Override
 	public String getPossibleMoves(String clickedOnLocation, String playerTurn) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+		return executeTransaction(new Transaction<String>() {
+			@Override
+			public String execute(Connection conn) throws SQLException {
+				String listOfLocations = "";
+				int pieceXpos = Integer.parseInt(""+clickedOnLocation.charAt(0))-1;
+				int pieceYpos = Integer.parseInt(""+clickedOnLocation.charAt(2))-1;
+				
+				Piece selectedPiece = model.getBoard()[pieceYpos][pieceXpos];
+				//checks to make sure that the piece selected is the of the same color 
+				if((playerTurn.equals("White") && selectedPiece.getColor() == Piece.WHITE) || (playerTurn.equals("Black") && selectedPiece.getColor() == Piece.BLACK)) {
+				//Checks if the piece is pinned
+				
+				//Finds the selected Piece's King
+				King king;
+				if(model.getWhitePlayer().getPieces()[0].getColor() == selectedPiece.getColor()) {
+					king = (King) model.getWhitePlayer().getPieces()[0];
+				}else {
+					king = (King) model.getBlackPlayer().getPieces()[0];
+				}
+				//looks for EnPassant
+				//if() {
+					
+				//}
+				
+				// Looks to see if Castling is allowed
+				//if(selectedPiece instanceof King) {
+					//check 
+				//}
+				
+				List<Integer[]> possibleMoves = selectedPiece.getValidMoves(model.getBoard());
+				for(Integer[] loc : possibleMoves) {
+					//Temporarily changes board to make sure that moving the piece does not put the King in Check
+					Piece attemptingToMove = model.getBoard()[loc[1]][loc[0]];
+					model.getBoard()[pieceYpos][pieceXpos] = null;
+					model.getBoard()[loc[1]][loc[0]] = selectedPiece;
+					int origX = selectedPiece.getXpos();
+					int origY = selectedPiece.getYpos();
+					selectedPiece.setXpos(loc[0]);
+					selectedPiece.setYpos(loc[1]);
+					Boolean checkIfOpenMove;
+					checkIfOpenMove = checkIfOpenMove(king,model.getBoard());
+					model.getBoard()[loc[1]][loc[0]] = attemptingToMove;
+					model.getBoard()[pieceYpos][pieceXpos]= selectedPiece;
+					selectedPiece.setXpos(origX);
+					selectedPiece.setYpos(origY);
+					//if the king will not be put in check, add to the list of valid moves
+					if(checkIfOpenMove) {
+					listOfLocations+= ""+(loc[0]+1);
+					listOfLocations+= ""+(loc[1]+1);
+					listOfLocations+=" ";
+					}
+				}
+				if(model.getInCheck() && !(selectedPiece instanceof King)) {
+					//if the player is in check, we will resize the list of moves to only show moves that can reach opposing piece
+					String stringOfAvailableMoves = "";
+					//Grabs list of AvailaleMoves from Model
+					List<Integer[]> availableMoves = model.getAvailableMoves();
+					
+					//If Location != location of attackingPiece, remove from list
+					for(int i = 0; i < listOfLocations.length(); i+=3){
+						boolean inListOfAvailableLocations = false;
+						for(Integer[] x : availableMoves) {
+							String locx = (""+(x[0]+1));
+							String locy = (""+(x[1]+1));
+							if(locx.equals(""+listOfLocations.charAt(i)) && locy.equals(""+listOfLocations.charAt(i+1))) {
+								inListOfAvailableLocations = true;
+							}
+						}
+						if(inListOfAvailableLocations){
+							stringOfAvailableMoves+= ""+listOfLocations.charAt(i)+""+listOfLocations.charAt(i+1)+" ";
+						}
+
+					}
+					return stringOfAvailableMoves;
+				
+				}
+				return listOfLocations;
+				}else {
+					return "False";
+				}
+			}});
+		}
 
 	@Override
 	public void setBoard(String boardLocations) {

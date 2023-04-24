@@ -12,10 +12,6 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/5"/>
 	<classpathentry kind="lib" path="WebContent/taglibs-standard-impl-1.2.5.jar"/>
-	<classpathentry kind="lib" path="/CS320_Derby/lib/derby.jar" sourcepath="C:/eclipse/db-derby-10.15.2.0-bin/lib/derby.jar">
-		<attributes>
-			<attribute name="javadoc_location" value="http://db.apache.org/derby/docs/10.10/publishedapi/jdbc4/"/>
-		</attributes>
-	</classpathentry>
+	<classpathentry kind="lib" path="C:/Users/samen/Downloads/jar_files/json-20230227.jar"/>
 	<classpathentry kind="output" path="build/classes"/>
 </classpath>
