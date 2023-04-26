@@ -20,7 +20,6 @@ public class GameController {
 	 * loadBoard
 	 * 
 	 */
-	private DerbyDatabase db = null;
 	private Game model;
 	public void setModel(Game model){
 		this.model = model;

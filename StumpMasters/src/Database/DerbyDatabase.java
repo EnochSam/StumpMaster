@@ -356,7 +356,7 @@ public class DerbyDatabase implements IDatabase {
 				// Check if moved already
 				PreparedStatement getMovedAlready = conn.prepareStatement(
 						"select pieces.movedAlready from pieces "
-						+ " where pieces.x = ? and pieces.y = ? ");
+						+ " where pieces.x = ? and pieces.y = ? and pieces.isCaptured = 'false' ");
 				
 				// Substitute x and y values into call
 				getMovedAlready.setInt(1, pieceXpos);
@@ -557,7 +557,7 @@ public class DerbyDatabase implements IDatabase {
 			
 					//create pieces for all tuples where isCaptured = false, add piece to board at right location
 					stmt1 = conn.prepareStatement(
-							"select type, x, y, color "+
+							"select type, x, y, color, movedAlready "+
 							"from pieces "+
 							"where isCaptured  = 'false'"
 							);
@@ -570,10 +570,12 @@ public class DerbyDatabase implements IDatabase {
 						int x = Integer.parseInt(resultSet.getObject(2).toString());
 						int y = Integer.parseInt(resultSet.getObject(3).toString());
 						int color = Integer.parseInt(resultSet.getObject(4).toString());
+						boolean movedAlready = resultSet.getString(5).equals("true");
 						Piece piece = Piece.findPiece(type);
 						piece.setXpos(x);
 						piece.setYpos(y);
 						piece.setColor(color);
+						piece.setHasMovedAlready(movedAlready);
 						board[y][x] = piece;
 						
 						
