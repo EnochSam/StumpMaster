@@ -11,11 +11,11 @@ public class Knight extends Piece{
 		
 	}
 	
-	public Knight(int xpos, int ypos, int color, int ID){
-		super(xpos,ypos,color, ID);
+	public Knight(int xpos, int ypos, int color){
+		super(xpos,ypos,color);
 	}
 	
-	public List<Integer[]> getValidMoves(Piece[][] board){
+	public List<Integer[]> getValidMoves(Piece[][] board,int playerColor){
 		List<Integer[]> possibleMoves = new ArrayList<Integer[]>();
 		
 		//X,Y locations to check are loaded into list
@@ -40,6 +40,35 @@ public class Knight extends Piece{
 				}
 			}
 		}
+		//Check to make sure move will not jeapardize King
+				if(super.getColor() == playerColor) {
+					int origx = super.getXpos();
+						int origy = super.getYpos();
+						Piece self = board[super.getYpos()][super.getXpos()];
+						board[super.getYpos()][super.getXpos()] = null;
+						for(int i = 0; i< possibleMoves.size(); i++) {
+							//ONLY CALL CHECKFORCHECK ON ENEMY TEAM
+							Integer[] locs = possibleMoves.get(i);
+							super.setXpos(locs[0]);
+							super.setYpos(locs[1]);
+							Piece oldPiece = board[super.getYpos()][super.getXpos()]; 
+							board[super.getYpos()][super.getXpos()] = self;
+							//If this piece is the color that needs to call check for check, call it
+							
+							System.out.println("Checking Position "+super.getXpos()+":"+super.getYpos()+" if valid move");
+							if(this.checkForCheck(board, playerColor)) {
+								possibleMoves.remove(locs);
+								i--;
+								System.out.println(""+super.getXpos()+":"+super.getYpos()+" will lead to check!");
+							
+							}
+							board[super.getYpos()][super.getXpos()] = oldPiece;
+							
+						}
+						super.setXpos(origx);
+						super.setYpos(origy);
+						board[super.getYpos()][super.getXpos()] = self;
+				}
 		return possibleMoves;
 		
 		

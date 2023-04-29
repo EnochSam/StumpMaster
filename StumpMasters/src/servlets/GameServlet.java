@@ -41,7 +41,7 @@ public class GameServlet extends HttpServlet {
 		//Set Controller and Models
 		Game model = new Game();
 		//GameController controller = new GameController();
-		IDatabase controller = new DerbyDatabase();
+		GameController controller = new GameController();
 		controller.setModel(model);
 		//Variable From client to retrieve all moves made in the round
 		String gameMoves = "";
@@ -80,7 +80,7 @@ public class GameServlet extends HttpServlet {
 			
 			try {
 				controller.setBoard(gameMoves);
-			} catch (SQLException e1) {
+			} catch (Exception e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}

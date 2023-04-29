@@ -9,12 +9,12 @@ public class Bishop extends Piece{
 		
 	}
 	
-	public Bishop(int xpos, int ypos, int color, int ID){
-		super(xpos,ypos,color, ID);
+	public Bishop(int xpos, int ypos, int color){
+		super(xpos,ypos,color);
 	}
 	
-	public List<Integer[]> getValidMoves(Piece[][] board){
-		return super.getDiagonalMoves(board);
+	public List<Integer[]> getValidMoves(Piece[][] board,int playerColor){
+		return super.getDiagonalMoves(board, playerColor);
 	}
 
 	@Override

@@ -9,12 +9,12 @@ public class Rook extends Piece{
 		
 	}
 	
-	public Rook(int xpos, int ypos, int color, int ID){
-		super(xpos,ypos,color, ID);
+	public Rook(int xpos, int ypos, int color){
+		super(xpos,ypos,color);
 	}
 	
-	public List<Integer[]> getValidMoves(Piece[][] board){
-		return super.getVerticalMoves(board);
+	public List<Integer[]> getValidMoves(Piece[][] board,int playerColor){
+		return super.getVerticalMoves(board, playerColor);
 	}
 
 	@Override

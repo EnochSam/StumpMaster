@@ -11,25 +11,21 @@ public abstract class Piece {
 	private int color;
 	private boolean captured;
 	private boolean hasMovedAlready;
-	private int id;
-	
 	public Piece(){
 		xpos = -1;
 		ypos = -1;
 		this.color = -1;
 		this.captured = false;
 		this.hasMovedAlready = false; 
-		id = 0;
 
 	}
 	
-	public Piece(int xpos, int ypos, int color, int id){
+	public Piece(int xpos, int ypos, int color){
 		this.xpos = xpos;
 		this.ypos = ypos;
 		this.color = color;
 		this.captured = false;
 		this.hasMovedAlready = false; 
-		this.id = id;
 	}
 	
 	public int getXpos() {
@@ -75,19 +71,12 @@ public abstract class Piece {
 	public boolean getHasMovedAlready() {
 		return this.hasMovedAlready;
 	}
-	
-	public int getID() {
-		return id;
-	}
-	public void setID(int ID) {
-		id = ID;
-	}
-	public abstract List<Integer[]> getValidMoves(Piece[][] board);
+	public abstract List<Integer[]> getValidMoves(Piece[][] board,int playerColor);
 	
 	//Used i Database
 	public abstract String type();
 	
-	public List<Integer[]> getVerticalMoves(Piece[][] board){
+	public List<Integer[]> getVerticalMoves(Piece[][] board,int playerColor){
 List<Integer[]> possibleMoves = new ArrayList<Integer[]>();
 		
 		//Traverse Left of Rook
@@ -160,12 +149,39 @@ List<Integer[]> possibleMoves = new ArrayList<Integer[]>();
 			y++;
 		}
 		
+		//Check to make sure move will not jeapardize King
+		int origx = xpos;
+		int origy = ypos;
+		Piece self = board[ypos][xpos];
+		board[ypos][xpos] = null;
+		for(int i = 0; i< possibleMoves.size(); i++) {
+			//ONLY CALL CHECKFORCHECK ON ENEMY TEAM
+			Integer[] locs = possibleMoves.get(i);
+			xpos = locs[0];
+			ypos = locs[1];
+			Piece oldPiece = board[ypos][xpos]; 
+			board[ypos][xpos] = self;
+			//If this piece is the color that needs to call check for check, call it
+			if(this.color == playerColor) {
+			System.out.println("Checking Position "+xpos+":"+ypos+" if valid move");
+			if(this.checkForCheck(board, playerColor)) {
+				possibleMoves.remove(i);
+				i--;
+				System.out.println(""+xpos+":"+ypos+" will lead to check!");
+			}
+			}
+			board[ypos][xpos] = oldPiece;
+			
+		}
+		xpos = origx;
+		ypos = origy;
+		board[ypos][xpos] = self;
 		return possibleMoves;
 		
 		
 	}
 	
-	public List<Integer[]> getDiagonalMoves(Piece[][] board){
+	public List<Integer[]> getDiagonalMoves(Piece[][] board, int playerColor){
 	List<Integer[]> possibleMoves = new ArrayList<Integer[]>();
 		
 		//Traverse southwest of Rook
@@ -248,12 +264,42 @@ List<Integer[]> possibleMoves = new ArrayList<Integer[]>();
 			x--;
 		}
 		
-		return possibleMoves;
+		//Check to make sure move will not jeapardize King
+		if(this.color == playerColor) {
+			int origx = xpos;
+				int origy = ypos;
+				Piece self = board[ypos][xpos];
+				board[ypos][xpos] = null;
+				for(int i = 0; i< possibleMoves.size(); i++) {
+					//ONLY CALL CHECKFORCHECK ON ENEMY TEAM
+					Integer[] locs = possibleMoves.get(i);
+					xpos = locs[0];
+					ypos = locs[1];
+					Piece oldPiece = board[ypos][xpos]; 
+					board[ypos][xpos] = self;
+					//If this piece is the color that needs to call check for check, call it
+					
+					System.out.println("Checking Position "+xpos+":"+ypos+" if valid move");
+					if(this.checkForCheck(board, playerColor)) {
+						possibleMoves.remove(locs);
+						i--;
+						System.out.println(""+xpos+":"+ypos+" will lead to check!");
+					
+					}
+					board[ypos][xpos] = oldPiece;
+					
+				}
+				xpos = origx;
+				ypos = origy;
+				board[ypos][xpos] = self;
+		}
+				return possibleMoves;
 		
 		
 	}
 
 	public King getKing(Piece[][] board) {
+		
 		for(int j = 0; j < 8; j++) {
 			for(int i = 0; i < 8; i++) {
 				if(board[j][i] instanceof King && board[j][i].getColor() == color) {
@@ -264,6 +310,35 @@ List<Integer[]> possibleMoves = new ArrayList<Integer[]>();
 		return null;
 	}
 	
+	public Boolean checkForCheck(Piece[][] board,int playerColor) {
+		System.out.println("Checking if "+board[ypos][xpos].type()+"is open");
+		for(int j = 0; j < 8; j++) {
+			for(int i = 0; i < 8; i++) {
+				if(board[j][i] != null) {
+					if(board[j][i].getColor() != playerColor){
+					boolean canreach = false;
+					King king = this.getKing(board);
+					System.out.println(board[j][i].type());
+					for(Integer[] loc : board[j][i].getValidMoves(board,playerColor)) {
+						if(loc[0] == king.getXpos() && loc[1] == king.getYpos()) {
+							
+							canreach = true;
+
+						}
+						if(board[j][i] instanceof Queen) {
+							System.out.println(loc[0]+":"+loc[1]);
+						}
+					}
+					if(canreach) {
+						king.setInCheck(false);
+						return true;
+					}
+				}
+				}
+			}
+		}
+		return false;
+	}
 	//used in the load initial data of the Database
 	public static Piece findPiece(String pieceName) {
 		if(pieceName.equals("King")){
