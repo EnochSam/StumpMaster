@@ -11,21 +11,25 @@ public abstract class Piece {
 	private int color;
 	private boolean captured;
 	private boolean hasMovedAlready;
+	private int id;
+	
 	public Piece(){
 		xpos = -1;
 		ypos = -1;
 		this.color = -1;
 		this.captured = false;
 		this.hasMovedAlready = false; 
+		id = 0;
 
 	}
 	
-	public Piece(int xpos, int ypos, int color){
+	public Piece(int xpos, int ypos, int color, int id){
 		this.xpos = xpos;
 		this.ypos = ypos;
 		this.color = color;
 		this.captured = false;
 		this.hasMovedAlready = false; 
+		this.id = id;
 	}
 	
 	public int getXpos() {
@@ -70,6 +74,13 @@ public abstract class Piece {
 	
 	public boolean getHasMovedAlready() {
 		return this.hasMovedAlready;
+	}
+	
+	public int getID() {
+		return id;
+	}
+	public void setID(int ID) {
+		id = ID;
 	}
 	public abstract List<Integer[]> getValidMoves(Piece[][] board);
 	

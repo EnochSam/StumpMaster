@@ -109,10 +109,10 @@ public class DiagonalTesting {
 		Piece testingPiece = new Bishop(); 
 		board[4][3] = testingPiece;
 		List<Integer[]> possibleMoves;
-		board[5][2] = new Pawn(2,5,1);
-		board[5][4] = new Pawn(4,5,0);
-		board[2][5] = new Pawn(5,2,1);
-		board[2][6] = new Pawn(6,1,0);
+		board[5][2] = new Pawn(2,5,1, 1);
+		board[5][4] = new Pawn(4,5,0, 2);
+		board[2][5] = new Pawn(5,2,1, 3);
+		board[2][6] = new Pawn(6,1,0, 4);
 		
 		List<Piece> PiecesToPass = new ArrayList<Piece>();
 		PiecesToPass.addAll(Arrays.asList(new Bishop(), new Queen()));
@@ -192,7 +192,7 @@ public class DiagonalTesting {
 		assertEquals(inList(possibleMoves, 4, 3), true);
 		
 		//White Pawn
-		testingPiece = new Pawn(3,4,0);
+		testingPiece = new Pawn(3,4,0, 5);
 		possibleMoves = testingPiece.getValidMoves(board);
 
 		//Top Left
@@ -214,7 +214,7 @@ public class DiagonalTesting {
 		
 		
 		//Black Pawn
-		testingPiece = new Pawn(3,4,1);
+		testingPiece = new Pawn(3,4,1, 6);
 		possibleMoves = testingPiece.getValidMoves(board);
 
 		//Top Left

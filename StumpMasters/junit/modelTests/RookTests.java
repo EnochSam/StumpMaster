@@ -19,10 +19,10 @@ class RookTests {
 	
 	@Test
 	void testMovePossibleMoves(){
-		Rook testRook = new Rook(4,4,Piece.WHITE);
+		Rook testRook = new Rook(4,4,Piece.WHITE, 1);
 		Piece[][] board= new Piece[8][8];
-		Piece enemyPiece = new Rook(2,4,Piece.BLACK);
-		Piece friendlyPiece = new Rook(2,3,Piece.WHITE);
+		Piece enemyPiece = new Rook(2,4,Piece.BLACK, 2);
+		Piece friendlyPiece = new Rook(2,3,Piece.WHITE, 3);
 		board[enemyPiece.getYpos()][enemyPiece.getXpos()] = enemyPiece;
 		board[friendlyPiece.getYpos()][friendlyPiece.getXpos()] = friendlyPiece;
 		boolean foundPiece = false;

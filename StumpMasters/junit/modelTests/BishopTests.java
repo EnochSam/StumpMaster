@@ -19,10 +19,10 @@ class BishopTests {
 	
 	@Test
 	void testMovePossibleMoves(){
-		Bishop testBishop = new Bishop(4,4,Piece.WHITE);
+		Bishop testBishop = new Bishop(4,4,Piece.WHITE, 1);
 		Piece[][] board= new Piece[8][8];
-		Piece enemyPiece = new Bishop(3,3,Piece.BLACK);
-		Piece friendlyPiece = new Bishop(2,2,Piece.WHITE);
+		Piece enemyPiece = new Bishop(3,3,Piece.BLACK, 2);
+		Piece friendlyPiece = new Bishop(2,2,Piece.WHITE, 3);
 		board[enemyPiece.getYpos()][enemyPiece.getXpos()] = enemyPiece;
 		board[friendlyPiece.getYpos()][friendlyPiece.getXpos()] = friendlyPiece;
 		boolean foundPiece = false;

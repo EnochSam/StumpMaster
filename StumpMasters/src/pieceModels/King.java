@@ -16,8 +16,8 @@ public class King extends Piece{
 		
 	}
 	
-	public King(int xpos, int ypos, int color){
-		super(xpos,ypos,color);
+	public King(int xpos, int ypos, int color, int id){
+		super(xpos,ypos,color, id);
 	}
 	
 	public boolean checkForCheckMate(Piece[][] board){	

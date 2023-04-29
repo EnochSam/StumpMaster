@@ -19,10 +19,10 @@ class KingTests {
 	
 	@Test
 	void testMovePossibleMoves(){
-		King testKing = new King(4,4,Piece.WHITE);
+		King testKing = new King(4,4,Piece.WHITE, 1);
 		Piece[][] board= new Piece[8][8];
-		Piece enemyPiece = new King(7,7,Piece.BLACK);
-		Piece friendlyPiece = new King(2,3,Piece.WHITE);
+		Piece enemyPiece = new King(7,7,Piece.BLACK, 2);
+		Piece friendlyPiece = new King(2,3,Piece.WHITE, 3);
 		board[enemyPiece.getYpos()][enemyPiece.getXpos()] = enemyPiece;
 		board[friendlyPiece.getYpos()][friendlyPiece.getXpos()] = friendlyPiece;
 		boolean foundPiece = false;

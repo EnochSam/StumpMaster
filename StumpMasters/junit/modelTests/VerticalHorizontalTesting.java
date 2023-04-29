@@ -102,7 +102,7 @@ public class VerticalHorizontalTesting {
 		//Inner Bottom Right
 		assertEquals(inList(possibleMoves, 3, 5), true);
 		
-		testingPiece = new Pawn(3,4,0);
+		testingPiece = new Pawn(3,4,0, 1);
 		possibleMoves = testingPiece.getValidMoves(board);
 		//Far Top
 		assertEquals(inList(possibleMoves, 3, 7), false);
@@ -121,7 +121,7 @@ public class VerticalHorizontalTesting {
 		//Inner Bottom Right
 		assertEquals(inList(possibleMoves, 3, 5), true);
 		
-		testingPiece = new Pawn(3,4,1);
+		testingPiece = new Pawn(3,4,1, 2);
 		possibleMoves = testingPiece.getValidMoves(board);
 		//Far Top
 		assertEquals(inList(possibleMoves, 3, 7), false);
@@ -147,10 +147,10 @@ public class VerticalHorizontalTesting {
 		Piece testingPiece = new Bishop(); 
 		board[4][3] = testingPiece;
 		List<Integer[]> possibleMoves;
-		board[4][0] = new Pawn(0,4,1);
-		board[5][3] = new Pawn(3,5,0);
-		board[4][4] = new Pawn(4,4,1);
-		board[4][6] = new Pawn(6,4,0);
+		board[4][0] = new Pawn(0,4,1, 3);
+		board[5][3] = new Pawn(3,5,0, 4);
+		board[4][4] = new Pawn(4,4,1, 5);
+		board[4][6] = new Pawn(6,4,0, 6);
 		
 		List<Piece> PiecesToPass = new ArrayList<Piece>();
 		PiecesToPass.addAll(Arrays.asList(new Rook(), new Queen()));
@@ -229,7 +229,7 @@ public class VerticalHorizontalTesting {
 		//Inner Bottom Right
 		assertEquals(inList(possibleMoves, 3, 5), false);
 		
-		testingPiece = new Pawn(3,4,0);
+		testingPiece = new Pawn(3,4,0, 7);
 		possibleMoves = testingPiece.getValidMoves(board);
 		//Far Top
 		assertEquals(inList(possibleMoves, 3, 7), false);
@@ -248,7 +248,7 @@ public class VerticalHorizontalTesting {
 		//Inner Bottom Right
 		assertEquals(inList(possibleMoves, 3, 5), false);
 		
-		testingPiece = new Pawn(3,4,1);
+		testingPiece = new Pawn(3,4,1, 6);
 		possibleMoves = testingPiece.getValidMoves(board);
 		//Far Top
 		assertEquals(inList(possibleMoves, 3, 7), false);

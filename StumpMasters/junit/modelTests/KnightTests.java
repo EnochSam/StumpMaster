@@ -14,10 +14,10 @@ class KnightTests {
 	
 	@Test
 	void testMovePossibleMoves(){
-		Knight testKnight = new Knight(4,4,Piece.WHITE);
+		Knight testKnight = new Knight(4,4,Piece.WHITE, 1);
 		Piece[][] board= new Piece[8][8];
-		Piece enemyPiece = new Knight(5,6,Piece.BLACK);
-		Piece friendlyPiece = new Knight(2,4,Piece.WHITE);
+		Piece enemyPiece = new Knight(5,6,Piece.BLACK, 2);
+		Piece friendlyPiece = new Knight(2,4,Piece.WHITE, 3);
 		board[enemyPiece.getYpos()][enemyPiece.getXpos()] = enemyPiece;
 		board[friendlyPiece.getYpos()][friendlyPiece.getXpos()] = friendlyPiece;
 		boolean foundPiece = false;

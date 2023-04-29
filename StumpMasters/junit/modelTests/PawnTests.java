@@ -14,11 +14,11 @@ class PawnTests {
 	
 	@Test
 	void testBlackPawn(){
-		Piece testPiece = new Pawn(4,4,Piece.BLACK);
+		Piece testPiece = new Pawn(4,4,Piece.BLACK, 1);
 		Piece[][] board= new Piece[8][8];
-		Piece enemyPiece = new Rook(5,5,Piece.WHITE);
-		Piece enemyPiece2 = new Pawn(4,5,Piece.WHITE);
-		Piece friendlyPiece = new Rook(3,5,Piece.BLACK);
+		Piece enemyPiece = new Rook(5,5,Piece.WHITE, 2);
+		Piece enemyPiece2 = new Pawn(4,5,Piece.WHITE, 3);
+		Piece friendlyPiece = new Rook(3,5,Piece.BLACK, 4);
 		board[enemyPiece.getYpos()][enemyPiece.getXpos()] = enemyPiece;
 		board[enemyPiece2.getYpos()][enemyPiece2.getXpos()] = enemyPiece2;
 		board[friendlyPiece.getYpos()][friendlyPiece.getXpos()] = friendlyPiece;
@@ -49,11 +49,11 @@ class PawnTests {
 	
 	@Test
 	void testWhitePawn(){
-		Piece testPiece = new Pawn(4,4,Piece.WHITE);
+		Piece testPiece = new Pawn(4,4,Piece.WHITE, 5);
 		Piece[][] board= new Piece[8][8];
-		Piece enemyPiece = new Rook(3,3,Piece.BLACK);
-		Piece enemyPiece2 = new Pawn(4,3,Piece.BLACK);
-		Piece friendlyPiece = new Rook(2,3,Piece.WHITE);
+		Piece enemyPiece = new Rook(3,3,Piece.BLACK, 6);
+		Piece enemyPiece2 = new Pawn(4,3,Piece.BLACK, 7);
+		Piece friendlyPiece = new Rook(2,3,Piece.WHITE, 8);
 		board[enemyPiece.getYpos()][enemyPiece.getXpos()] = enemyPiece;
 		board[enemyPiece2.getYpos()][enemyPiece2.getXpos()] = enemyPiece2;
 		board[friendlyPiece.getYpos()][friendlyPiece.getXpos()] = friendlyPiece;

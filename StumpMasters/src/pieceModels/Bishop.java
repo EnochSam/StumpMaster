@@ -9,8 +9,8 @@ public class Bishop extends Piece{
 		
 	}
 	
-	public Bishop(int xpos, int ypos, int color){
-		super(xpos,ypos,color);
+	public Bishop(int xpos, int ypos, int color, int ID){
+		super(xpos,ypos,color, ID);
 	}
 	
 	public List<Integer[]> getValidMoves(Piece[][] board){

@@ -557,7 +557,7 @@ public class DerbyDatabase implements IDatabase {
 			
 					//create pieces for all tuples where isCaptured = false, add piece to board at right location
 					stmt1 = conn.prepareStatement(
-							"select type, x, y, color, movedAlready "+
+							"select type, x, y, color, movedAlready, piece_id "+
 							"from pieces "+
 							"where isCaptured  = 'false'"
 							);
@@ -571,11 +571,13 @@ public class DerbyDatabase implements IDatabase {
 						int y = Integer.parseInt(resultSet.getObject(3).toString());
 						int color = Integer.parseInt(resultSet.getObject(4).toString());
 						boolean movedAlready = resultSet.getString(5).equals("true");
+						int ID = resultSet.getInt(6);
 						Piece piece = Piece.findPiece(type);
 						piece.setXpos(x);
 						piece.setYpos(y);
 						piece.setColor(color);
 						piece.setHasMovedAlready(movedAlready);
+						piece.setID(ID);
 						board[y][x] = piece;
 						
 						
@@ -641,8 +643,10 @@ public class DerbyDatabase implements IDatabase {
 										if( model.getBoard()[newPieceYpos][7] instanceof Rook && !model.getBoard()[newPieceYpos][7].getHasMovedAlready()) {
 										//Rook is on the Right and needs to be moved to the Left
 										Piece rook = model.getBoard()[newPieceYpos][7];
+										rook.setXpos(newPieceXpos-1);
+										rook.setYpos(newPieceYpos);
 										model.getBoard()[newPieceYpos][7] = null;
-										model.getBoard()[newPieceYpos][newPieceXpos-1] = rook;
+										model.getBoard()[rook.getYpos()][rook.getXpos()] = rook;
 										rookOldXpos = 8;
 										rookNewXpos = 6;
 										}
@@ -650,8 +654,10 @@ public class DerbyDatabase implements IDatabase {
 										if( model.getBoard()[newPieceYpos][0] instanceof Rook && !model.getBoard()[newPieceYpos][0].getHasMovedAlready()) {
 										//Rook is on the Left and needs to be moved to the left
 										Piece rook = model.getBoard()[newPieceYpos][0];
+										rook.setXpos(newPieceXpos+1);
+										rook.setYpos(newPieceYpos);
 										model.getBoard()[newPieceYpos][0] = null;
-										model.getBoard()[newPieceYpos][newPieceXpos+1] = rook;							
+										model.getBoard()[rook.getYpos()][rook.getXpos()] = rook;							
 										rookOldXpos = 1;
 										rookNewXpos = 4;
 										}
@@ -740,9 +746,35 @@ public class DerbyDatabase implements IDatabase {
 						// Execute Query
 						int update = updatePiece.executeUpdate();
 						
+						
+						// Update new locations of any pieces that moved (castling)
+						PreparedStatement setLocation = null;
+						
+						//Iterate through board to find every piece
+						for(Piece[] pieces: model.getBoard()){
+								for(Piece piece: pieces) {
+									if(piece != null) {
+										if(piece.getCaptured() == false) {
+											// Update the pieces current x,y locations
+											setLocation = conn.prepareStatement(
+													"update pieces "+
+													" set pieces.x = ?, pieces.y = ? " +
+													" where piece_id = ? ");
+											
+											setLocation.setInt(1, piece.getXpos());
+											setLocation.setInt(2, piece.getYpos());
+											setLocation.setInt(3, piece.getID());
+											
+											System.out.println("X: " + piece.getXpos() + " Y: " + piece.getYpos());
+											update = setLocation.executeUpdate();
+											System.out.println("Updating Piece: " + piece.type());
+										}
+									}
+								}
+						}
 						return true;
+						}
 					}
-				}
 				return false;
 			}
 		});

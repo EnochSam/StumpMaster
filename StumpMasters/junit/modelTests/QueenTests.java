@@ -19,10 +19,10 @@ class QueenTests {
 	
 	@Test
 	void testMovePossibleMoves(){
-		Queen testQueen = new Queen(4,4,Piece.WHITE);
+		Queen testQueen = new Queen(4,4,Piece.WHITE, 1);
 		Piece[][] board= new Piece[8][8];
-		Piece enemyPiece = new Queen(5,3,Piece.BLACK);
-		Piece friendlyPiece = new Queen(3,5,Piece.WHITE);
+		Piece enemyPiece = new Queen(5,3,Piece.BLACK, 2);
+		Piece friendlyPiece = new Queen(3,5,Piece.WHITE, 3);
 		board[enemyPiece.getYpos()][enemyPiece.getXpos()] = enemyPiece;
 		board[friendlyPiece.getYpos()][friendlyPiece.getXpos()] = friendlyPiece;
 		boolean foundPiece = false;

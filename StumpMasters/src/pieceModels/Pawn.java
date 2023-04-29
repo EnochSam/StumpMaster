@@ -10,8 +10,8 @@ public class Pawn extends Piece{
 		
 	}
 	
-	public Pawn(int xpos, int ypos, int color){
-		super(xpos,ypos,color);
+	public Pawn(int xpos, int ypos, int color, int ID){
+		super(xpos,ypos,color, ID);
 	}
 	
 	@Override
