@@ -728,7 +728,7 @@ public class DerbyDatabase implements IDatabase {
 						}
 						// Get the selected piece id
 						PreparedStatement getPieceId = conn.prepareStatement(
-								"select pieces.piece_id, pieces.type, pieces.color, pieces.movedAlready from pieces"
+								"select pieces.piece_id, pieces.type, pieces.color, pieces.movedAlready, pieces.enPassantX, pieces.enPassantY from pieces"
 								+ " where pieces.x = ? and pieces.y = ? "
 								+ " and pieces.isCaptured = 'false' ");
 						
@@ -741,6 +741,8 @@ public class DerbyDatabase implements IDatabase {
 						
 						String type = null;
 						boolean moved = false;
+						int enPassantX = 100;
+						int enPassantY = 100;
 						int color = 2;
 						//Set id
 						int id = 0;
@@ -749,6 +751,8 @@ public class DerbyDatabase implements IDatabase {
 							type = resultSet.getString(2);
 							moved = Boolean.getBoolean(resultSet.getString(4));
 							color = resultSet.getInt(3);
+							enPassantX = resultSet.getInt(5);
+							enPassantY = resultSet.getInt(6);
 						}
 
 						
@@ -758,11 +762,21 @@ public class DerbyDatabase implements IDatabase {
 								+ " where pieces.x = ? and pieces.y = ? "
 								+ " and pieces.isCaptured = 'false' and not pieces.color =  ?"
 							);
-						
-						// Substitute values into query
+						// If piece performed en passant, capture piece directly behind
 						getCapturedPiece.setInt(1, newPieceXpos);
-						getCapturedPiece.setInt(2, newPieceYpos);
 						getCapturedPiece.setInt(3, color);
+						
+						if(newPieceXpos == enPassantX && newPieceYpos == enPassantY) {
+							if(color == 0) {
+								getCapturedPiece.setInt(2, newPieceYpos - 1);
+							}
+							else {
+								getCapturedPiece.setInt(2, newPieceYpos + 1);
+							}
+						}	// Otherwise capture piece at position moved to
+						else {
+							getCapturedPiece.setInt(2, newPieceYpos);
+						}
 						
 						// Execute Query
 						resultSet = getCapturedPiece.executeQuery();
