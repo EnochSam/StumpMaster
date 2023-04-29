@@ -229,7 +229,7 @@
 			setTimeout( (e)=>{
 				let askpp = ""
 					while(askpp != "Queen" && askpp != "Knight" && askpp != "Rook" && askpp != "Bishop" ){
-						askpp =prompt("What are you promoting your prompt to?")
+						askpp =prompt("What are you promoting your pawn to?")
 					}
 					if(askpp == "Queen"){
 						askpp = "Q"

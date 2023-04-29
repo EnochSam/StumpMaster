@@ -11,9 +11,12 @@ import java.util.List;
 
 import models.Game;
 import models.Player;
+import pieceModels.Bishop;
 import pieceModels.King;
+import pieceModels.Knight;
 import pieceModels.Pawn;
 import pieceModels.Piece;
+import pieceModels.Queen;
 import pieceModels.Rook;
 
 public class DerbyDatabase implements IDatabase {
@@ -555,14 +558,49 @@ public class DerbyDatabase implements IDatabase {
 				ResultSet resultSet = null;					
 				try {
 			
-					//create pieces for all tuples where isCaptured = false, add piece to board at right location
-					stmt1 = conn.prepareStatement(
-							"select type, x, y, color, movedAlready, piece_id "+
-							"from pieces "+
-							"where isCaptured  = 'false'"
-							);
-					resultSet = stmt1.executeQuery();
-			
+					// Check for pawn promotion
+					int pieceID = 40;
+					// Query any pawns that are at either side of the board
+					PreparedStatement checkPromotion = conn.prepareStatement(
+							"select pieces.piece_id from pieces " +
+							" where pieces.type = 'Pawn' and pieces.isCaptured = 'false' " +
+							" and (pieces.y = 0 or pieces.y = 7) ");
+					resultSet = checkPromotion.executeQuery();
+					
+					if(resultSet.next()) {
+						pieceID = resultSet.getInt(1);
+						
+						// Update pawn to have new type of player's choice
+						PreparedStatement promote = conn.prepareStatement(
+								"update pieces "+
+								" set pieces.type = ? "+
+								" where pieces.piece_id = ? ");
+						
+						promote.setInt(2, pieceID);
+						
+						String gameMoves = model.getGameMoves();
+						if(gameMoves.charAt(gameMoves.length() - 4) == 'Q') {
+							promote.setString(1, "Queen");
+						}
+						else if(gameMoves.charAt(gameMoves.length() - 4) == 'R') {
+							promote.setString(1, "Rook");
+						}
+						else if(gameMoves.charAt(gameMoves.length() - 4) == 'B') {
+							promote.setString(1, "Bishop");
+						}
+						else if(gameMoves.charAt(gameMoves.length() - 4) == 'K') {
+							promote.setString(1, "Knight");
+						}
+						int update = promote.executeUpdate();
+					}
+						
+						//create pieces for all tuples where isCaptured = false, add piece to board at right location
+						stmt1 = conn.prepareStatement(
+								"select type, x, y, color, movedAlready, piece_id "+
+								"from pieces "+
+								"where isCaptured  = 'false'"
+								);
+						resultSet = stmt1.executeQuery();			
 				
 				
 					while(resultSet.next()) {
@@ -580,9 +618,9 @@ public class DerbyDatabase implements IDatabase {
 						piece.setID(ID);
 						board[y][x] = piece;
 						
-						
 						//set board in model			
 					}
+		
 					model.setBoard(board);
 					return true;
 			}
