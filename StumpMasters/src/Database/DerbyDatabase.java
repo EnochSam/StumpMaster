@@ -836,7 +836,12 @@ public class DerbyDatabase implements IDatabase {
 							}
 							
 							// Find pawn of opponent's color
-							enPassant.setInt(3, (color + 1) % 1);
+							if(color == 0) {
+								enPassant.setInt(3, 1);
+							}
+							else {
+								enPassant.setInt(3, 0);
+							}
 							
 							// Find opponent's pawns that are in position to perform en passant
 							enPassant.setInt(4,  selectedPieceXpos - 1);
