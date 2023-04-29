@@ -142,11 +142,9 @@ public class King extends Piece{
 					board[super.getYpos()][super.getXpos()] = self;
 					//If this piece is the color that needs to call check for check, call it
 					
-					System.out.println("Checking Position "+super.getXpos()+":"+super.getYpos()+" if valid move");
 					if(this.checkForCheck(board, playerColor)) {
 						possibleMoves.remove(locs);
 						i--;
-						System.out.println(""+super.getXpos()+":"+super.getYpos()+" will lead to check!");
 					
 					}
 					board[super.getYpos()][super.getXpos()] = oldPiece;
@@ -228,7 +226,6 @@ public class King extends Piece{
 						}
 						board[super.getYpos()][super.getXpos()] = self;
 						//If King Can Be Put in Check, set Boolean to false 
-						System.out.println(super.getColor());
 						if(super.checkForCheck(board,super.getColor())){
 							allowedToCastle =  false;
 						}
@@ -267,21 +264,16 @@ public class King extends Piece{
 	@Override
 	public Boolean checkForCheck(Piece[][] board, int playerColor) {
 		King self = (King)board[super.getYpos()][super.getXpos()];
-		board[super.getYpos()][super.getXpos()] = null;
 		for(int j = 0; j < 8; j++) {
 			for(int i = 0; i < 8; i++) {
 				if(board[j][i] != null) {
 					if(board[j][i].getColor() != playerColor){
 					boolean canreach = false;
-					System.out.println(board[j][i].type());
 					for(Integer[] loc : board[j][i].getValidMoves(board,playerColor)) {
 						if(loc[0] == super.getXpos() && loc[1] == super.getYpos()) {
 							
 							canreach = true;
 
-						}
-						if(board[j][i] instanceof Queen) {
-							System.out.println(loc[0]+":"+loc[1]);
 						}
 					}
 					if(canreach) {
@@ -292,7 +284,6 @@ public class King extends Piece{
 			}
 			}
 		}
-		board[super.getYpos()][super.getXpos()] = self;
 		return false;
 		
 	}

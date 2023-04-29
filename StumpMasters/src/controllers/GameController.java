@@ -110,7 +110,15 @@ public class GameController {
 				}
 			}
 		}
+		
 		this.model.setBoard(board);
+		if(this.model.getWhitePlayer().getPieces()[0].checkForCheck(this.model.getBoard(), 0)
+				|| this.model.getBlackPlayer().getPieces()[0].checkForCheck(this.model.getBoard(), 1)) {
+			this.model.setInCheck(true);
+			if(checkForCheckMate(this.model.getWhitePlayer()) || checkForCheckMate(this.model.getBlackPlayer())) {
+				this.model.setInCheckmate(true);
+			}
+		}
 	}
 	
 	public String getPossibleMoves(String clickedOnLocation, String playerTurn) {
@@ -123,7 +131,6 @@ public class GameController {
 		//checks to make sure that the piece selected is the of the same color 
 		if((playerTurn.equals("White") && selectedPiece.getColor() == Piece.WHITE) || (playerTurn.equals("Black") && selectedPiece.getColor() == Piece.BLACK)) {
 		//Checks if the piece is pinned
-		System.out.print(selectedPiece);
 		
 		// Looks to see if Castling is allowed
 		List<Integer[]> possibleMoves = selectedPiece.getValidMoves(this.model.getBoard(),selectedPiece.getColor());
@@ -140,9 +147,7 @@ public class GameController {
 	}
 	
 	public boolean moveValidMove(String newPieceLoc, String attemptingToMove,String player) {
-		System.out.println(player);
 		String validMoves = getPossibleMoves(attemptingToMove,player);
-		System.out.println("Valid Move Validated");
 		int selectedPieceXpos = Integer.parseInt(""+attemptingToMove.charAt(0))-1;
 		int selectedPieceYpos = Integer.parseInt(""+attemptingToMove.charAt(2))-1;
 		
@@ -183,7 +188,7 @@ public class GameController {
 						if(castleLoc != null) {
 							int rookOldXpos = -1;
 							int rookNewXpos = -1;
-							if(castleLoc.charAt(0) == '8') {
+							if(castleLoc.charAt(0) == '6') {
 								if( this.model.getBoard()[newPieceYpos][7] instanceof Rook && !this.model.getBoard()[newPieceYpos][7].getHasMovedAlready()) {
 								//Rook is on the Right and needs to be moved to the Left
 								Piece rook = this.model.getBoard()[newPieceYpos][7];
@@ -211,9 +216,15 @@ public class GameController {
 					}
 					
 				}
-				King opposingKing = this.model.getBoard()[newPieceYpos][newPieceXpos].getColor() == 0 ? (King) this.model.getBlackPlayer().getPieces()[0]: (King)this.model.getWhitePlayer().getPieces()[0];
+				Player opponent = this.model.getBoard()[newPieceYpos][newPieceXpos].getColor() == 0 ? this.model.getBlackPlayer(): this.model.getWhitePlayer(); 
+				King opposingKing = (King) opponent.getPieces()[0];
 				if(opposingKing.checkForCheck(this.model.getBoard(), opposingKing.getColor())){
 					this.model.setInCheck(true);
+					if(checkForCheckMate(opponent)) {
+						this.model.setInCheckmate(true);
+					}
+				}else {
+					this.model.setInCheck(false);
 				}
 				return true;
 			}
@@ -221,4 +232,16 @@ public class GameController {
 		return false;
 	}
 	
+	private Boolean checkForCheckMate(Player player) {
+		for(Piece piece : player.getPieces()) {
+			if(!piece.getCaptured()) {
+				if(piece.getValidMoves(this.model.getBoard(), piece.getColor()).size() > 0) {
+					return false;
+				}
+
+			}
+		}
+		return true;
+	
+	}
 }

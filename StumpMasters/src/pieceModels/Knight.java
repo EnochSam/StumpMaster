@@ -55,11 +55,9 @@ public class Knight extends Piece{
 							board[super.getYpos()][super.getXpos()] = self;
 							//If this piece is the color that needs to call check for check, call it
 							
-							System.out.println("Checking Position "+super.getXpos()+":"+super.getYpos()+" if valid move");
 							if(this.checkForCheck(board, playerColor)) {
 								possibleMoves.remove(locs);
 								i--;
-								System.out.println(""+super.getXpos()+":"+super.getYpos()+" will lead to check!");
 							
 							}
 							board[super.getYpos()][super.getXpos()] = oldPiece;
