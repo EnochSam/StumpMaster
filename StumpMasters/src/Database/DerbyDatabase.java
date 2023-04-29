@@ -750,61 +750,7 @@ public class DerbyDatabase implements IDatabase {
 							moved = Boolean.getBoolean(resultSet.getString(4));
 							color = resultSet.getInt(3);
 						}
-						
-						// Determine if enPassant will be possible for the opponent
-						Piece selectedPiece = model.getBoard()[selectedPieceXpos][selectedPieceYpos];
-						System.out.println("Type: " + type);
-						System.out.println("moved: " + moved);
-						if(type.equals("Pawn") && moved == false)
-						{
-							// Update opponent pawn to be able to perform en passant on current pawn
-							PreparedStatement enPassant = conn.prepareStatement(
-									"update pieces "+
-									" set enPassant = 'true', enPassantX = ?, enPassantY = ? "+
-									" where color = ? and (x = ? or x = ?) and y = ?");
-							
-							// Mark position that opponent pawn will move to to perform en passant
-							enPassant.setInt(1, selectedPieceXpos);
-							if(color == 0) {
-								enPassant.setInt(2, selectedPieceYpos + 1);
-							}
-							else {
-								enPassant.setInt(2, selectedPieceYpos - 1);
-							}
-							
-							// Find pawn of opponent's color
-							enPassant.setInt(3, (color + 1) % 1);
-							
-							// Find opponent's pawns that are in position to perform en passant
-							enPassant.setInt(4,  selectedPieceXpos - 1);
-							enPassant.setInt(5,  selectedPieceXpos + 1);
-							
-							if(color == 0) {
-								enPassant.setInt(6, selectedPieceYpos + 2);
-							}
-							else {
-								enPassant.setInt(6, selectedPieceYpos - 2);
-							}
-							
-							int update = enPassant.executeUpdate();
-						}
-						//Get piece color
-						PreparedStatement getColor = conn.prepareStatement(
-								"select pieces.color from pieces "
-								+ " where pieces.x = ? and pieces.y = ? ");
-						
-						// Substitute values into query
-						getColor.setInt(1, selectedPieceXpos);
-						getColor.setInt(2, selectedPieceYpos);
-						
-						// Execute query
-						resultSet = getColor.executeQuery();
-						color = 2;
-						
-						// get color
-						if(resultSet.next()) {
-							color = resultSet.getInt(1);
-						}
+
 						
 						// Update captured Piece
 						PreparedStatement getCapturedPiece = conn.prepareStatement(
@@ -857,7 +803,7 @@ public class DerbyDatabase implements IDatabase {
 											// Update the pieces current x,y locations
 											setLocation = conn.prepareStatement(
 													"update pieces "+
-													" set pieces.x = ?, pieces.y = ? " +
+													" set pieces.x = ?, pieces.y = ?, pieces.enPassant = 'false' " +
 													" where piece_id = ? ");
 											
 											setLocation.setInt(1, piece.getXpos());
@@ -870,6 +816,40 @@ public class DerbyDatabase implements IDatabase {
 										}
 									}
 								}
+						}
+						
+						if(type.equals("Pawn") && moved == false)
+						{
+							// Update opponent pawn to be able to perform en passant on current pawn
+							PreparedStatement enPassant = conn.prepareStatement(
+									"update pieces "+
+									" set enPassant = 'true', enPassantX = ?, enPassantY = ? "+
+									" where color = ? and (x = ? or x = ?) and y = ?");
+							
+							// Mark position that opponent pawn will move to to perform en passant
+							enPassant.setInt(1, selectedPieceXpos);
+							if(color == 0) {
+								enPassant.setInt(2, selectedPieceYpos + 1);
+							}
+							else {
+								enPassant.setInt(2, selectedPieceYpos - 1);
+							}
+							
+							// Find pawn of opponent's color
+							enPassant.setInt(3, (color + 1) % 1);
+							
+							// Find opponent's pawns that are in position to perform en passant
+							enPassant.setInt(4,  selectedPieceXpos - 1);
+							enPassant.setInt(5,  selectedPieceXpos + 1);
+							
+							if(color == 0) {
+								enPassant.setInt(6, selectedPieceYpos + 2);
+							}
+							else {
+								enPassant.setInt(6, selectedPieceYpos - 2);
+							}
+							
+							update = enPassant.executeUpdate();
 						}
 						return true;
 						}
