@@ -319,11 +319,8 @@ List<Integer[]> possibleMoves = new ArrayList<Integer[]>();
 							canreach = true;
 
 						}
-						if(board[j][i] instanceof Queen) {
-						}
 					}
 					if(canreach) {
-						king.setInCheck(false);
 						return true;
 					}
 				}

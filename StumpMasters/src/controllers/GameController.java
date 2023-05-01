@@ -4,7 +4,10 @@ package controllers;
 import java.util.ArrayList;
 import java.util.List;
 
+import Database.DatabaseProvider;
 import Database.DerbyDatabase;
+import Database.FakeGameDatabase;
+import Database.IDatabase;
 import models.Game;
 import models.Player;
 import pieceModels.Bishop;
@@ -16,103 +19,42 @@ import pieceModels.Queen;
 import pieceModels.Rook;
 
 public class GameController {
-	/*
-	 * loadBoard
-	 * 
-	 */
-	private DerbyDatabase db = null;
+	
+	//0 for Fake
+	//1 for Real
+	private int dbTest = 0;
+	private IDatabase db = null;
 	private Game model;
 	public void setModel(Game model){
 		this.model = model;
 	}
 	
 	public GameController() {
+		if(dbTest == 0) {
+			db = new FakeGameDatabase();
+		}else {
+			db = new DerbyDatabase();
+		}
 	}
 	
 	public void setBoard(String boardLocations) {		
-//		db.setBoard(boardLocations);
+		
+		//Sets the Game String to be passed back and forth
 		this.model.setGameMoves(boardLocations);
-//		//initialize the Pieces and Board
-		Piece[][] board = new Piece[8][8];
-		Player[] players = model.getBothPlayers();
-
 		
-		//load initially on board
-		for(int i = 0; i < players.length; i++){
-
-			for(int j = 0; j < players[i].getPieces().length; j++) {
-				
-				Piece tempPiece= players[i].getPieces()[j];
-				int tempPieceX =tempPiece.getXpos();
-				int tempPieceY =tempPiece.getYpos();
-				board[tempPieceY][tempPieceX] = tempPiece;
-			}
-			
+		//if there are no moves is boardLocations, the game is reset
+		if(boardLocations.length() == 0) {
+			db.resetLocations();
 		}
-		//BOARD LOCATIONS FORMULA
-		//STRING = 1234 1234 1234
-		//1= xpos of current location
-		//2= ypos of current location
-		//3= xpos of new location
-		//4 = ypos of new location
-		//5 = space
-
-		for(int i = 0; i < boardLocations.length() & boardLocations.length()-i >5; i+=5) {
-			int curx = Integer.parseInt(""+boardLocations.charAt(i))-1;
-			int cury = Integer.parseInt(""+boardLocations.charAt(i+1))-1;
-			int newx = Integer.parseInt(""+boardLocations.charAt(i+2))-1;
-			int newy = Integer.parseInt(""+boardLocations.charAt(i+3))-1;
-			
-			//if piece is on moved location set that piece to captured
-			if(board[newy][newx] != null) {
-				board[newy][newx].setCaptured(true);
-			}
-			board[newy][newx] = board[cury][curx];
-			board[cury][curx] = null;
-			board[newy][newx].setXpos(newx);
-			board[newy][newx].setYpos(newy);
-			board[newy][newx].setHasMovedAlready(true);
-			
-			//Check For Pawn Promotion
-			if(i+4 <boardLocations.length() ) {
-				if(!(""+boardLocations.charAt(i+4)).equals(" ")) {
-					int color = board[newy][newx].getColor();
-					//Check Which Character the Pawn is Set To
-					if((""+boardLocations.charAt(i+4)).equals("Q")){
-						board[newy][newx] = new Queen();
-						board[newy][newx].setXpos(newx);
-						board[newy][newx].setYpos(newy);
-						board[newy][newx].setColor(color);
-						board[newy][newx].setHasMovedAlready(true);
-					}
-					if((""+boardLocations.charAt(i+4)).equals("R")){
-						board[newy][newx] = new Rook();
-						board[newy][newx].setXpos(newx);
-						board[newy][newx].setColor(color);
-						board[newy][newx].setYpos(newy);
-						board[newy][newx].setHasMovedAlready(true);
-					}
-					if((""+boardLocations.charAt(i+4)).equals("K")){
-						board[newy][newx] = new Knight();
-						board[newy][newx].setXpos(newx);
-						board[newy][newx].setYpos(newy);
-						board[newy][newx].setColor(color);
-						board[newy][newx].setHasMovedAlready(true);
-					}
-					if((""+boardLocations.charAt(i+4)).equals("B")){
-						board[newy][newx] = new Bishop();
-						board[newy][newx].setXpos(newx);
-						board[newy][newx].setYpos(newy);
-						board[newy][newx].setColor(color);
-						board[newy][newx].setHasMovedAlready(true);
-					}
-					i++;
-				}
-			}
-		}
+		//initialize the Pieces and Board
+		this.model.setBoard(db.populateBoard(boardLocations));
 		
-		this.model.setBoard(board);
-		if(this.model.getWhitePlayer().getPieces()[0].checkForCheck(this.model.getBoard(), 0)
+		//Set En Passant
+		setEnPassant();
+		//initializes Players
+		this.model.setWhitePlayer(db.populatePlayer(Piece.WHITE));
+		this.model.setBlackPlayer(db.populatePlayer(Piece.BLACK));
+			if(this.model.getWhitePlayer().getPieces()[0].checkForCheck(this.model.getBoard(), 0)
 				|| this.model.getBlackPlayer().getPieces()[0].checkForCheck(this.model.getBoard(), 1)) {
 			this.model.setInCheck(true);
 			if(checkForCheckMate(this.model.getWhitePlayer()) || checkForCheckMate(this.model.getBlackPlayer())) {
@@ -122,17 +64,18 @@ public class GameController {
 	}
 	
 	public String getPossibleMoves(String clickedOnLocation, String playerTurn) {
-		//return db.getPossibleMoves(clickedOnLocation, playerTurn);
+		
+		//Creates String to Send to Server that has list of locations the Selected Piece can Move 
 		String listOfLocations = "";
 		int pieceXpos = Integer.parseInt(""+clickedOnLocation.charAt(0))-1;
 		int pieceYpos = Integer.parseInt(""+clickedOnLocation.charAt(2))-1;
-		
-		Piece selectedPiece = this.model.getBoard()[pieceYpos][pieceXpos];
+
+		//Grabs selected Piece from database
+		Piece selectedPiece = db.getPiece(pieceXpos,pieceYpos); 
+		this.setEnPassant();
 		//checks to make sure that the piece selected is the of the same color 
 		if((playerTurn.equals("White") && selectedPiece.getColor() == Piece.WHITE) || (playerTurn.equals("Black") && selectedPiece.getColor() == Piece.BLACK)) {
-		//Checks if the piece is pinned
-		
-		// Looks to see if Castling is allowed
+		//Adds all possible Moves to list of Locations String
 		List<Integer[]> possibleMoves = selectedPiece.getValidMoves(this.model.getBoard(),selectedPiece.getColor());
 		for(Integer[] loc : possibleMoves) {
 			listOfLocations+= ""+(loc[0]+1);
@@ -166,6 +109,7 @@ public class GameController {
 		}
 		for(Integer[] x : possibleMoves) {
 			if(x[0] == newPieceXpos && x[1] == newPieceYpos) {
+				//If Move is a Valid Move, update the board
 				if(this.model.getBoard()[newPieceYpos][newPieceXpos] != null) {
 					this.model.getBoard()[newPieceYpos][newPieceXpos].setCaptured(true); 
 				}
@@ -173,14 +117,14 @@ public class GameController {
 				this.model.getBoard()[selectedPieceYpos][selectedPieceXpos] = null;
 				this.model.getBoard()[newPieceYpos][newPieceXpos].setXpos(newPieceXpos);
 				this.model.getBoard()[newPieceYpos][newPieceXpos].setYpos(newPieceYpos);
-				//CheckForCheck
-				this.model.getBoard()[newPieceYpos][newPieceXpos].getKing(this.model.getBoard()).checkForCheckMate(this.model.getBoard());
 				//Checks for Pawn Promotion
 				if(this.model.getBoard()[newPieceYpos][newPieceXpos] instanceof Pawn && 
 						(this.model.getBoard()[newPieceYpos][newPieceXpos].getYpos() == 0
 					  || this.model.getBoard()[newPieceYpos][newPieceXpos].getYpos() == 7)) {
 					this.model.setPawnPromotion(true);
 				}else
+				
+					
 				//Checks for Castling
 				if(this.model.getBoard()[newPieceYpos][newPieceXpos] instanceof King) {
 					King king =(King) this.model.getBoard()[newPieceYpos][newPieceXpos];
@@ -196,6 +140,7 @@ public class GameController {
 								this.model.getBoard()[newPieceYpos][newPieceXpos-1] = rook;
 								rookOldXpos = 8;
 								rookNewXpos = 6;
+								db.updateDatabaseForCastling(rookOldXpos-1, newPieceYpos);
 								}
 							}else {
 								if( this.model.getBoard()[newPieceYpos][0] instanceof Rook && !this.model.getBoard()[newPieceYpos][0].getHasMovedAlready()) {
@@ -205,6 +150,7 @@ public class GameController {
 								this.model.getBoard()[newPieceYpos][newPieceXpos+1] = rook;							
 								rookOldXpos = 1;
 								rookNewXpos = 4;
+								db.updateDatabaseForCastling(rookOldXpos-1, newPieceYpos);
 								}
 							}
 							//Split String into 2 and add the string into GameMoves
@@ -214,8 +160,23 @@ public class GameController {
 						
 						}
 					}
+					//Checks For EnPassant
+					}else if(this.model.getBoard()[newPieceYpos][newPieceXpos] instanceof Pawn && 
+							this.model.getBoard()[newPieceYpos][newPieceXpos] != null) {
+						
+						Pawn pawn = (Pawn) this.model.getBoard()[newPieceYpos][newPieceXpos];
+						if(pawn.getEnPassantLoc() != null) {
+							int capturedYpos = pawn.getColor() == Piece.WHITE?
+									pawn.getEnPassantLoc()[1]-1: pawn.getEnPassantLoc()[1]+1; 
+							String leftOfSplit = this.model.getGameMoves().substring(0, this.model.getGameMoves().length() -2 );
+							String rightOfSplit = this.model.getGameMoves().substring(this.model.getGameMoves().length() -2 );
+							this.model.setGameMoves( leftOfSplit+(pawn.getEnPassantLoc()[0]+1)+(capturedYpos+1)+(pawn.getEnPassantLoc()[0]+1)+(newPieceYpos+1)+" "+rightOfSplit);
+							this.model.getBoard()[capturedYpos][newPieceXpos] = null;
+							db.updateDatabaseForEnPassant(pawn.getXpos(),pawn.getYpos(),pawn.getColor());
+						}
+					}
 					
-				}
+				//Checks for Check/Checkmate on King
 				Player opponent = this.model.getBoard()[newPieceYpos][newPieceXpos].getColor() == 0 ? this.model.getBlackPlayer(): this.model.getWhitePlayer(); 
 				King opposingKing = (King) opponent.getPieces()[0];
 				if(opposingKing.checkForCheck(this.model.getBoard(), opposingKing.getColor())){
@@ -226,6 +187,9 @@ public class GameController {
 				}else {
 					this.model.setInCheck(false);
 				}
+				
+				//Finally, update the database
+				db.updateDatabase(this.model.getBoard());
 				return true;
 			}
 		}
@@ -242,6 +206,46 @@ public class GameController {
 			}
 		}
 		return true;
-	
+	}
+	private Boolean setEnPassant() {
+		String gameMoves =this.model.getGameMoves();
+		Piece[][] board = model.getBoard();
+		//If the last move was a pawn,its never been called before, delta y = 2, and theres a pawn next to it
+		//en passant is true for that pawn next to it
+		//Step 1, grab the last part of the game string
+		//if last move was pawn promotion , break
+		int possiblePawnOldXpos = -1;
+		int possiblePawnOldYpos = -1;
+		int	possiblePawnNewXpos = -1;
+		int possiblePawnNewYpos = -1;
+		
+		if(gameMoves.length() > 8) {
+			possiblePawnOldXpos = Integer.parseInt(""+gameMoves.charAt(gameMoves.length()-7))-1;
+			possiblePawnOldYpos = Integer.parseInt(""+gameMoves.charAt(gameMoves.length()-6))-1;
+			possiblePawnNewXpos = Integer.parseInt(""+gameMoves.charAt(gameMoves.length()-5))-1;
+			try {
+			possiblePawnNewYpos = Integer.parseInt(""+gameMoves.charAt(gameMoves.length()-4))-1;
+			}catch(NumberFormatException e) {
+				return false;
+			}
+			
+			if(this.model.getBoard()[possiblePawnNewYpos][possiblePawnNewXpos] instanceof Pawn){
+			if((possiblePawnOldYpos == 1 || possiblePawnOldYpos == 6) && Math.abs(possiblePawnNewYpos-possiblePawnOldYpos)==2) {
+				//checks left of Pawn
+				if(board[possiblePawnNewYpos][possiblePawnNewXpos-1] != null){
+					if(board[possiblePawnNewYpos][possiblePawnNewXpos-1] instanceof Pawn) {
+						Pawn enPassantablePawn = (Pawn) board[possiblePawnNewYpos][possiblePawnNewXpos-1];
+						if(board[possiblePawnNewYpos][possiblePawnNewXpos].getColor() == Piece.WHITE){
+							enPassantablePawn.setEnPassantLoc(new Integer[] {possiblePawnOldXpos,possiblePawnOldYpos+1});
+						}else {enPassantablePawn.setEnPassantLoc(new Integer[] {possiblePawnOldXpos,possiblePawnOldYpos-1});}
+					}
+				}else if(board[possiblePawnNewYpos][possiblePawnNewXpos+1] != null) {
+					System.out.println("Poop");
+					if(board[possiblePawnNewYpos][possiblePawnNewXpos+1] instanceof Pawn) {
+						Pawn enPassantablePawn = (Pawn) board[possiblePawnNewYpos][possiblePawnNewXpos+1];
+						if(board[possiblePawnNewYpos][possiblePawnNewXpos].getColor() == Piece.WHITE){
+						enPassantablePawn.setEnPassantLoc(new Integer[] {possiblePawnOldXpos,possiblePawnOldYpos+1});
+					}else {enPassantablePawn.setEnPassantLoc(new Integer[] {possiblePawnOldXpos,possiblePawnOldYpos-1});}
+				}}}}}return false;
 	}
 }
