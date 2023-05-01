@@ -173,13 +173,6 @@ public class FakeGameDatabase implements IDatabase{
 
 
 	@Override
-	public void updateDatabase(Piece[][] board) {
-		// TODO Auto-generated method stub
-		
-	}
-
-
-	@Override
 	public void updateDatabaseForCastling(int rookXpos, int rookYpos) {
 		
 	}
@@ -187,6 +180,13 @@ public class FakeGameDatabase implements IDatabase{
 
 	@Override
 	public void updateDatabaseForEnPassant(int xpos, int ypos, int color) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+	@Override
+	public void updateDatabase(int oldX, int oldY, int newX, int newY) {
 		// TODO Auto-generated method stub
 		
 	}

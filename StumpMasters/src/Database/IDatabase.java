@@ -20,13 +20,11 @@ public interface IDatabase {
 
 	public Piece getPiece(int pieceXpos, int pieceYpos);
 
-	public void updateDatabase(Piece[][] board);
+	public void updateDatabase(int oldX, int oldY, int newX, int newY);
 	
-	public void updateDatabaseForCastling(int rookXpos, int rookYpos);
-
 	//Passes in The x and ypos of Pawn that is capturing to update the pawn that will be captured
 	public void updateDatabaseForEnPassant(int xpos, int ypos, int color);
 
-	
+	void updateDatabaseForCastling(int rookXpos, int rookYpos);
 	
 }

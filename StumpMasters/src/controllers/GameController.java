@@ -4,6 +4,7 @@ package controllers;
 import java.util.ArrayList;
 import java.util.List;
 
+import Database.DBUtil;
 import Database.DatabaseProvider;
 import Database.DerbyDatabase;
 import Database.FakeGameDatabase;
@@ -22,7 +23,7 @@ public class GameController {
 	
 	//0 for Fake
 	//1 for Real
-	private int dbTest = 0;
+	private int dbTest = 1;
 	private IDatabase db = null;
 	private Game model;
 	public void setModel(Game model){
@@ -71,7 +72,8 @@ public class GameController {
 		int pieceYpos = Integer.parseInt(""+clickedOnLocation.charAt(2))-1;
 
 		//Grabs selected Piece from database
-		Piece selectedPiece = db.getPiece(pieceXpos,pieceYpos); 
+		Piece selectedPiece = db.getPiece(pieceXpos,pieceYpos);
+		this.model.getBoard()[selectedPiece.getYpos()][selectedPiece.getXpos()] = selectedPiece;
 		this.setEnPassant();
 		//checks to make sure that the piece selected is the of the same color 
 		if((playerTurn.equals("White") && selectedPiece.getColor() == Piece.WHITE) || (playerTurn.equals("Black") && selectedPiece.getColor() == Piece.BLACK)) {
@@ -117,6 +119,9 @@ public class GameController {
 				this.model.getBoard()[selectedPieceYpos][selectedPieceXpos] = null;
 				this.model.getBoard()[newPieceYpos][newPieceXpos].setXpos(newPieceXpos);
 				this.model.getBoard()[newPieceYpos][newPieceXpos].setYpos(newPieceYpos);
+				
+				//update Database
+				db.updateDatabase(selectedPieceXpos, selectedPieceYpos, newPieceXpos, newPieceYpos);
 				//Checks for Pawn Promotion
 				if(this.model.getBoard()[newPieceYpos][newPieceXpos] instanceof Pawn && 
 						(this.model.getBoard()[newPieceYpos][newPieceXpos].getYpos() == 0
@@ -187,9 +192,6 @@ public class GameController {
 				}else {
 					this.model.setInCheck(false);
 				}
-				
-				//Finally, update the database
-				db.updateDatabase(this.model.getBoard());
 				return true;
 			}
 		}
@@ -228,24 +230,24 @@ public class GameController {
 			}catch(NumberFormatException e) {
 				return false;
 			}
-			
 			if(this.model.getBoard()[possiblePawnNewYpos][possiblePawnNewXpos] instanceof Pawn){
 			if((possiblePawnOldYpos == 1 || possiblePawnOldYpos == 6) && Math.abs(possiblePawnNewYpos-possiblePawnOldYpos)==2) {
 				//checks left of Pawn
 				if(board[possiblePawnNewYpos][possiblePawnNewXpos-1] != null){
-					if(board[possiblePawnNewYpos][possiblePawnNewXpos-1] instanceof Pawn) {
+					if(possiblePawnNewXpos-1 >=0) {if(board[possiblePawnNewYpos][possiblePawnNewXpos-1] instanceof Pawn) {
 						Pawn enPassantablePawn = (Pawn) board[possiblePawnNewYpos][possiblePawnNewXpos-1];
 						if(board[possiblePawnNewYpos][possiblePawnNewXpos].getColor() == Piece.WHITE){
 							enPassantablePawn.setEnPassantLoc(new Integer[] {possiblePawnOldXpos,possiblePawnOldYpos+1});
 						}else {enPassantablePawn.setEnPassantLoc(new Integer[] {possiblePawnOldXpos,possiblePawnOldYpos-1});}
-					}
-				}else if(board[possiblePawnNewYpos][possiblePawnNewXpos+1] != null) {
-					System.out.println("Poop");
+						System.out.println("EnPassantSet:");return true;
+					}}
+				}else if(possiblePawnNewXpos+1 <=7){if(board[possiblePawnNewYpos][possiblePawnNewXpos+1] != null) {
 					if(board[possiblePawnNewYpos][possiblePawnNewXpos+1] instanceof Pawn) {
 						Pawn enPassantablePawn = (Pawn) board[possiblePawnNewYpos][possiblePawnNewXpos+1];
 						if(board[possiblePawnNewYpos][possiblePawnNewXpos].getColor() == Piece.WHITE){
 						enPassantablePawn.setEnPassantLoc(new Integer[] {possiblePawnOldXpos,possiblePawnOldYpos+1});
 					}else {enPassantablePawn.setEnPassantLoc(new Integer[] {possiblePawnOldXpos,possiblePawnOldYpos-1});}
-				}}}}}return false;
+System.out.println("EnPassantSet");return true;
+					}}}}}}return false;
 	}
 }

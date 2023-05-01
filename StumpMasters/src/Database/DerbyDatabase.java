@@ -158,7 +158,7 @@ public class DerbyDatabase implements IDatabase {
 				PreparedStatement insertPiece = null;
 				
 				try {
-					// populate players table (do authors first, since author_id is foreign key in books table)
+					// populate players table (do authors first, since color is foreign key in books table)
 					insertPlayer = conn.prepareStatement("insert into players (type) values (?)");
 					for (Player player : playerList) {
 //						// auto-generated primary key, don't insert this
@@ -167,7 +167,6 @@ public class DerbyDatabase implements IDatabase {
 					}
 					insertPlayer.executeBatch();
 					
-					System.out.println("Passed1");
 					// populate books table (do this after authors table,
 					// since author_id must exist in authors table before inserting book)
 					insertPiece = conn.prepareStatement("insert into pieces (color, type, x, y, isCaptured, movedAlready) values (?, ?, ?, ?,?, ?)");
@@ -182,7 +181,6 @@ public class DerbyDatabase implements IDatabase {
 						insertPiece.addBatch();
 					}
 					insertPiece.executeBatch();
-					System.out.println("Executed");
 					return true;
 				} finally {
 					DBUtil.closeQuietly(insertPlayer);
@@ -197,290 +195,8 @@ public class DerbyDatabase implements IDatabase {
 		
 		DerbyDatabase db = new DerbyDatabase();
 		db.resetLocations();
-		System.out.println("Doone");
 	}
 	
-	/*
-	public String getPossibleMoves(String clickedOnLocation, String playerTurn) {
-		return executeTransaction(new Transaction<String>() {
-			@Override
-			public String execute(Connection conn) throws SQLException {
-				String listOfLocations = "";
-				int pieceXpos = Integer.parseInt(""+clickedOnLocation.charAt(0))-1;
-				int pieceYpos = Integer.parseInt(""+clickedOnLocation.charAt(2))-1;
-				
-				Piece selectedPiece = model.getBoard()[pieceYpos][pieceXpos];
-				
-				// Check if moved already
-				PreparedStatement getMovedAlready = conn.prepareStatement(
-						"select pieces.movedAlready from pieces "
-						+ " where pieces.x = ? and pieces.y = ? and pieces.isCaptured = 'false' ");
-				
-				// Substitute x and y values into call
-				getMovedAlready.setInt(1, pieceXpos);
-				getMovedAlready.setInt(2, pieceYpos);
-				
-				ResultSet resultSet = getMovedAlready.executeQuery();
-				
-				// Load has moved already into piece object
-				if(resultSet.next()) {
-					if(resultSet.getString(1).equals("false")) {
-						selectedPiece.setHasMovedAlready(false);
-					}
-					else {
-						selectedPiece.setHasMovedAlready(true);
-					}
-				}
-				
-
-				//Checks for EnPassant
-				PreparedStatement getEnPassant = conn.prepareStatement(
-						"select enPassantX, enPassantY from pieces "+
-						" where piece_id = ? and enPassant = 'true' ");
-				
-				
-				resultSet = getEnPassant.executeQuery();
-				
-				if(resultSet.next()) {
-					int enPassantX = Integer.parseInt(resultSet.getString(1));
-					int enPassantY = Integer.parseInt(resultSet.getString(2));
-					
-					listOfLocations+= ""+(enPassantX + 1);
-					listOfLocations+= ""+(enPassantY + 1);
-					listOfLocations+=" ";
-				}
-				//checks to make sure that the piece selected is the of the same color 
-				if((playerTurn.equals("White") && selectedPiece.getColor() == Piece.WHITE) || (playerTurn.equals("Black") && selectedPiece.getColor() == Piece.BLACK)) {
-				//Checks if the piece is pinned
-				
-				//Finds the selected Piece's King
-				King king;
-				if(model.getWhitePlayer().getPieces()[0].getColor() == selectedPiece.getColor()) {
-					king = (King) model.getWhitePlayer().getPieces()[0];
-				}else {
-					king = (King) model.getBlackPlayer().getPieces()[0];
-				}
-				
-				// Looks to see if Castling is allowed
-				//if(selectedPiece instanceof King) {
-					//check 
-				//}
-				
-				List<Integer[]> possibleMoves = selectedPiece.getValidMoves(model.getBoard());
-				for(Integer[] loc : possibleMoves) {
-					//Temporarily changes board to make sure that moving the piece does not put the King in Check
-					Piece attemptingToMove = model.getBoard()[loc[1]][loc[0]];
-					model.getBoard()[pieceYpos][pieceXpos] = null;
-					model.getBoard()[loc[1]][loc[0]] = selectedPiece;
-					int origX = selectedPiece.getXpos();
-					int origY = selectedPiece.getYpos();
-					selectedPiece.setXpos(loc[0]);
-					selectedPiece.setYpos(loc[1]);
-					Boolean checkIfOpenMove;
-					checkIfOpenMove = checkIfOpenMove(king,model.getBoard());
-					model.getBoard()[loc[1]][loc[0]] = attemptingToMove;
-					model.getBoard()[pieceYpos][pieceXpos]= selectedPiece;
-					selectedPiece.setXpos(origX);
-					selectedPiece.setYpos(origY);
-					//if the king will not be put in check, add to the list of valid moves
-					if(checkIfOpenMove) {
-					listOfLocations+= ""+(loc[0]+1);
-					listOfLocations+= ""+(loc[1]+1);
-					listOfLocations+=" ";
-					}
-				}
-				if(model.getInCheck() && !(selectedPiece instanceof King)) {
-					//if the player is in check, we will resize the list of moves to only show moves that can reach opposing piece
-					String stringOfAvailableMoves = "";
-					//Grabs list of AvailaleMoves from Model
-					List<Integer[]> availableMoves = model.getAvailableMoves();
-					
-					//If Location != location of attackingPiece, remove from list
-					for(int i = 0; i < listOfLocations.length(); i+=3){
-						boolean inListOfAvailableLocations = false;
-						for(Integer[] x : availableMoves) {
-							String locx = (""+(x[0]+1));
-							String locy = (""+(x[1]+1));
-							if(locx.equals(""+listOfLocations.charAt(i)) && locy.equals(""+listOfLocations.charAt(i+1))) {
-								inListOfAvailableLocations = true;
-							}
-						}
-						if(inListOfAvailableLocations){
-							stringOfAvailableMoves+= ""+listOfLocations.charAt(i)+""+listOfLocations.charAt(i+1)+" ";
-						}
-
-					}
-					return stringOfAvailableMoves;
-				
-				}
-				return listOfLocations;
-				}else {
-					return "False";
-				}
-			}});
-		}
-
-	public void setBoard(String boardLocations) {
-		
-	}
-	*/
-	/*
-	public boolean moveValidMove(String newPieceLoc, String attemptingToMove, String player) {
-		return (boolean)executeTransaction(new Transaction<Boolean>() {
-			@Override
-			public Boolean execute(Connection conn) throws SQLException {
-						// Get the selected piece id
-						PreparedStatement getPieceId = conn.prepareStatement(
-								"select pieces.piece_id, pieces.type, pieces.color, pieces.movedAlready, pieces.enPassantX, pieces.enPassantY from pieces"
-								+ " where pieces.x = ? and pieces.y = ? "
-								+ " and pieces.isCaptured = 'false' ");
-						
-						// Substitute selected piece x and y positions into query
-						getPieceId.setInt(1, selectedPieceXpos);
-						getPieceId.setInt(2, selectedPieceYpos);
-						
-						// Execute Query
-						ResultSet resultSet = getPieceId.executeQuery();
-						
-						String type = null;
-						boolean moved = false;
-						int enPassantX = 100;
-						int enPassantY = 100;
-						int color = 2;
-						//Set id
-						int id = 0;
-						if(resultSet.next()) {
-							id = resultSet.getInt(1);
-							type = resultSet.getString(2);
-							moved = Boolean.getBoolean(resultSet.getString(4));
-							color = resultSet.getInt(3);
-							enPassantX = resultSet.getInt(5);
-							enPassantY = resultSet.getInt(6);
-						}
-
-						
-						// Update captured Piece
-						PreparedStatement getCapturedPiece = conn.prepareStatement(
-								"select pieces.piece_id from pieces "
-								+ " where pieces.x = ? and pieces.y = ? "
-								+ " and pieces.isCaptured = 'false' and not pieces.color =  ?"
-							);
-						// If piece performed en passant, capture piece directly behind
-						getCapturedPiece.setInt(1, newPieceXpos);
-						getCapturedPiece.setInt(3, color);
-						
-						if(newPieceXpos == enPassantX && newPieceYpos == enPassantY) {
-							if(color == 0) {
-								getCapturedPiece.setInt(2, newPieceYpos - 1);
-							}
-							else {
-								getCapturedPiece.setInt(2, newPieceYpos + 1);
-							}
-						}	// Otherwise capture piece at position moved to
-						else {
-							getCapturedPiece.setInt(2, newPieceYpos);
-						}
-						
-						// Execute Query
-						resultSet = getCapturedPiece.executeQuery();
-						
-						if(resultSet.next()) {
-							// Mark piece as captured
-							PreparedStatement setCaptured = conn.prepareStatement(
-									"update pieces "
-									+ " set pieces.isCaptured = 'true' "
-									+ " where pieces.piece_id = ? ");
-							setCaptured.setInt(1, resultSet.getInt(1));
-							int updateCapture = setCaptured.executeUpdate();
-						}
-						
-						// Update the selected piece location
-						PreparedStatement updatePiece = conn.prepareStatement(
-								"update pieces "
-								+ " set pieces.x = ?, pieces.y = ?, movedAlready = 'true' "
-								+ " where piece_id = ?");
-						
-						//Substitute id into query
-						updatePiece.setInt(1, newPieceXpos);
-						updatePiece.setInt(2, newPieceYpos);
-						updatePiece.setInt(3, id);
-						
-						// Execute Query
-						int update = updatePiece.executeUpdate();
-						
-						
-						// Update new locations of any pieces that moved (castling)
-						PreparedStatement setLocation = null;
-						
-						//Iterate through board to find every piece
-						for(Piece[] pieces: model.getBoard()){
-								for(Piece piece: pieces) {
-									if(piece != null) {
-										if(piece.getCaptured() == false) {
-											// Update the pieces current x,y locations
-											setLocation = conn.prepareStatement(
-													"update pieces "+
-													" set pieces.x = ?, pieces.y = ?, pieces.enPassant = 'false' " +
-													" where piece_id = ? ");
-											
-											setLocation.setInt(1, piece.getXpos());
-											setLocation.setInt(2, piece.getYpos());
-											setLocation.setInt(3, piece.getID());
-											
-											System.out.println("X: " + piece.getXpos() + " Y: " + piece.getYpos());
-											update = setLocation.executeUpdate();
-											System.out.println("Updating Piece: " + piece.type());
-										}
-									}
-								}
-						}
-						
-						if(type.equals("Pawn") && moved == false)
-						{
-							// Update opponent pawn to be able to perform en passant on current pawn
-							PreparedStatement enPassant = conn.prepareStatement(
-									"update pieces "+
-									" set enPassant = 'true', enPassantX = ?, enPassantY = ? "+
-									" where color = ? and (x = ? or x = ?) and y = ?");
-							
-							// Mark position that opponent pawn will move to to perform en passant
-							enPassant.setInt(1, selectedPieceXpos);
-							if(color == 0) {
-								enPassant.setInt(2, selectedPieceYpos + 1);
-							}
-							else {
-								enPassant.setInt(2, selectedPieceYpos - 1);
-							}
-							
-							// Find pawn of opponent's color
-							if(color == 0) {
-								enPassant.setInt(3, 1);
-							}
-							else {
-								enPassant.setInt(3, 0);
-							}
-							
-							// Find opponent's pawns that are in position to perform en passant
-							enPassant.setInt(4,  selectedPieceXpos - 1);
-							enPassant.setInt(5,  selectedPieceXpos + 1);
-							
-							if(color == 0) {
-								enPassant.setInt(6, selectedPieceYpos + 2);
-							}
-							else {
-								enPassant.setInt(6, selectedPieceYpos - 2);
-							}
-							
-							update = enPassant.executeUpdate();
-						}
-						return true;
-						}
-					}
-				return false;
-			}
-		});
-		}
-	*/
 	@Override
 	
 	public Piece[][] populateBoard(String boardLocations) {
@@ -527,7 +243,6 @@ public class DerbyDatabase implements IDatabase {
 	}
 	@Override
 	public void resetLocations() {
-		System.out.println("Resettin Locatoins...");
 		executeTransaction(new Transaction<Boolean>() {
 			@Override
 			public Boolean execute(Connection conn) throws SQLException {
@@ -618,70 +333,131 @@ public class DerbyDatabase implements IDatabase {
 				
 		});	
 		//create tables by create table function in this file
-		System.out.println("Creating Tables");
 		createTables();
-		System.out.println("Loading Initial Data");
 		loadInitialData();
-		System.out.println("Locations Reset");
 	}	
 	@Override
 	public Player populatePlayer(int playerColor) {
+		//King needs to be first, that is all
+		Player player = new Player();
+		player.setPieces(new Piece[16]);
 		executeTransaction(new Transaction<Boolean>() {
 			public Boolean execute(Connection conn) throws SQLException {
 				PreparedStatement stmt1 = null;
 				try {
 					stmt1 = conn.prepareStatement(
-							"select * from pieces where x = ? and y = ? and isCaptured = false"
+							"select type,x,y,movedAlready from pieces where color = ?"
 					);
+					stmt1.setInt(1,playerColor);
 					ResultSet resultSet = stmt1.executeQuery();
 					while(resultSet.next()) {
-						for(int i = 1; i <= 6; i++) {
-							System.out.println(resultSet.getObject(i));
+						Piece piece = Piece.findPiece(""+resultSet.getObject(1));
+						piece.setXpos(Integer.parseInt(""+resultSet.getObject(2)));
+						piece.setYpos(Integer.parseInt(""+resultSet.getObject(3)));
+						piece.setColor(playerColor);
+						piece.setHasMovedAlready((""+resultSet.getObject(4)).equals("true"));
+						if(piece instanceof King) {
+							player.getPieces()[0] = piece;
+						}else {
+							int i = 1;
+							while(player.getPieces()[i] != null) {i++;}
+							player.getPieces()[i]= piece;
 						}
 					}
 				}finally {
 					DBUtil.closeQuietly(stmt1);;
 
 				}
+				
 			return null;
 			}});
-		return null;
+		return player;
 	}
 	@Override
 	public Piece getPiece(int pieceXpos, int pieceYpos){
-		Piece piece[] = new Piece[1];
+		//for some reason when passing in a Piece object, it doesn't work, so I just made a 1 index array
+		Piece[] pieces= new Piece[1];
 		executeTransaction(new Transaction<Boolean>() {
 		public Boolean execute(Connection conn) throws SQLException {
 			PreparedStatement stmt1 = null;
 			try {
 				stmt1 = conn.prepareStatement(
-						"select * from pieces where x = ? and y = ? and isCaptured = false"
+						"select type, color ,movedAlready from pieces where x = ? and y = ? and isCaptured = false"
 				);
 				stmt1.setInt(1, pieceXpos);
 				stmt1.setInt(2, pieceYpos);
 				ResultSet resultSet = stmt1.executeQuery();
-				//piece;
 				while(resultSet.next()) {
-					for(int i = 1; i <= 6; i++) {
-						System.out.println(resultSet.getObject(i));
-					}
-				 piece[0] = Piece.findPiece(""+resultSet.getObject(3));
-					
+					Piece piece = Piece.findPiece(""+resultSet.getObject(1));
+					piece.setXpos(pieceXpos);
+					piece.setYpos(pieceYpos);
+					piece.setColor(Integer.parseInt(""+resultSet.getObject(2)));
+					piece.setHasMovedAlready((""+resultSet.getObject(3)).equals("true"));
+					pieces[0] = piece;
+
 				}
+
 			}finally {
 				DBUtil.closeQuietly(stmt1);;
 
 			}
 			return true;
 		}});
-		return piece[0];
+		return pieces[0];
 	}
-	@Override
-	public void updateDatabase(Piece[][] board) {
-		/* TODO Will update the location of piece based off
-		 * old location sent in, if piece at new location, update their isCaptured to true BEFORE updating Piece 
-		 */
-		
+	
+	public void updateDatabase(int oldX, int oldY, int newX, int newY) {
+		executeTransaction(new Transaction<Boolean>() {
+
+		public Boolean execute(Connection conn) throws SQLException {
+			PreparedStatement stmt1 = null;
+			PreparedStatement stmt2 = null;
+			PreparedStatement stmt3 = null;
+			PreparedStatement stmt4 = null;
+
+			try {
+				stmt1 = conn.prepareStatement(
+						"select piece_id from pieces where x = ? and y = ? and isCaptured = false"
+				);
+				stmt1.setInt(1, oldX);
+				stmt1.setInt(2, oldY);
+				ResultSet resultSet = stmt1.executeQuery();
+				resultSet.next();
+				
+				int movingPiece_id = Integer.parseInt(""+resultSet.getObject(1));
+				int capturedPiece_id = -1;
+				stmt2 = conn.prepareStatement(
+						"select piece_id from pieces where x = ? and y = ? and isCaptured = false"
+				);
+				stmt2.setInt(1, newX);
+				stmt2.setInt(2, newY);
+				resultSet = stmt2.executeQuery();
+				while(resultSet.next()){
+				capturedPiece_id = Integer.parseInt(""+resultSet.getObject(1));
+				}
+				if(capturedPiece_id != -1) {
+					stmt3 = conn.prepareStatement(
+							"update pieces set isCaptured = true where piece_id = ?"
+					);
+					stmt3.setInt(1, capturedPiece_id);
+					stmt3.executeUpdate();
+				}
+				stmt4 = conn.prepareStatement(
+						"update pieces set x = ?, y = ?,movedAlready = true where piece_id = ?"
+				);
+				stmt4.setInt(1, newX);
+				stmt4.setInt(2, newY);
+				stmt4.setInt(3, movingPiece_id);
+				stmt4.executeUpdate();
+			}finally {
+				DBUtil.closeQuietly(stmt1);
+				DBUtil.closeQuietly(stmt2);
+				DBUtil.closeQuietly(stmt3);
+				DBUtil.closeQuietly(stmt4);;
+
+			}
+			return true;
+		}});
 	}
 	@Override
 	public void updateDatabaseForCastling(int rookXpos, int rookYpos) {
@@ -689,15 +465,69 @@ public class DerbyDatabase implements IDatabase {
 		 * if RookXpos == 0, left Castle, else, Right Castle 
 		 * Update rook's position in Database
 		 */
+		int newXpos = rookXpos == 0? 3 : 5;
+		executeTransaction(new Transaction<Boolean>() {
+
+			public Boolean execute(Connection conn) throws SQLException {
+				PreparedStatement stmt1 = null;
+				PreparedStatement stmt2 = null;
+
+				try {
+					stmt1 = conn.prepareStatement(
+							"select piece_id from pieces where x = ? and y = ? and isCaptured = false"
+					);
+					stmt1.setInt(1, rookXpos);
+					stmt1.setInt(2, rookYpos);
+					ResultSet resultSet = stmt1.executeQuery();
+					resultSet.next();
+					
+					int capturedPiece_id = Integer.parseInt(""+resultSet.getObject(1));
+					stmt2 = conn.prepareStatement(
+							"update pieces set x=?,y=? where piece_id = ?"
+					);
+					stmt2.setInt(1, newXpos);
+					stmt2.setInt(2, rookYpos);
+					stmt2.setInt(3, capturedPiece_id);
+					stmt2.executeUpdate();
+				}finally {
+					DBUtil.closeQuietly(stmt1);
+					DBUtil.closeQuietly(stmt2);
+				}
+				return true;
+			}});
 		
 		
 	}
 	@Override
 	public void updateDatabaseForEnPassant(int xpos, int ypos, int color) {
-		/* TODO Passed in are the new x and y positions of Pawn, 
-		 * if Pawn.color == White, captured piece== ypos -1, else, captured piece == ypos +1
-		 * Update the captured piece's location in database
-		 */
+		int capturedy = color == Piece.WHITE? ypos-1 : ypos+1;
+		executeTransaction(new Transaction<Boolean>() {
+
+			public Boolean execute(Connection conn) throws SQLException {
+				PreparedStatement stmt1 = null;
+				PreparedStatement stmt2 = null;
+
+				try {
+					stmt1 = conn.prepareStatement(
+							"select piece_id from pieces where x = ? and y = ? and isCaptured = false"
+					);
+					stmt1.setInt(1, xpos);
+					stmt1.setInt(2, capturedy);
+					ResultSet resultSet = stmt1.executeQuery();
+					resultSet.next();
+					
+					int capturedPiece_id = Integer.parseInt(""+resultSet.getObject(1));
+					stmt2 = conn.prepareStatement(
+							"update pieces set isCaptured = true where piece_id = ?"
+					);
+					stmt2.setInt(1, capturedPiece_id);
+					stmt2.executeUpdate();
+				}finally {
+					DBUtil.closeQuietly(stmt1);
+					DBUtil.closeQuietly(stmt2);
+				}
+				return true;
+			}});
 		
 	}
 
