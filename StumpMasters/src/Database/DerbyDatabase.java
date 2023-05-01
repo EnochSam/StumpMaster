@@ -530,5 +530,48 @@ public class DerbyDatabase implements IDatabase {
 			}});
 		
 	}
+	@Override
+	public void updatDatabaseForPawnPromotion(int x, int y, char promotedPawnChar) {
+		String newType;
+		if(promotedPawnChar == 'Q') {
+			newType = "Queen";
+		}else if(promotedPawnChar == 'R') {
+			newType = "Rook";
+		}else if(promotedPawnChar == 'B') {
+			newType = "Bishop";
+		}else{
+			newType = "Knight";
+		}
+		executeTransaction(new Transaction<Boolean>() {
+
+			public Boolean execute(Connection conn) throws SQLException {
+				PreparedStatement stmt1 = null;
+				PreparedStatement stmt2 = null;
+
+				try {
+					stmt1 = conn.prepareStatement(
+							"select piece_id from pieces where x = ? and y = ? and isCaptured = false"
+					);
+					stmt1.setInt(1, x);
+					stmt1.setInt(2, y);
+					ResultSet resultSet = stmt1.executeQuery();
+					resultSet.next();
+					
+					int capturedPiece_id = Integer.parseInt(""+resultSet.getObject(1));
+					stmt2 = conn.prepareStatement(
+							"update pieces set type = ? where piece_id = ?"
+					);
+					stmt2.setInt(2, capturedPiece_id);
+					stmt2.setString(1, newType);
+					stmt2.executeUpdate();
+				}finally {
+					DBUtil.closeQuietly(stmt1);
+					DBUtil.closeQuietly(stmt2);
+				}
+				return true;
+			}});
+		
+		
+	}
 
 }

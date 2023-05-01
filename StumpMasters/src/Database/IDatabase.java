@@ -26,5 +26,7 @@ public interface IDatabase {
 	public void updateDatabaseForEnPassant(int xpos, int ypos, int color);
 
 	void updateDatabaseForCastling(int rookXpos, int rookYpos);
+
+	public void updatDatabaseForPawnPromotion(int x, int y, char promotedPawnChar);
 	
 }

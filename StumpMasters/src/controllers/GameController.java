@@ -44,6 +44,7 @@ public class GameController {
 		this.model.setGameMoves(boardLocations);
 		
 		//if there are no moves is boardLocations, the game is reset
+		checkForPawnPromotion();
 		if(boardLocations.length() == 0) {
 			db.resetLocations();
 		}
@@ -64,6 +65,17 @@ public class GameController {
 		}
 	}
 	
+	private void checkForPawnPromotion() {
+		try{Integer.parseInt(""+this.model.getGameMoves().charAt(model.getGameMoves().length()-4));
+		}catch(NumberFormatException e){
+			db.updatDatabaseForPawnPromotion(Integer.parseInt(""+this.model.getGameMoves().charAt(model.getGameMoves().length()-6))-1,
+					Integer.parseInt(""+this.model.getGameMoves().charAt(model.getGameMoves().length()-5))-1,
+					this.model.getGameMoves().charAt(model.getGameMoves().length()-4));
+		}catch(StringIndexOutOfBoundsException e) {
+			
+		}
+	}
+
 	public String getPossibleMoves(String clickedOnLocation, String playerTurn) {
 		
 		//Creates String to Send to Server that has list of locations the Selected Piece can Move 
@@ -216,11 +228,7 @@ public class GameController {
 		//en passant is true for that pawn next to it
 		//Step 1, grab the last part of the game string
 		//if last move was pawn promotion , break
-		int possiblePawnOldXpos = -1;
-		int possiblePawnOldYpos = -1;
-		int	possiblePawnNewXpos = -1;
-		int possiblePawnNewYpos = -1;
-		
+		int possiblePawnOldXpos = -1;int possiblePawnOldYpos = -1;int	possiblePawnNewXpos = -1;int possiblePawnNewYpos = -1;
 		if(gameMoves.length() > 8) {
 			possiblePawnOldXpos = Integer.parseInt(""+gameMoves.charAt(gameMoves.length()-7))-1;
 			possiblePawnOldYpos = Integer.parseInt(""+gameMoves.charAt(gameMoves.length()-6))-1;
@@ -239,7 +247,7 @@ public class GameController {
 						if(board[possiblePawnNewYpos][possiblePawnNewXpos].getColor() == Piece.WHITE){
 							enPassantablePawn.setEnPassantLoc(new Integer[] {possiblePawnOldXpos,possiblePawnOldYpos+1});
 						}else {enPassantablePawn.setEnPassantLoc(new Integer[] {possiblePawnOldXpos,possiblePawnOldYpos-1});}
-						System.out.println("EnPassantSet:");return true;
+						return true;
 					}}
 				}else if(possiblePawnNewXpos+1 <=7){if(board[possiblePawnNewYpos][possiblePawnNewXpos+1] != null) {
 					if(board[possiblePawnNewYpos][possiblePawnNewXpos+1] instanceof Pawn) {
@@ -247,7 +255,7 @@ public class GameController {
 						if(board[possiblePawnNewYpos][possiblePawnNewXpos].getColor() == Piece.WHITE){
 						enPassantablePawn.setEnPassantLoc(new Integer[] {possiblePawnOldXpos,possiblePawnOldYpos+1});
 					}else {enPassantablePawn.setEnPassantLoc(new Integer[] {possiblePawnOldXpos,possiblePawnOldYpos-1});}
-System.out.println("EnPassantSet");return true;
+						return true;
 					}}}}}}return false;
 	}
 }

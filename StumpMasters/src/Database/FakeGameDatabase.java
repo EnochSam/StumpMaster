@@ -191,4 +191,11 @@ public class FakeGameDatabase implements IDatabase{
 		
 	}
 
+
+	@Override
+	public void updatDatabaseForPawnPromotion(int x, int y, char promotedPawnChar) {
+		// TODO Auto-generated method stub
+		
+	}
+
 }
