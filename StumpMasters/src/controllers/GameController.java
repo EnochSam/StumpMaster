@@ -20,7 +20,7 @@ import pieceModels.Queen;
 import pieceModels.Rook;
 
 public class GameController {
-	
+	//zELLER gAE 
 	//0 for Fake
 	//1 for Real
 	private int dbTest = 1;
@@ -238,24 +238,25 @@ public class GameController {
 			}catch(NumberFormatException e) {
 				return false;
 			}
+			System.out.println("Good");
 			if(this.model.getBoard()[possiblePawnNewYpos][possiblePawnNewXpos] instanceof Pawn){
 			if((possiblePawnOldYpos == 1 || possiblePawnOldYpos == 6) && Math.abs(possiblePawnNewYpos-possiblePawnOldYpos)==2) {
 				//checks left of Pawn
-				if(board[possiblePawnNewYpos][possiblePawnNewXpos-1] != null){
-					if(possiblePawnNewXpos-1 >=0) {if(board[possiblePawnNewYpos][possiblePawnNewXpos-1] instanceof Pawn) {
+				if(possiblePawnNewXpos-1 >=0) {if(board[possiblePawnNewYpos][possiblePawnNewXpos-1] != null){
+					 if(board[possiblePawnNewYpos][possiblePawnNewXpos-1] instanceof Pawn) {
 						Pawn enPassantablePawn = (Pawn) board[possiblePawnNewYpos][possiblePawnNewXpos-1];
 						if(board[possiblePawnNewYpos][possiblePawnNewXpos].getColor() == Piece.WHITE){
 							enPassantablePawn.setEnPassantLoc(new Integer[] {possiblePawnOldXpos,possiblePawnOldYpos+1});
 						}else {enPassantablePawn.setEnPassantLoc(new Integer[] {possiblePawnOldXpos,possiblePawnOldYpos-1});}
-						return true;
+						 return true;
 					}}
-				}else if(possiblePawnNewXpos+1 <=7){if(board[possiblePawnNewYpos][possiblePawnNewXpos+1] != null) {
+				}if(possiblePawnNewXpos+1 <=7){if(board[possiblePawnNewYpos][possiblePawnNewXpos+1] != null) {
 					if(board[possiblePawnNewYpos][possiblePawnNewXpos+1] instanceof Pawn) {
 						Pawn enPassantablePawn = (Pawn) board[possiblePawnNewYpos][possiblePawnNewXpos+1];
 						if(board[possiblePawnNewYpos][possiblePawnNewXpos].getColor() == Piece.WHITE){
 						enPassantablePawn.setEnPassantLoc(new Integer[] {possiblePawnOldXpos,possiblePawnOldYpos+1});
 					}else {enPassantablePawn.setEnPassantLoc(new Integer[] {possiblePawnOldXpos,possiblePawnOldYpos-1});}
-						return true;
+						 return true;
 					}}}}}}return false;
 	}
 }
