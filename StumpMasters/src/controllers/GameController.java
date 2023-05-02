@@ -2,6 +2,7 @@ package controllers;
 
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import Database.DBUtil;
@@ -182,7 +183,7 @@ public class GameController {
 							this.model.getBoard()[newPieceYpos][newPieceXpos] != null) {
 						
 						Pawn pawn = (Pawn) this.model.getBoard()[newPieceYpos][newPieceXpos];
-						if(pawn.getEnPassantLoc() != null) {
+						if(pawn.getEnPassantLoc() != null && pawn.getEnPassantLoc()[0] == x[0] && pawn.getEnPassantLoc()[1] == x[1]) {
 							int capturedYpos = pawn.getColor() == Piece.WHITE?
 									pawn.getEnPassantLoc()[1]-1: pawn.getEnPassantLoc()[1]+1; 
 							String leftOfSplit = this.model.getGameMoves().substring(0, this.model.getGameMoves().length() -2 );
@@ -238,7 +239,6 @@ public class GameController {
 			}catch(NumberFormatException e) {
 				return false;
 			}
-			System.out.println("Good");
 			if(this.model.getBoard()[possiblePawnNewYpos][possiblePawnNewXpos] instanceof Pawn){
 			if((possiblePawnOldYpos == 1 || possiblePawnOldYpos == 6) && Math.abs(possiblePawnNewYpos-possiblePawnOldYpos)==2) {
 				//checks left of Pawn
@@ -258,5 +258,9 @@ public class GameController {
 					}else {enPassantablePawn.setEnPassantLoc(new Integer[] {possiblePawnOldXpos,possiblePawnOldYpos-1});}
 						 return true;
 					}}}}}}return false;
+	}
+
+	public List<String> getCapturedPieces(int playerColor) {
+		return db.getCapturedPlayersList(playerColor);
 	}
 }

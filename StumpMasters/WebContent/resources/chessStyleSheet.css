@@ -34,12 +34,16 @@
 	height : 50px;
 	background-color : green;	
 }
+#board{
 
+	
+}
 #board table{
 	display : grid;
 	justify-content: space-around;
 	border : 5px;
 	row-gap : 0px;
+	/*float: left;*/
 }
 
 #board piece {
@@ -73,6 +77,14 @@
 	clip-path: inset(0px 250px 250px 0px);
 }
 
+.BlackCaptured{
+	height: 50px;
+	width:50px;
+}
+.WhiteCaptured{
+	height: 50px;
+	width:50px;
+}
 #WhiteKing{
 	clip-path: inset(0px 250px 50px 0px);
 }

@@ -573,5 +573,33 @@ public class DerbyDatabase implements IDatabase {
 		
 		
 	}
+	@Override
+	public List<String> getCapturedPlayersList(int playerColor) {
+		// TODO Auto-generated method stub
+		List<String> captured= new ArrayList<String>();
+		String color = playerColor == Piece.WHITE? "White":"Black";
+		executeTransaction(new Transaction<Boolean>() {
+
+			public Boolean execute(Connection conn) throws SQLException {
+				PreparedStatement stmt1 = null;
+				PreparedStatement stmt2 = null;
+
+				try {
+					stmt1 = conn.prepareStatement(
+							"select type from pieces where color = ? and isCaptured = true"
+					);
+					stmt1.setInt(1, playerColor);
+					ResultSet resultSet = stmt1.executeQuery();
+					while(resultSet.next()) {
+						captured.add(color+resultSet.getObject(1));
+					}
+					
+				}finally {
+					DBUtil.closeQuietly(stmt1);
+				}
+				return true;
+			}});
+		return captured;
+	}
 
 }

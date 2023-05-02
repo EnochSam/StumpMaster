@@ -1,6 +1,7 @@
 package Database;
 
 import java.sql.SQLException;
+import java.util.List;
 
 import models.Game;
 import models.Player;
@@ -28,5 +29,7 @@ public interface IDatabase {
 	void updateDatabaseForCastling(int rookXpos, int rookYpos);
 
 	public void updatDatabaseForPawnPromotion(int x, int y, char promotedPawnChar);
+
+	public List<String> getCapturedPlayersList(int playerColor);
 	
 }

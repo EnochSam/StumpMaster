@@ -163,15 +163,23 @@ public class GameServlet extends HttpServlet {
 			out.println("</center>");
 		}
 
-		JSONObject obj = new JSONObject();
+		JSONObject board = new JSONObject();
+		JSONObject rightCaptured = new JSONObject();
+		JSONObject leftCaptured = new JSONObject();
 		String[][] loadBoard = loadBoard(request,model.getBoard());
 		try {
-			obj.put("board", loadBoard);
+			board.put("board", loadBoard);
+			request.setAttribute("boardJson", board.toString());
+			rightCaptured.put("rightCaptured",controller.getCapturedPieces(Piece.BLACK));
+			request.setAttribute("rightCaptured", rightCaptured.toString());
+			leftCaptured.put("leftCaptured", controller.getCapturedPieces(Piece.WHITE));
+			request.setAttribute("leftCaptured", leftCaptured.toString());
+
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		request.setAttribute("jsonstring", obj.toString());
+		
 
 		
 		//sends all atributes to client

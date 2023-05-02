@@ -20,10 +20,12 @@
     	<input type = "hidden" value ="" id=possibleMoves >
     </form>
     <script>
-    	let pieceImg = ${jsonstring};
+    	let pieceImg = ${boardJson};
     
     	//Grabs Values passed from Servelt and store them in variables
     	let possibleMoves = "${possibleMoves}"
+    	let RightCaptured = ${rightCaptured};
+    	let LeftCaptured = ${leftCaptured};
     	let playerTurn = "${playerTurn}";
 		let selectingPiece = "${selectingPiece}"
 		let selectValidMoves = "${selectValidMoves}"
@@ -159,14 +161,45 @@
             //Create table
              //<td> == column
              //<tr> == row
+           	let leftRow = document.createElement("table")
+           	for(var y = 0; y < 8; y++){
+           		let tr = document.createElement("tr");
+           		for(var x = 0; x < 2; x++){
+           			
+           		}
+           	 	leftRow.appendChild(tr)
+           		
+           	}
+           	
+           	document.getElementById("Board").appendChild(leftRow)
+           	
             let board = document.createElement("table");
-            board.style = "${pageContext.servletContext.contextPath}/resources/chessStyleSheet.css"
             for(let y=8; y >= 1; y--){
+            	
+            	let LeftCaptureColumn = document.createElement("td");
+       			let button = document.createElement("div");
+       			button.className = "WhiteCaptured"
+       			LeftCaptureColumn.style = "width: 50px;height: 50px;"
+       			LeftCaptureColumn.appendChild(button)
+                
+                let LeftCaptureColumn2 = document.createElement("td");
+       			let button2 = document.createElement("div");
+       			button2.className = "WhiteCaptured"
+       			LeftCaptureColumn2.style = "width: 50px;height: 50px;"
+       			LeftCaptureColumn2.appendChild(button2)
+                
             	//create individual spaces on table
                 let tr = document.createElement("tr")
-                tr.style = "${pageContext.servletContext.contextPath}/resources/chessStyleSheet.css"
-                let td = null;
+
+                //tr.style = "${pageContext.servletContext.contextPath}/resources/chessStyleSheet.css"
+         		tr.appendChild(LeftCaptureColumn)
+         		tr.appendChild(LeftCaptureColumn2)
+                 td = null;
                 let point = null;
+                td = document.createElement("td");
+                
+                td.innerHTML = y;
+                tr.appendChild(td)
                 for(let  x= 1; x <= 8; x++){
                     
                     //create new space in x axis
@@ -203,13 +236,46 @@
                     
                     //add table row to table row
                     tr.appendChild(td)
+                    
                 }
 				//
+				let RightCaptureColumn = document.createElement("td");
+       				button = document.createElement("div");
+       				button.className = "BlackCaptured"
+       				RightCaptureColumn.appendChild(button)
+                	let RightCaptureColumn2 = document.createElement("td");
+       				button2 = document.createElement("div");
+       				button2.className = "BlackCaptured"
+       				RightCaptureColumn2.appendChild(button2)
+       				tr.appendChild(RightCaptureColumn)
+       				tr.appendChild(RightCaptureColumn2)
                 board.appendChild(tr)
 
             }
             document.getElementById("Board").appendChild(board)
-		
+			//Fills Captured Rows
+			let leftColumns = document.getElementsByClassName("WhiteCaptured")
+			for(let i = 0; i < LeftCaptured["leftCaptured"].length; i++){
+				img = document.createElement("img")
+   				img.src = "${pageContext.servletContext.contextPath}/resources/PiecesPNG.png"
+   				img.id = LeftCaptured["leftCaptured"][i]
+   				if(img.id == "null"){
+   					img.id = "nothing"
+   				}
+   				leftColumns[i].appendChild(img)
+			}
+			let rightColumns = document.getElementsByClassName("BlackCaptured")
+			for(let i = 0; i < RightCaptured["rightCaptured"].length; i++){
+				img = document.createElement("img")
+   				img.src = "${pageContext.servletContext.contextPath}/resources/PiecesPNG.png"
+   				img.id = RightCaptured["rightCaptured"][i]
+				if(img.id == "null"){
+   					img.id = "nothing"
+   				}
+   				rightColumns[i].appendChild(img)
+			}
+            
+           // for(var i = 0;)
             //checks if Get Values exist
             if(possibleMoves.length > 0){
             	for(let i = 0; i < possibleMoves.length; i+=3){
