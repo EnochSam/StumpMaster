@@ -346,7 +346,7 @@ public class DerbyDatabase implements IDatabase {
 				PreparedStatement stmt1 = null;
 				try {
 					stmt1 = conn.prepareStatement(
-							"select type,x,y,movedAlready from pieces where color = ?"
+							"select type,x,y,movedAlready,isCaptured from pieces where color = ?"
 					);
 					stmt1.setInt(1,playerColor);
 					ResultSet resultSet = stmt1.executeQuery();
@@ -356,6 +356,7 @@ public class DerbyDatabase implements IDatabase {
 						piece.setYpos(Integer.parseInt(""+resultSet.getObject(3)));
 						piece.setColor(playerColor);
 						piece.setHasMovedAlready((""+resultSet.getObject(4)).equals("true"));
+						piece.setCaptured((""+resultSet.getObject(5)).equals("true"));
 						if(piece instanceof King) {
 							player.getPieces()[0] = piece;
 						}else {

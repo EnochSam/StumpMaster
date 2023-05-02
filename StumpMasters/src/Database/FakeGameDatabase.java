@@ -1,5 +1,7 @@
 package Database;
 
+import java.util.List;
+
 import models.Player;
 import pieceModels.Bishop;
 import pieceModels.Knight;
@@ -196,6 +198,13 @@ public class FakeGameDatabase implements IDatabase{
 	public void updatDatabaseForPawnPromotion(int x, int y, char promotedPawnChar) {
 		// TODO Auto-generated method stub
 		
+	}
+
+
+	@Override
+	public List<String> getCapturedPlayersList(int playerColor) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

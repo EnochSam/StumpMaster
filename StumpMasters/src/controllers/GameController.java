@@ -212,12 +212,15 @@ public class GameController {
 	}
 	
 	private Boolean checkForCheckMate(Player player) {
+		Piece p;
 		for(Piece piece : player.getPieces()) {
 			if(!piece.getCaptured()) {
 				if(piece.getValidMoves(this.model.getBoard(), piece.getColor()).size() > 0) {
+					System.out.println(piece.type()+" can move out of check for"+piece.getColor()
+					+"at "+piece.getXpos()+":"+piece.getYpos());
 					return false;
 				}
-
+			
 			}
 		}
 		return true;
