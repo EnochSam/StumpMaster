@@ -252,6 +252,24 @@
                 board.appendChild(tr)
 
             }
+          //creates bottom row of letters
+          tr =document.createElement("tr");
+          td = document.createElement("td");
+          br = document.createElement("div");
+          
+          br.style = "width:130px;"
+          td.appendChild(br)
+        	  tr.appendChild(td)
+            for(let i = 0; i < 8; i++){
+				td = document.createElement("td");
+                td.style = "width: 50px;"
+                br = document.createElement("div");
+                br.innerHTML = String.fromCharCode(97+i);
+                br.style = "width:50px;"
+                td.appendChild(br)
+               	tr.appendChild(td)
+            }
+            board.appendChild(tr)
             document.getElementById("Board").appendChild(board)
 			//Fills Captured Rows
 			let leftColumns = document.getElementsByClassName("WhiteCaptured")
