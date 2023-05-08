@@ -27,6 +27,7 @@ public class DerbyDatabase implements IDatabase {
 			throw new IllegalStateException("Could not load Derby driver"+ e.getMessage());
 		}
 	}
+
 	
 	private interface Transaction<ResultType> {
 		public ResultType execute(Connection conn) throws SQLException;
@@ -35,7 +36,8 @@ public class DerbyDatabase implements IDatabase {
 	private static final int MAX_ATTEMPTS = 10;
 
 	Game model;
-	
+	private String username;
+
 	public void setModel(Game model) {
 		this.model = model;
 	}
@@ -95,7 +97,7 @@ public class DerbyDatabase implements IDatabase {
 		
 		return conn;
 	}
-
+	
 	
 	public void createTables() {
 		
@@ -108,18 +110,20 @@ public class DerbyDatabase implements IDatabase {
 				try {
 					stmt1 = conn.prepareStatement(
 							"create table players (" +
-							"	color integer primary key " +
+							"	player_id integer primary key " +
 							"		generated always as identity (start with 0, increment by 1), " +
+							"	username varchar(70),"+
+							"	color integer,"+
 							"	type varchar(70) " +
 							")"
 					);
 					stmt1.executeUpdate();
-					
 					stmt2 = conn.prepareStatement(
 						"create table pieces (" +
 						"	piece_id integer primary key " +
 						"		generated always as identity (start with 0, increment by 1), " +
-						"	color integer constraint color references players, " +
+						"	player_id integer constraint player_id references players, " +
+						" color integer,"+
 						"	type varchar(40)," +
 						"	x integer," +
 						"	y integer,"+
@@ -140,7 +144,7 @@ public class DerbyDatabase implements IDatabase {
 		});
 	}
 	
-	public void loadInitialData() {
+	public void loadInitialData(String username) {
 		executeTransaction(new Transaction<Boolean>() {
 			@Override
 			public Boolean execute(Connection conn) throws SQLException {
@@ -159,17 +163,19 @@ public class DerbyDatabase implements IDatabase {
 				
 				try {
 					// populate players table (do authors first, since color is foreign key in books table)
-					insertPlayer = conn.prepareStatement("insert into players (type) values (?)");
-					for (Player player : playerList) {
+					insertPlayer = conn.prepareStatement("insert into players (username) values (?)");
 //						// auto-generated primary key, don't insert this
-						insertPlayer.setString(1,player.getType());
-						insertPlayer.addBatch();
-					}
-					insertPlayer.executeBatch();
-					
+						insertPlayer.setString(1, username);
+					insertPlayer.executeUpdate();		
+					PreparedStatement getPlayerId = null;
+					getPlayerId = conn.prepareStatement("select player_id from players where username = ?");
+//					// auto-generated primary key, don't insert this
+					getPlayerId.setString(1, username);
+					ResultSet playerId = getPlayerId.executeQuery();
+					playerId.next();
 					// populate books table (do this after authors table,
 					// since author_id must exist in authors table before inserting book)
-					insertPiece = conn.prepareStatement("insert into pieces (color, type, x, y, isCaptured, movedAlready) values (?, ?, ?, ?,?, ?)");
+					insertPiece = conn.prepareStatement("insert into pieces (color, type, x, y, isCaptured, movedAlready, player_id) values (?, ?, ?, ?,?, ?,?)");
 					for (Piece piece : pieceList) {
 //						insertBook.setInt(1, book.getBookId());		// auto-generated primary key, don't insert this
 						insertPiece.setInt(1, piece.getColor());
@@ -178,6 +184,7 @@ public class DerbyDatabase implements IDatabase {
 						insertPiece.setInt(4,  piece.getYpos());
 						insertPiece.setString(5,  ""+piece.getCaptured());
 						insertPiece.setString(6,  ""+piece.getHasMovedAlready());
+						insertPiece.setInt(7,Integer.parseInt(""+playerId.getObject(1)));
 						insertPiece.addBatch();
 					}
 					insertPiece.executeBatch();
@@ -194,7 +201,13 @@ public class DerbyDatabase implements IDatabase {
 	public static void main(String[] args) throws IOException {
 		
 		DerbyDatabase db = new DerbyDatabase();
-		db.resetLocations();
+		db.loadInitialData("rfields4");
+	}
+	
+	@Override
+	public void setUsername(String username) {
+		this.username= username;
+		
 	}
 	
 	@Override
@@ -210,10 +223,11 @@ public class DerbyDatabase implements IDatabase {
 						
 					//create pieces for all tuples where isCaptured = false, add piece to board at right location
 						stmt1 = conn.prepareStatement(
-								"select type, x, y, color, movedAlready, piece_id "+
-								"from pieces "+
-								"where isCaptured  = 'false'"
+								"select pieces.type, pieces.x, pieces.y, pieces.color, pieces.movedAlready, pieces.piece_id "+
+								"from pieces,players "+
+								"where isCaptured  = 'false' and players.player_id = pieces.player_id and players.username = ?"
 								);
+						stmt1.setString(1,username);
 						resultSet = stmt1.executeQuery();			
 				
 				
@@ -250,13 +264,15 @@ public class DerbyDatabase implements IDatabase {
 				PreparedStatement stmt2 = null;
 				PreparedStatement stmt3 = null;
 				PreparedStatement stmt4 = null;
+				PreparedStatement stmt5 = null;
 				boolean tableExistPi = true;
 				boolean tableExistPl = true;
 				try {
 					try {
 					stmt1 = conn.prepareStatement(
-							"select * from pieces"
+							"select pieces.color from pieces, players where pieces.player_id = players.player_id and players.username = ?"
 					);
+					stmt1.setString(1, username);		
 					stmt1.executeQuery();
 					}
 					catch(SQLException e) {
@@ -264,33 +280,44 @@ public class DerbyDatabase implements IDatabase {
 						tableExistPi = false;
 					}
 				}finally {
-					DBUtil.closeQuietly(stmt1);;
+					DBUtil.closeQuietly(stmt1);
 
 				}
 				
-
+				try {
 				try {
 					stmt2 = conn.prepareStatement(
-							"select * from players"
+							"select color from players where username = '?'"
 					);
+					stmt2.setString(1, username);
 					stmt2.executeQuery();
 				}
 				catch(SQLException e) {
 					tableExistPl = false;
 				}
-				finally {
-					DBUtil.closeQuietly(stmt2);;
+				}finally {
+					DBUtil.closeQuietly(stmt2);
 				}
 				
 				if(tableExistPi && tableExistPl) {
 					try {					
 						stmt3 = conn.prepareStatement(
-								"drop table pieces"
+								"select piece_id from  pieces, players where pieces.player_id = players.player_id and players.username = ?"
 						);
-						stmt3.executeUpdate();
+						stmt3.setString(1, username);
+						stmt3.executeQuery();
+						ResultSet stmt3R = stmt3.getResultSet();
+						while(stmt3R.next()) {
+							stmt1 = conn.prepareStatement(
+									"delete from  pieces where piece_id = ?"
+									);
+							stmt1.setString(1, ""+stmt3R.getObject(1));
+							stmt1.executeQuery();
+						}
 						stmt4 = conn.prepareStatement(
-								"drop table players"
+								"delete from players where username = ?"
 						);
+						stmt4.setString(1, username);
 						stmt4.executeUpdate();
 						
 						DBUtil.closeQuietly(stmt3);
@@ -307,21 +334,32 @@ public class DerbyDatabase implements IDatabase {
 				else if(tableExistPi) {
 					try {
 						stmt3 = conn.prepareStatement(
-							"drop table pieces"
-					);
-					stmt3.executeUpdate();
-					DBUtil.closeQuietly(stmt3);
+								"select piece_id from pieces, players where pieces.player_id = players.player_id and players.username = ?"
+						);
+						stmt3.setString(1, username);
+						ResultSet stmt4R = stmt3.executeQuery();
+						while(stmt4R.next()) {
+							stmt5 = conn.prepareStatement(
+									"delete from  pieces where piece_id = ?"
+									);
+							stmt5.setInt(1, Integer.parseInt(""+stmt4R.getObject(1)));
+							stmt5.executeUpdate();
+							DBUtil.closeQuietly(stmt5);
+						}
 					}
 					finally {
 						DBUtil.closeQuietly(stmt3);
+						DBUtil.closeQuietly(stmt5);
+
 					}
 				}
 				else if(tableExistPl) {
 					try {
 						stmt4 = conn.prepareStatement(
-								"drop table players"
+								"delete from players where username = ?"
 						);
 						stmt4.executeUpdate();
+						stmt4.setString(1,username);
 						DBUtil.closeQuietly(stmt4);
 					}
 					finally {
@@ -333,8 +371,7 @@ public class DerbyDatabase implements IDatabase {
 				
 		});	
 		//create tables by create table function in this file
-		createTables();
-		loadInitialData();
+		loadInitialData(username);
 	}	
 	@Override
 	public Player populatePlayer(int playerColor) {
@@ -346,9 +383,11 @@ public class DerbyDatabase implements IDatabase {
 				PreparedStatement stmt1 = null;
 				try {
 					stmt1 = conn.prepareStatement(
-							"select type,x,y,movedAlready,isCaptured from pieces where color = ?"
+							"select pieces.type, pieces.x, pieces.y, pieces.movedAlready, pieces.isCaptured from pieces, players where pieces.color = ? "+
+					"	and players.player_id = pieces.player_id and players.username = ? "
 					);
 					stmt1.setInt(1,playerColor);
+					stmt1.setString(2,username);
 					ResultSet resultSet = stmt1.executeQuery();
 					while(resultSet.next()) {
 						Piece piece = Piece.findPiece(""+resultSet.getObject(1));
@@ -383,10 +422,12 @@ public class DerbyDatabase implements IDatabase {
 			PreparedStatement stmt1 = null;
 			try {
 				stmt1 = conn.prepareStatement(
-						"select type, color ,movedAlready from pieces where x = ? and y = ? and isCaptured = false"
+						"select pieces.type, pieces.color , pieces.movedAlready from pieces, players where pieces.x = ? and pieces.y = ? and pieces.isCaptured = false"+
+								" and players.player_id = pieces.player_id and players.username = ?"
 				);
 				stmt1.setInt(1, pieceXpos);
 				stmt1.setInt(2, pieceYpos);
+				stmt1.setString(3,username);
 				ResultSet resultSet = stmt1.executeQuery();
 				while(resultSet.next()) {
 					Piece piece = Piece.findPiece(""+resultSet.getObject(1));
@@ -418,20 +459,24 @@ public class DerbyDatabase implements IDatabase {
 
 			try {
 				stmt1 = conn.prepareStatement(
-						"select piece_id from pieces where x = ? and y = ? and isCaptured = false"
+						"select pieces.piece_id from pieces,players where pieces.x = ? and pieces.y = ? and pieces.isCaptured = false "+
+								"and players.player_id = pieces.player_id and players.username = ?"
 				);
 				stmt1.setInt(1, oldX);
 				stmt1.setInt(2, oldY);
+				stmt1.setString(3, username);
 				ResultSet resultSet = stmt1.executeQuery();
 				resultSet.next();
 				
 				int movingPiece_id = Integer.parseInt(""+resultSet.getObject(1));
 				int capturedPiece_id = -1;
 				stmt2 = conn.prepareStatement(
-						"select piece_id from pieces where x = ? and y = ? and isCaptured = false"
+						"select pieces.piece_id from pieces,players where pieces.x = ? and pieces.y = ? and pieces.isCaptured = false"+
+				"	and players.player_id = pieces.player_id and players.username = ?"
 				);
 				stmt2.setInt(1, newX);
 				stmt2.setInt(2, newY);
+				stmt2.setString(3, username);
 				resultSet = stmt2.executeQuery();
 				while(resultSet.next()){
 				capturedPiece_id = Integer.parseInt(""+resultSet.getObject(1));
@@ -475,7 +520,8 @@ public class DerbyDatabase implements IDatabase {
 
 				try {
 					stmt1 = conn.prepareStatement(
-							"select piece_id from pieces where x = ? and y = ? and isCaptured = false"
+							"select pieces.piece_id from pieces,players where pieces.x = ? and pieces.y = ? and pieces.isCaptured = false"
+							+"	 and players.player_id = pieces.player_id and players.username = ?"
 					);
 					stmt1.setInt(1, rookXpos);
 					stmt1.setInt(2, rookYpos);
@@ -510,7 +556,8 @@ public class DerbyDatabase implements IDatabase {
 
 				try {
 					stmt1 = conn.prepareStatement(
-							"select piece_id from pieces where x = ? and y = ? and isCaptured = false"
+							"select pieces.piece_id from pieces,players where pieces.x = ? and pieces.y = ? and pieces.isCaptured = false "+
+					"                   and players.player_id = pieces.player_id and players.username = ?"
 					);
 					stmt1.setInt(1, xpos);
 					stmt1.setInt(2, capturedy);
@@ -551,7 +598,8 @@ public class DerbyDatabase implements IDatabase {
 
 				try {
 					stmt1 = conn.prepareStatement(
-							"select piece_id from pieces where x = ? and y = ? and isCaptured = false"
+							"select pieces.piece_id from pieces,players where pieces.x = ? and pieces.y = ? and pieces.isCaptured = false"
+							+"	and players.player_id = pieces.player_id and players.username = ?"
 					);
 					stmt1.setInt(1, x);
 					stmt1.setInt(2, y);
@@ -587,8 +635,8 @@ public class DerbyDatabase implements IDatabase {
 
 				try {
 					stmt1 = conn.prepareStatement(
-							"select type from pieces where color = ? and isCaptured = true"
-					);
+							"select pieces.type from pieces,players where pieces.color = ? and pieces.isCaptured = true"
+					+"	and players.player_id = pieces.player_id and players.username = ?");
 					stmt1.setInt(1, playerColor);
 					ResultSet resultSet = stmt1.executeQuery();
 					while(resultSet.next()) {
@@ -602,5 +650,6 @@ public class DerbyDatabase implements IDatabase {
 			}});
 		return captured;
 	}
+	
 
 }

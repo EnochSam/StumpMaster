@@ -31,5 +31,7 @@ public interface IDatabase {
 	public void updatDatabaseForPawnPromotion(int x, int y, char promotedPawnChar);
 
 	public List<String> getCapturedPlayersList(int playerColor);
+
+	public void setUsername(String username);
 	
 }

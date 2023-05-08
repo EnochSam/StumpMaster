@@ -22,6 +22,7 @@ public class Game {
 	private boolean pawnPromotion;
 	private List<Integer[]> availableMoves = null;
 	private String gameMoves;
+	private boolean chekForMateInOne = false;
 	public Game() {
 		
 	}
@@ -90,5 +91,14 @@ public class Game {
 	
 	public void setGameMoves(String gameMoves) {
 		this.gameMoves = gameMoves;
+	}
+
+	public void setChekForMateInOne(boolean b) {
+		this.chekForMateInOne = b;
+		
+	}
+	
+	public Boolean getChekForMateInOne() {
+		return this.chekForMateInOne;
 	}
 }

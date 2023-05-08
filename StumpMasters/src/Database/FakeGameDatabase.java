@@ -207,4 +207,11 @@ public class FakeGameDatabase implements IDatabase{
 		return null;
 	}
 
+
+	@Override
+	public void setUsername(String username) {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

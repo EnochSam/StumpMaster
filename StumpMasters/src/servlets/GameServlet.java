@@ -37,7 +37,7 @@ public class GameServlet extends HttpServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) 
-			throws ServletException, IOException {
+		throws ServletException, IOException {
 		//Set Controller and Models
 		Game model = new Game();
 		//GameController controller = new GameController();
@@ -77,9 +77,11 @@ public class GameServlet extends HttpServlet {
 			//to tell Servlet to save the sessionData
 			request.setAttribute("beginningOfGame", true);
 			}	
-			
+			String username = request.getParameter("username");
+			System.out.println(username);
+			controller.setUsername(username);
 			try {
-				controller.setBoard(gameMoves);
+				controller.setBoard(gameMoves,playerTurn);
 			} catch (Exception e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
@@ -181,13 +183,15 @@ public class GameServlet extends HttpServlet {
 		}
 		
 
-		
+		controller.serverCheckForMateIn();
 		//sends all atributes to client
 		request.setAttribute("board", loadBoard);
 		request.setAttribute("gameMoves", model.getGameMoves());
 		request.setAttribute("playerTurn",playerTurn);
 		request.setAttribute("selectingPiece",selectingPiece);
 		request.setAttribute("selectValidMoves",selectValidMoves);
+		request.setAttribute("mateinone", model.getChekForMateInOne());
+		request.setAttribute("username", username);
 		if(model.getInCheckmate()) {
 			request.setAttribute("inCheckmate", true);
 		}

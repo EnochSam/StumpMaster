@@ -19,7 +19,7 @@ import pieceModels.Pawn;
 import pieceModels.Piece;
 import pieceModels.Queen;
 import pieceModels.Rook;
-
+//'5254 7775 4185 7886 8586 7574 8687 4746 8788 7473 8868 5847 6867 4868 6766 4748 6668 '
 public class GameController {
 	//zELLER gAE 
 	//0 for Fake
@@ -27,6 +27,7 @@ public class GameController {
 	private int dbTest = 1;
 	private IDatabase db = null;
 	private Game model;
+	private String username;
 	public void setModel(Game model){
 		this.model = model;
 	}
@@ -39,7 +40,7 @@ public class GameController {
 		}
 	}
 	
-	public void setBoard(String boardLocations) {		
+	public void setBoard(String boardLocations,String turn) {		
 		
 		//Sets the Game String to be passed back and forth
 		this.model.setGameMoves(boardLocations);
@@ -63,7 +64,9 @@ public class GameController {
 			if(checkForCheckMate(this.model.getWhitePlayer()) || checkForCheckMate(this.model.getBlackPlayer())) {
 				this.model.setInCheckmate(true);
 			}
+			
 		}
+			
 	}
 	
 	private void checkForPawnPromotion() {
@@ -148,6 +151,8 @@ public class GameController {
 					King king =(King) this.model.getBoard()[newPieceYpos][newPieceXpos];
 					for(String castleLoc : king.getCastlingLocation()) {
 						if(castleLoc != null) {
+							if(Integer.parseInt(castleLoc.charAt(0)+"") == newPieceXpos
+									&& Integer.parseInt(castleLoc.charAt(1)+"") == newPieceYpos) {
 							int rookOldXpos = -1;
 							int rookNewXpos = -1;
 							if(castleLoc.charAt(0) == '6') {
@@ -177,6 +182,7 @@ public class GameController {
 							this.model.setGameMoves( leftOfSplit+rookOldXpos+(newPieceYpos+1)+rookNewXpos+(newPieceYpos+1)+" "+rightOfSplit);
 						
 						}
+						}
 					}
 					//Checks For EnPassant
 					}else if(this.model.getBoard()[newPieceYpos][newPieceXpos] instanceof Pawn && 
@@ -194,9 +200,11 @@ public class GameController {
 						}
 					}
 					
+				
 				//Checks for Check/Checkmate on King
 				Player opponent = this.model.getBoard()[newPieceYpos][newPieceXpos].getColor() == 0 ? this.model.getBlackPlayer(): this.model.getWhitePlayer(); 
 				King opposingKing = (King) opponent.getPieces()[0];
+				
 				if(opposingKing.checkForCheck(this.model.getBoard(), opposingKing.getColor())){
 					this.model.setInCheck(true);
 					if(checkForCheckMate(opponent)) {
@@ -204,7 +212,14 @@ public class GameController {
 					}
 				}else {
 					this.model.setInCheck(false);
+					//if(this.chekForMateInOne(1,this.model.getBlackPlayer(),this.model.getBoard()) || this.chekForMateInOne(0,this.model.getWhitePlayer(),this.model.getBoard())) {
+					//	this.model.setChekForMateInOne(true);
+					//}else {
+					//	this.model.setChekForMateInOne(false);
+					//}
 				}
+				
+				
 				return true;
 			}
 		}
@@ -216,8 +231,6 @@ public class GameController {
 		for(Piece piece : player.getPieces()) {
 			if(!piece.getCaptured()) {
 				if(piece.getValidMoves(this.model.getBoard(), piece.getColor()).size() > 0) {
-					System.out.println(piece.type()+" can move out of check for"+piece.getColor()
-					+"at "+piece.getXpos()+":"+piece.getYpos());
 					return false;
 				}
 			
@@ -265,5 +278,58 @@ public class GameController {
 
 	public List<String> getCapturedPieces(int playerColor) {
 		return db.getCapturedPlayersList(playerColor);
+	}
+	public Boolean chekForMateInOne(int playColor,Player player,Piece[][] board){
+		Boolean mateIn1 = false;
+		//opp king
+		Player opponent = playColor == Piece.WHITE? this.model.getBlackPlayer(): this.model.getWhitePlayer();
+		King king = (King) opponent.getPieces()[0];
+		for(int j = 0; j < 8;j++) {
+			
+		
+		for(Piece piece: board[j]) {
+			if(piece != null && piece.getColor() == playColor) {
+				for(Integer[] loc : piece.getValidMoves(board, playColor)) {
+					if((loc[0]!= king.getXpos() || loc[1]!= king.getYpos())){
+
+					Piece old = board[loc[1]][loc[0]];
+					if(old != null) {
+					old.setCaptured(true);
+					}
+					int oldx = piece.getXpos(); int oldy = piece.getYpos();
+					board[piece.getYpos()][piece.getXpos()] = null;
+					piece.setXpos(loc[0]);
+					piece.setYpos(loc[1]);
+					board[piece.getYpos()][piece.getXpos()] = piece;
+					if(this.checkForCheckMate(opponent)) {
+						mateIn1 = true;
+					}
+					if(old != null) {
+					old.setCaptured(false);
+					}
+					board[piece.getYpos()][piece.getXpos()] = old;
+					piece.setXpos(oldx);
+					piece.setYpos(oldy);
+					board[piece.getYpos()][piece.getXpos()] = piece;
+					}
+				}
+				}
+			}
+		}
+		
+		return mateIn1;
+	}
+	
+	public void serverCheckForMateIn(){
+		if(chekForMateInOne(0,this.model.getWhitePlayer(),this.model.getBoard()) || chekForMateInOne(1,this.model.getBlackPlayer(),this.model.getBoard())) {
+			this.model.setChekForMateInOne(true);
+		}else {
+				this.model.setChekForMateInOne(false);
+		}
+	}
+
+	public void setUsername(String username) {
+		this.username = username;
+		db.setUsername(username);
 	}
 }

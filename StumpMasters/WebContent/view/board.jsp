@@ -11,13 +11,15 @@
 <body>
 	<
     <form method="post" id= "gameForm" action="${pageContext.servletContext.contextPath}/Game">
+        	<input type = "hidden" value ="${username}" name=username >
+    
     <div id="Board">
         
     </div>
     </form>
     <form id ="form" method="get" action="${pageContext.servletContext.contextPath}/MainMenu">
     	<input type="submit" value="Quit Game">
-    	<input type = "hidden" value ="" id=possibleMoves >
+    	<input type = "hidden" value ="${username}" name=username >
     </form>
     <script>
     	let pieceImg = ${boardJson};
@@ -34,9 +36,10 @@
 		let tileStart = ${beginningOfGame};
 		let pawnPromotion = "${PawnPromotion}";
 		let gameMoves = "${gameMoves}"
+		let mateinone = "${mateinone}"
 		
 		//Displays if a player is in Checkmate
-				if(inCheckmate == "true"){
+			if(inCheckmate == "true"){
 			let inCheckSign = document.createElement("div")
 			inCheckSign.id = "inCheck"
 			inCheckSign.innerHTML = "Checkmate";
@@ -56,6 +59,11 @@
 			inCheckSign.innerHTML = "Check";
 			document.getElementById("gameForm").prepend(inCheckSign)
 			
+		}else if(mateinone == "true"){
+			let mateinoneSig = document.createElement("div")
+			mateinoneSig.id = "MateNextMove"
+			mateinoneSig.innerHTML = "Mate Next Move";
+			document.getElementById("gameForm").prepend(mateinoneSig)
 		}
 		
     	//Grabs from Servlet the GameMoves Data
