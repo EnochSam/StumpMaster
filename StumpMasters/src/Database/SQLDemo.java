@@ -157,7 +157,11 @@ public class SQLDemo {
 		while (resultSet.next()) {
 			List<String> row = new ArrayList<String>();
 			for (int i = 1; i <= numColumns; i++) {
-				row.add(resultSet.getObject(i).toString());
+				Object val = resultSet.getObject(i);
+				if(val == null) {
+					val = "null";
+				}
+				row.add(val.toString());
 			}
 			rowList.add(row);
 		}

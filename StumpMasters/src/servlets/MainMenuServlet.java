@@ -22,6 +22,9 @@ public class MainMenuServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) 
 			throws ServletException, IOException {
 		//Get Menu JSP File
+		if(request.getParameter("username") != null) {
+			request.setAttribute("username",request.getParameter("username") );
+		}
 		RequestDispatcher rd = request.getRequestDispatcher("view/menu.jsp");
 		rd.forward(request, response);
 	}

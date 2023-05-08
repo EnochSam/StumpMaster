@@ -78,7 +78,6 @@ public class GameServlet extends HttpServlet {
 			request.setAttribute("beginningOfGame", true);
 			}	
 			String username = request.getParameter("username");
-			System.out.println(username);
 			controller.setUsername(username);
 			try {
 				controller.setBoard(gameMoves,playerTurn);

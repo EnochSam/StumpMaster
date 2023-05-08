@@ -525,6 +525,7 @@ public class DerbyDatabase implements IDatabase {
 					);
 					stmt1.setInt(1, rookXpos);
 					stmt1.setInt(2, rookYpos);
+					stmt1.setString(3, username);
 					ResultSet resultSet = stmt1.executeQuery();
 					resultSet.next();
 					
@@ -561,6 +562,7 @@ public class DerbyDatabase implements IDatabase {
 					);
 					stmt1.setInt(1, xpos);
 					stmt1.setInt(2, capturedy);
+					stmt1.setString(3, username);
 					ResultSet resultSet = stmt1.executeQuery();
 					resultSet.next();
 					
@@ -603,6 +605,7 @@ public class DerbyDatabase implements IDatabase {
 					);
 					stmt1.setInt(1, x);
 					stmt1.setInt(2, y);
+					stmt1.setString(3, username);
 					ResultSet resultSet = stmt1.executeQuery();
 					resultSet.next();
 					
@@ -638,6 +641,8 @@ public class DerbyDatabase implements IDatabase {
 							"select pieces.type from pieces,players where pieces.color = ? and pieces.isCaptured = true"
 					+"	and players.player_id = pieces.player_id and players.username = ?");
 					stmt1.setInt(1, playerColor);
+					stmt1.setString(2, username);
+					
 					ResultSet resultSet = stmt1.executeQuery();
 					while(resultSet.next()) {
 						captured.add(color+resultSet.getObject(1));

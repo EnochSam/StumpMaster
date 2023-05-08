@@ -36,8 +36,7 @@ public class LoginServlet extends HttpServlet {
 
 
 		RequestDispatcher rd = request.getRequestDispatcher("view/Login.jsp");
-		rd.forward(request, response);
-		
+		rd.include(request, response);
 	}
 
 	/**
@@ -100,7 +99,7 @@ public class LoginServlet extends HttpServlet {
 		
 		if(exists) {
 			// Pass user object to main menu
-			request.setAttribute("user", controller.getUser(username, password));
+			request.setAttribute("username", controller.getUser(username, password).getUsername());
 			request.setAttribute("username", username);
 			
 			// Forward to Main menu
