@@ -160,8 +160,8 @@ public class DerbyDatabase implements IDatabase {
 
 				PreparedStatement insertPlayer = null;
 				PreparedStatement insertPiece = null;
-				
 				try {
+					System.out.println(username);
 					// populate players table (do authors first, since color is foreign key in books table)
 					insertPlayer = conn.prepareStatement("insert into players (username) values (?)");
 //						// auto-generated primary key, don't insert this
@@ -201,7 +201,8 @@ public class DerbyDatabase implements IDatabase {
 	public static void main(String[] args) throws IOException {
 		
 		DerbyDatabase db = new DerbyDatabase();
-		db.loadInitialData("rfields4");
+		db.createTables();
+		db.loadInitialData("EnochIsForeverAPoopie");
 	}
 	
 	@Override
@@ -257,6 +258,8 @@ public class DerbyDatabase implements IDatabase {
 	}
 	@Override
 	public void resetLocations() {
+		dropTables();
+		createTables();
 		executeTransaction(new Transaction<Boolean>() {
 			@Override
 			public Boolean execute(Connection conn) throws SQLException {
@@ -656,5 +659,27 @@ public class DerbyDatabase implements IDatabase {
 		return captured;
 	}
 	
+	private void dropTables() {
+		executeTransaction(new Transaction<Boolean>() {
+
+			public Boolean execute(Connection conn) throws SQLException {
+				PreparedStatement stmt1 = null;
+				PreparedStatement stmt2 = null;
+
+				try {
+					stmt1 = conn.prepareStatement(
+							"drop table pieces");					
+				 stmt1.executeUpdate();
+				 stmt2 = conn.prepareStatement(
+							"drop table players");					
+				 stmt2.executeUpdate();
+					
+				}finally {
+					DBUtil.closeQuietly(stmt1);
+					DBUtil.closeQuietly(stmt2);
+				}
+				return true;
+			}});
+	}
 
 }
