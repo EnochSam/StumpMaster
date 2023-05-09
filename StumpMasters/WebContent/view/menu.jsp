@@ -18,6 +18,13 @@
 		<input type="submit" value="Create Game">
 		<input type="hidden" name = username value="${username}">
 	</form>
+			<br><br>
+		<form method="get" id = "LoadGame" action="${pageContext.servletContext.contextPath}/Load">
+		<input type="hidden" name = username value="${username}">
+		</form>
+		
+			<br>
+		
 	<br><br>
 	<form method="get" id = "Login" action="${pageContext.servletContext.contextPath}/Login">
 		<input type="submit" value="Log Out">
@@ -30,6 +37,12 @@
 	if("${! empty user}" != "true" && ("${username}".length == 0 || "${username}" == "NotLoggedIn")){
 	let repost = document.getElementById("Login")
 	repost.submit();
+	}
+	if("${loadGame}" == "true"){
+		let submit =document.createElement("input")
+		submit.type = "submit"
+		submit.value = "Load Game"
+		document.getElementById("LoadGame").appendChild(submit)
 	}
 </script>
 </html>

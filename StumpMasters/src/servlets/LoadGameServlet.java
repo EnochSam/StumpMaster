@@ -29,7 +29,7 @@ import pieceModels.Rook;
 /**
  * Servlet implementation class Game
  */
-@WebServlet("/Game")
+@WebServlet("/Load")
 public class LoadGameServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
@@ -42,7 +42,49 @@ public class LoadGameServlet extends HttpServlet {
 		//GameController controller = new GameController();
 		
 		GameController controller = new GameController();
-		//controller.loadGame(request.getParameter("username");
+		Game model = new Game();
+		controller.setModel(model);
+		controller.setUsername(request.getParameter("username"));
+		controller.loadGame();
+		//response.
+		GameServlet StringCreation = new GameServlet();
+		
+		JSONObject board = new JSONObject();
+		JSONObject rightCaptured = new JSONObject();
+		JSONObject leftCaptured = new JSONObject();
+		String[][] loadBoard =  StringCreation.loadBoard(request, model.getBoard());
+		try{
+			board.put("board", loadBoard);
+			request.setAttribute("boardJson", board.toString());
+			rightCaptured.put("rightCaptured",controller.getCapturedPieces(Piece.BLACK));
+			request.setAttribute("rightCaptured", rightCaptured.toString());
+			leftCaptured.put("leftCaptured", controller.getCapturedPieces(Piece.WHITE));
+			request.setAttribute("leftCaptured", leftCaptured.toString());
+
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+
+		controller.serverCheckForMateIn();
+		request.setAttribute("board",loadBoard);
+		request.setAttribute("gameMoves", model.getGameMoves());
+		if(model.getWhitePlayer().getTurn()){
+			request.setAttribute("playerTurn", "White");
+		}else {
+			request.setAttribute("playerTurn", "Black");
+
+		}
+		request.setAttribute("selectingPiece","True");
+		request.setAttribute("selectValidMoves","false");
+		request.setAttribute("mateinone", model.getChekForMateInOne());
+		request.setAttribute("username", request.getParameter("username"));
+		request.setAttribute("beginningOfGame", false);
+		request.setAttribute("Save", "Save");
+		request.setAttribute("tile", "Save");
+		RequestDispatcher rd = request.getRequestDispatcher("view/load.jsp");
+		rd.forward(request, response);
 	}
 	
 	/**
@@ -51,6 +93,7 @@ public class LoadGameServlet extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
 		doGet(request, response);
+		
 	}
 
 }

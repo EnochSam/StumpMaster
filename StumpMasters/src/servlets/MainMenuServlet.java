@@ -25,12 +25,14 @@ public class MainMenuServlet extends HttpServlet {
 			throws ServletException, IOException {
 		//Get Menu JSP File
 		//Checks to see if there is a stored Game
-		GameController controller = new GameController();
-		/*if(controller.doesSaveExist(request.getParameter("username"))) {
-			request.setAttribute("loadGame", true);
-		}*/
 		if(request.getParameter("username") != null) {
-			request.setAttribute("username",request.getParameter("username") );
+			String username = request.getParameter("username");
+			GameController controller = new GameController();
+			controller.setUsername(username);
+			if(controller.doesSaveExist()) {
+				request.setAttribute("loadGame", true);
+			}
+			request.setAttribute("username", username);
 		}
 		RequestDispatcher rd = request.getRequestDispatcher("view/menu.jsp");
 		rd.forward(request, response);

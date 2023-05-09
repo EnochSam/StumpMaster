@@ -138,7 +138,8 @@ public class DerbyDatabase implements IDatabase {
 							"	game_id integer primary key " +
 							"		generated always as identity (start with 0, increment by 1), " +
 							"	username varchar(70), " +
-							"	type varchar(900)" +
+							"	gameMoves varchar(900)," +
+							"	isWhiteTurn varchar(10)"+
 							")"
 						);	
 						stmt3.executeUpdate();
@@ -172,7 +173,6 @@ public class DerbyDatabase implements IDatabase {
 				PreparedStatement insertPlayer = null;
 				PreparedStatement insertPiece = null;
 				try {
-					System.out.println(username);
 					// populate players table (do authors first, since color is foreign key in books table)
 					insertPlayer = conn.prepareStatement("insert into players (username) values (?)");
 //						// auto-generated primary key, don't insert this
@@ -212,9 +212,12 @@ public class DerbyDatabase implements IDatabase {
 	public static void main(String[] args) throws IOException {
 		
 		DerbyDatabase db = new DerbyDatabase();
-		//db.dropTables();
+		db.dropTables();
 		db.createTables();
+		db.setUsername("EnochIsForeverAPoopie");
 		db.loadInitialData("EnochIsForeverAPoopie");
+		Player[] p = new Player[] {new Player(0), new Player(1)};
+		db.overwritePieces(p);
 	}
 	
 	@Override
@@ -226,7 +229,7 @@ public class DerbyDatabase implements IDatabase {
 	@Override
 	
 	public Piece[][] populateBoard(String boardLocations) {
-		Piece[][] board = new Piece[8][8];
+		Piece[][] board = new Piece[8][8]; 
 		executeTransaction(new Transaction<Boolean>() {
 			
 			public Boolean execute(Connection conn) throws SQLException {
@@ -675,6 +678,7 @@ public class DerbyDatabase implements IDatabase {
 			public Boolean execute(Connection conn) throws SQLException {
 				PreparedStatement stmt1 = null;
 				PreparedStatement stmt2 = null;
+				PreparedStatement stmt3 = null;
 
 				try {
 					stmt1 = conn.prepareStatement(
@@ -683,7 +687,9 @@ public class DerbyDatabase implements IDatabase {
 				 stmt2 = conn.prepareStatement(
 							"drop table players");					
 				 stmt2.executeUpdate();
-					
+				 stmt3 = conn.prepareStatement(
+							"drop table saveStates");					
+				 stmt3.executeUpdate();
 				}finally {
 					DBUtil.closeQuietly(stmt1);
 					DBUtil.closeQuietly(stmt2);
@@ -692,14 +698,207 @@ public class DerbyDatabase implements IDatabase {
 			}});
 	}
 	@Override
-	public void saveGame(String gameMoves) {
+	public void saveGame(String gameMoves, boolean turn) {
 		// TODO Auto-generated method stub
 		/* 1 Check to see if username is in query
 		 * 2 If in query, remove
 		 * 3 Add gameMoves, username
 		 * username is already set in this.username, gameMoves will be passed in
 		 */
-		System.out.println("Called");
+		executeTransaction(new Transaction<Boolean>() {
+			
+			public Boolean execute(Connection conn) throws SQLException {
+				PreparedStatement stmt1 = null;
+				PreparedStatement stmt2 = null;
+				PreparedStatement stmt3 = null;
+				try {
+					stmt1 = conn.prepareStatement(
+							"select * from saveStates where username = ? "
+					);
+					stmt1.setString(1, username);
+					ResultSet resultSet = stmt1.executeQuery();
+					if(resultSet.next()) {
+					stmt2 = conn.prepareStatement(
+							"delete from saveStates where username = ?"
+					);
+					stmt2.setString(1, username);
+					stmt2.executeUpdate();
+					}
+					stmt3 = conn.prepareStatement(
+							"insert into saveStates (username, gameMoves, isWhiteTurn) values (?,?,?)"
+					);
+					stmt3.setString(1, username);
+					stmt3.setString(2, gameMoves);
+					stmt3.setString(3, ""+turn);
+					stmt3.executeUpdate();
+				}finally {
+					DBUtil.closeQuietly(stmt1);
+					DBUtil.closeQuietly(stmt2);
+					DBUtil.closeQuietly(stmt3);
+				}
+				return true;
+			}});
+	}
+	@Override
+	public boolean doesSaveExist() {
+		boolean[] exists = new boolean[1];
+		executeTransaction(new Transaction<Boolean>() {
+			public Boolean execute(Connection conn) throws SQLException {
+
+				PreparedStatement stmt1 = null;
+
+				try {
+					stmt1 = conn.prepareStatement(
+							"select * from saveStates where username = ?");
+					stmt1.setString(1, username);
+					
+					ResultSet resultSet = stmt1.executeQuery();
+					if(resultSet.next()) {
+						exists[0] = true;
+					}
+					
+				}finally {
+					DBUtil.closeQuietly(stmt1);
+				}
+				return true;
+			}});
+		return exists[0];
+	}
+	@Override
+	public String loadGame() {
+		String[] gameMoves = new String[1];
+		executeTransaction(new Transaction<Boolean>() {
+			
+			public Boolean execute(Connection conn) throws SQLException {
+				PreparedStatement stmt1 = null;
+				PreparedStatement stmt2 = null;
+				PreparedStatement stmt3 = null;
+				try {
+					stmt1 = conn.prepareStatement(
+							"select gameMoves, isWhiteTurn from saveStates where username = ? "
+					);
+					stmt1.setString(1, username);
+					ResultSet resultSet = stmt1.executeQuery();
+					resultSet.next();
+					gameMoves[0] = resultSet.getObject(1).toString();
+					System.out.println(resultSet.getObject(2).toString());
+				}finally {
+					DBUtil.closeQuietly(stmt1);
+					DBUtil.closeQuietly(stmt2);
+					DBUtil.closeQuietly(stmt3);
+				}
+				return true;
+			}});
+		this.resetLocations();
+		return gameMoves[0];
+	}
+	@Override
+	public void overwritePieces(Player[] players) {
+		this.resetLocations();
+executeTransaction(new Transaction<Boolean>() {
+		
+			public Boolean execute(Connection conn) throws SQLException {
+				PreparedStatement stmt1 = null;
+				PreparedStatement stmt2 = null;
+				PreparedStatement stmt3 = null;
+				PreparedStatement stmt4 = null;
+				PreparedStatement stmt5 = null;
+				PreparedStatement stmt6 = null;
+				PreparedStatement stmt7 = null;
+
+				try {
+					stmt5 = conn.prepareStatement(
+							"select player_id from players where username = ?"
+					);
+					stmt5.setString(1, username);
+					ResultSet resultSets = stmt5.executeQuery();
+					resultSets.next();
+					int deletingId = Integer.parseInt(resultSets.getObject(1).toString());
+					stmt6 = conn.prepareStatement(
+							"delete from pieces where player_id = ?"
+					);
+					stmt6.setInt(1, deletingId);
+					stmt6.executeUpdate();
+					DBUtil.closeQuietly(stmt6);
+					stmt7 = conn.prepareStatement(
+							"delete from players where username = ?"
+					);
+					stmt7.setString(1, username);
+					stmt7.executeUpdate();
+					DBUtil.closeQuietly(stmt7);
+					DBUtil.closeQuietly(stmt5);
+
+					stmt4 = conn.prepareStatement(
+							"insert into players (username) values(?)"
+					);
+					stmt4.setString(1, username);
+					stmt4.executeUpdate(); 
+					DBUtil.closeQuietly(stmt4);
+					//For Each Player, grab the created Player id
+					stmt1 = conn.prepareStatement(
+							"select player_id from players where username = ?"
+					);
+					stmt1.setString(1, username);
+					ResultSet resultSet = stmt1.executeQuery();
+					resultSet.next();
+					int player_id = Integer.parseInt(resultSet.getObject(1).toString());
+					for(Player player : players) {
+						
+						for(Piece piece : player.getPieces()) {
+							//
+							stmt3 = conn.prepareStatement("insert into pieces (color, type, x, y, "
+									+ "isCaptured, movedAlready, player_id) values (?, ?, ?, ?,?, ?,?)");
+//								insertBook.setInt(1, book.getBookId());		// auto-generated primary key, don't insert this
+							stmt3.setInt(1, piece.getColor());
+							stmt3.setString(2, piece.type());
+							stmt3.setInt(3, piece.getXpos());
+							stmt3.setInt(4,  piece.getYpos());
+							stmt3.setString(5,  ""+piece.getCaptured());
+							stmt3.setString(6,  ""+piece.getHasMovedAlready());
+							stmt3.setInt(7,player_id);
+							stmt3.executeUpdate();
+							DBUtil.closeQuietly(stmt3);
+						}
+
+							
+					
+					}
+				}finally {
+					DBUtil.closeQuietly(stmt1);
+					DBUtil.closeQuietly(stmt2);
+					DBUtil.closeQuietly(stmt3);
+				}
+				return true;
+			}});
+		
+		
+	}
+	@Override
+	public boolean getPlayerTurnFromSave() {
+		boolean[] isWhiteTurn = new boolean[1];
+		executeTransaction(new Transaction<Boolean>() {
+			public Boolean execute(Connection conn) throws SQLException {
+
+				PreparedStatement stmt1 = null;
+
+				try {
+					stmt1 = conn.prepareStatement(
+							"select isWhiteTurn from saveStates where username = ?");
+					stmt1.setString(1, username);
+					
+					ResultSet resultSet = stmt1.executeQuery();
+					resultSet.next();
+					isWhiteTurn[0] = Boolean.parseBoolean(resultSet.getObject(1).toString());
+					
+					
+				}finally {
+					DBUtil.closeQuietly(stmt1);
+				}
+				return true;
+			}});
+		return isWhiteTurn[0];
+		
+		
 	}
 
 }

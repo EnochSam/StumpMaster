@@ -79,8 +79,7 @@ public class GameServlet extends HttpServlet {
 			request.setAttribute("beginningOfGame", true);
 			}
 			// if player is saving game, remove all Nans
-			System.out.println(gameMoves);
-			System.out.println(saveGame);
+		
 			if(saveGame != null) {
 				if(gameMoves.charAt(gameMoves.length()-1) == 'N') {
 					gameMoves = gameMoves.substring(0, gameMoves.length() - 6);
@@ -91,7 +90,6 @@ public class GameServlet extends HttpServlet {
 			if(username == null){
 				username = "NotLoggedIn";
 			}
-			System.out.println(gameMoves);
 			controller.setUsername(username);
 			try {
 				controller.setBoard(gameMoves,playerTurn);
@@ -100,12 +98,10 @@ public class GameServlet extends HttpServlet {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
-			
+
 			//Checks if the Player is selecting a piece
 			if(selectingPiece.equals("True") && (!tileSelected.equals("START") && saveGame== null)) {
 				//Checks to see if there is a player's piece at specified location
-				System.out.println(saveGame);
-				System.out.println("Bad poop 1");
 
 				try { 
 					//Grabs location from client
@@ -127,7 +123,6 @@ public class GameServlet extends HttpServlet {
 				
 		}else
 		if(selectValidMoves.equals("True") && saveGame == null) {
-			System.out.println("Bad poop");
 
 			String pieceAttemptingToMove = gameMoves.substring(gameMoves.length()-2, gameMoves.length());
 			String previousTitle = ""+pieceAttemptingToMove.charAt(0)+":"+pieceAttemptingToMove.charAt(1);
@@ -162,7 +157,6 @@ public class GameServlet extends HttpServlet {
 			
 		}else  
 			if(saveGame!= null){
-				System.out.println("Good poop");
 
 				controller.saveGame();
 		}

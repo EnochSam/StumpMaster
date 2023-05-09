@@ -221,4 +221,18 @@ public class FakeGameDatabase implements IDatabase{
 		
 	}
 
+
+	@Override
+	public boolean doesSaveExist() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+
+	@Override
+	public String loadGame() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

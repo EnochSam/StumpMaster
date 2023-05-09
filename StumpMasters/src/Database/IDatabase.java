@@ -34,6 +34,14 @@ public interface IDatabase {
 
 	public void setUsername(String username);
 
-	public void saveGame(String gameMoves);
+	public boolean doesSaveExist();
+
+	public String loadGame();
+
+	public void overwritePieces(Player[] player);
+
+	public void saveGame(String gameMoves, boolean turn);
+
+	public boolean getPlayerTurnFromSave();
 	
 }

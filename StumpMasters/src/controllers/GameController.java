@@ -336,17 +336,18 @@ public class GameController {
 	}
 
 	public void setTurn(String playerTurn) {
-		if(playerTurn == "White") {
+		if(playerTurn.equals("White")) {
 			this.model.getWhitePlayer().setTurn(true);
 			this.model.getBlackPlayer().setTurn(false); 
 		}else {
 			this.model.getWhitePlayer().setTurn(false);
 			this.model.getBlackPlayer().setTurn(true);
 		}
+		System.out.println(this.model.getWhitePlayer().getTurn());
 		
 	}
 
-	public void switchTurns() {
+	public void switchTurns(){
 		if(this.model.getWhitePlayer().getTurn()) {
 			this.model.getBlackPlayer().setTurn(true);
 			this.model.getWhitePlayer().setTurn(false);
@@ -355,7 +356,143 @@ public class GameController {
 	}
 
 	public void saveGame() {
-		db.saveGame(this.model.getGameMoves());
+		db.saveGame(this.model.getGameMoves(), this.model.getWhitePlayer().getTurn());
 		
+	}
+
+	public boolean doesSaveExist() {
+		return db.doesSaveExist();
+	}
+
+	public void loadGame() {
+		String boardLocations = db.loadGame();
+		boolean isWhiteTurn = db.getPlayerTurnFromSave();
+		Player whitePlayer = new Player(Piece.WHITE);
+		Player blackPlayer = new Player(Piece.BLACK);
+		Player[] player =new Player[]{whitePlayer,blackPlayer};
+		//initializes  Pieces
+		for(int i = 0; i <= 1; i++) {
+		//Kings	
+		player[i].getPieces()[0].setColor(i);
+		player[i].getPieces()[0].setXpos(4);
+		player[i].getPieces()[0].setYpos(i*7);
+		//Queens
+		player[i].getPieces()[1].setColor(i);
+		player[i].getPieces()[1].setXpos(3);
+		player[i].getPieces()[1].setYpos(i*7);
+		
+		//Rooks
+		player[i].getPieces()[2].setColor(i);
+		player[i].getPieces()[2].setXpos(7);
+		player[i].getPieces()[2].setYpos(i*7);
+		player[i].getPieces()[3].setColor(i);
+		player[i].getPieces()[3].setXpos(0);
+		player[i].getPieces()[3].setYpos(i*7);
+		
+		//Bishops
+		player[i].getPieces()[4].setColor(i);
+		player[i].getPieces()[4].setXpos(2);
+		player[i].getPieces()[4].setYpos(i*7);
+		player[i].getPieces()[5].setColor(i);
+		player[i].getPieces()[5].setXpos(5);
+		player[i].getPieces()[5].setYpos(i*7);
+		
+		//Knights
+		player[i].getPieces()[6].setColor(i);
+		player[i].getPieces()[6].setXpos(1);
+		player[i].getPieces()[6].setYpos(i*7);
+		player[i].getPieces()[7].setColor(i);
+		player[i].getPieces()[7].setXpos(6);
+		player[i].getPieces()[7].setYpos(i*7);
+		
+		for(int j = 0; j < 8; j++) {
+			int ypos = 6;
+			if(i == 0) ypos = 1;
+			player[i].getPieces()[8+j].setColor(i);
+			player[i].getPieces()[8+j].setXpos(j);
+			player[i].getPieces()[8+j].setYpos(ypos);
+		}
+		}
+		
+		Piece[][] board = new Piece[8][8];
+		//load initially on board
+				for(int i = 0; i < player.length; i++){
+
+					for(int j = 0; j < player[i].getPieces().length; j++) {
+						
+						Piece tempPiece= player[i].getPieces()[j];
+						int tempPieceX =tempPiece.getXpos();
+						int tempPieceY =tempPiece.getYpos();
+						board[tempPieceY][tempPieceX] = tempPiece;
+					}
+					
+				}
+				//BOARD LOCATIONS FORMULA
+				//STRING = 1234 1234 1234
+				//1= xpos of current location
+				//2= ypos of current location
+				//3= xpos of new location
+				//4 = ypos of new location
+				//5 = space
+
+				for(int i = 0; i < boardLocations.length() & boardLocations.length()-i >5; i+=5) {
+					int curx = Integer.parseInt(""+boardLocations.charAt(i))-1;
+					int cury = Integer.parseInt(""+boardLocations.charAt(i+1))-1;
+					int newx = Integer.parseInt(""+boardLocations.charAt(i+2))-1;
+					int newy = Integer.parseInt(""+boardLocations.charAt(i+3))-1;
+					
+					//if piece is on moved location set that piece to captured
+					if(board[newy][newx] != null) {
+						board[newy][newx].setCaptured(true);
+					}
+					board[newy][newx] = board[cury][curx];
+					board[cury][curx] = null;
+					board[newy][newx].setXpos(newx);
+					board[newy][newx].setYpos(newy);
+					board[newy][newx].setHasMovedAlready(true);
+					
+					//Check For Pawn Promotion
+					if(i+4 <boardLocations.length() ) {
+						if(!(""+boardLocations.charAt(i+4)).equals(" ")) {
+							int color = board[newy][newx].getColor();
+							//Check Which Character the Pawn is Set To
+							if((""+boardLocations.charAt(i+4)).equals("Q")){
+								board[newy][newx] = new Queen();
+								board[newy][newx].setXpos(newx);
+								board[newy][newx].setYpos(newy);
+								board[newy][newx].setColor(color);
+								board[newy][newx].setHasMovedAlready(true);
+							}
+							if((""+boardLocations.charAt(i+4)).equals("R")){
+								board[newy][newx] = new Rook();
+								board[newy][newx].setXpos(newx);
+								board[newy][newx].setColor(color);
+								board[newy][newx].setYpos(newy);
+								board[newy][newx].setHasMovedAlready(true);
+							}
+							if((""+boardLocations.charAt(i+4)).equals("K")){
+								board[newy][newx] = new Knight();
+								board[newy][newx].setXpos(newx);
+								board[newy][newx].setYpos(newy);
+								board[newy][newx].setColor(color);
+								board[newy][newx].setHasMovedAlready(true);
+							}
+							if((""+boardLocations.charAt(i+4)).equals("B")){
+								board[newy][newx] = new Bishop();
+								board[newy][newx].setXpos(newx);
+								board[newy][newx].setYpos(newy);
+								board[newy][newx].setColor(color);
+								board[newy][newx].setHasMovedAlready(true);
+							}
+							i++;
+						}
+					}
+				}
+		db.overwritePieces(player);
+		this.model.setGameMoves(boardLocations);
+		this.model.setBoard(board);
+		this.model.setWhitePlayer(whitePlayer);
+		this.model.setBlackPlayer(blackPlayer);
+		this.model.getWhitePlayer().setTurn(isWhiteTurn);
 	}
 }
