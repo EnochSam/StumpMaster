@@ -303,7 +303,6 @@ public class GameController {
 					piece.setYpos(loc[1]);
 					board[piece.getYpos()][piece.getXpos()] = piece;
 					if(this.checkForCheckMate(opponent)) {
-						System.out.println(piece.type()+" at pos "+piece.getXpos()+1+":"+piece.getYpos()+1);
 						mateIn1 = true;
 					}
 					if(old != null) {
@@ -343,7 +342,6 @@ public class GameController {
 			this.model.getWhitePlayer().setTurn(false);
 			this.model.getBlackPlayer().setTurn(true);
 		}
-		System.out.println(this.model.getWhitePlayer().getTurn());
 		
 	}
 
@@ -451,12 +449,22 @@ public class GameController {
 					board[newy][newx].setYpos(newy);
 					board[newy][newx].setHasMovedAlready(true);
 					
+					
 					//Check For Pawn Promotion
 					if(i+4 <boardLocations.length() ) {
 						if(!(""+boardLocations.charAt(i+4)).equals(" ")) {
 							int color = board[newy][newx].getColor();
+							int search = 0;
+							while(player[color].getPieces()[search].getXpos() != 
+									board[newy][newx].getXpos() || 
+									player[color].getPieces()[search].getYpos() != 
+									board[newy][newx].getYpos()) {
+								
+								search++;
+							}
 							//Check Which Character the Pawn is Set To
 							if((""+boardLocations.charAt(i+4)).equals("Q")){
+								
 								board[newy][newx] = new Queen();
 								board[newy][newx].setXpos(newx);
 								board[newy][newx].setYpos(newy);
@@ -484,6 +492,7 @@ public class GameController {
 								board[newy][newx].setColor(color);
 								board[newy][newx].setHasMovedAlready(true);
 							}
+							player[color].getPieces()[search] = board[newy][newx];
 							i++;
 						}
 					}
