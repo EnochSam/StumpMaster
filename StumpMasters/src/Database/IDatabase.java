@@ -34,6 +34,6 @@ public interface IDatabase {
 
 	public void setUsername(String username);
 
-	public void saveGame();
+	public void saveGame(String gameMoves);
 	
 }

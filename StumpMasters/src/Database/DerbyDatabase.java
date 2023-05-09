@@ -106,7 +106,8 @@ public class DerbyDatabase implements IDatabase {
 			public Boolean execute(Connection conn) throws SQLException {
 				PreparedStatement stmt1 = null;
 				PreparedStatement stmt2 = null;
-				
+				PreparedStatement stmt3 = null;
+
 				try {
 					stmt1 = conn.prepareStatement(
 							"create table players (" +
@@ -132,13 +133,23 @@ public class DerbyDatabase implements IDatabase {
 						")"
 					);	
 					stmt2.executeUpdate();
-					
+					stmt3 = conn.prepareStatement(
+							"create table saveStates (" +
+							"	game_id integer primary key " +
+							"		generated always as identity (start with 0, increment by 1), " +
+							"	username varchar(70), " +
+							"	type varchar(900)" +
+							")"
+						);	
+						stmt3.executeUpdate();
 					
 					
 					return true;
 				} finally {
 					DBUtil.closeQuietly(stmt1);
 					DBUtil.closeQuietly(stmt2);
+					DBUtil.closeQuietly(stmt3);
+
 				}
 			}
 		});
@@ -201,6 +212,7 @@ public class DerbyDatabase implements IDatabase {
 	public static void main(String[] args) throws IOException {
 		
 		DerbyDatabase db = new DerbyDatabase();
+		//db.dropTables();
 		db.createTables();
 		db.loadInitialData("EnochIsForeverAPoopie");
 	}
@@ -678,6 +690,16 @@ public class DerbyDatabase implements IDatabase {
 				}
 				return true;
 			}});
+	}
+	@Override
+	public void saveGame(String gameMoves) {
+		// TODO Auto-generated method stub
+		/* 1 Check to see if username is in query
+		 * 2 If in query, remove
+		 * 3 Add gameMoves, username
+		 * username is already set in this.username, gameMoves will be passed in
+		 */
+		System.out.println("Called");
 	}
 
 }

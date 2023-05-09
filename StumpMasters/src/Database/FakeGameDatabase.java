@@ -214,4 +214,11 @@ public class FakeGameDatabase implements IDatabase{
 		
 	}
 
+
+	@Override
+	public void saveGame(String gameMoves) {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

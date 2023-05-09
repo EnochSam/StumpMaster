@@ -24,7 +24,7 @@ public class GameController {
 	//zELLER gAE 
 	//0 for Fake
 	//1 for Real
-	private int dbTest = 0;
+	private int dbTest = 1;
 	private IDatabase db = null;
 	private Game model;
 	private String username;
@@ -355,7 +355,7 @@ public class GameController {
 	}
 
 	public void saveGame() {
-		db.saveGame();
+		db.saveGame(this.model.getGameMoves());
 		
 	}
 }

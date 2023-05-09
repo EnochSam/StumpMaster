@@ -27,7 +27,7 @@
 </body>
 <script>
 	
-	if("${! empty user}" != "true" && "${username}".length == 0){
+	if("${! empty user}" != "true" && ("${username}".length == 0 || "${username}" == "NotLoggedIn")){
 	let repost = document.getElementById("Login")
 	repost.submit();
 	}

@@ -80,6 +80,7 @@ public class GameServlet extends HttpServlet {
 			}
 			// if player is saving game, remove all Nans
 			System.out.println(gameMoves);
+			System.out.println(saveGame);
 			if(saveGame != null) {
 				if(gameMoves.charAt(gameMoves.length()-1) == 'N') {
 					gameMoves = gameMoves.substring(0, gameMoves.length() - 6);
@@ -101,8 +102,11 @@ public class GameServlet extends HttpServlet {
 			}
 			
 			//Checks if the Player is selecting a piece
-			if(selectingPiece.equals("True") && !(tileSelected.equals("START") && saveGame== null)) {
+			if(selectingPiece.equals("True") && (!tileSelected.equals("START") && saveGame== null)) {
 				//Checks to see if there is a player's piece at specified location
+				System.out.println(saveGame);
+				System.out.println("Bad poop 1");
+
 				try { 
 					//Grabs location from client
 					//sends string version of possible list to views
@@ -123,6 +127,8 @@ public class GameServlet extends HttpServlet {
 				
 		}else
 		if(selectValidMoves.equals("True") && saveGame == null) {
+			System.out.println("Bad poop");
+
 			String pieceAttemptingToMove = gameMoves.substring(gameMoves.length()-2, gameMoves.length());
 			String previousTitle = ""+pieceAttemptingToMove.charAt(0)+":"+pieceAttemptingToMove.charAt(1);
 			Boolean isMoveValid = controller.moveValidMove(tileSelected,previousTitle,playerTurn );
@@ -154,10 +160,11 @@ public class GameServlet extends HttpServlet {
 				}
 			}
 			
-		}else { 
+		}else  
 			if(saveGame!= null){
+				System.out.println("Good poop");
+
 				controller.saveGame();
-			}
 		}
 		 //let Controller Create Board
 
