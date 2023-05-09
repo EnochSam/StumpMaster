@@ -5,7 +5,7 @@
 <html>
 <head>
 <meta charset="ISO-8859-1">
-<title>Enoch a Bigger Poopie</title>
+<title>${username}'s Game </title>
 <link rel="stylesheet" href="${pageContext.servletContext.contextPath}/resources/chessStyleSheet.css">
 </head>
 <body>
@@ -16,10 +16,13 @@
     <div id="Board">
         
     </div>
+    <input type="submit" onclick = sendPost() name="Save" value="Save Game">
+    	<input type = "hidden" value ="${username}" name=username >
     </form>
     <form id ="form" method="get" action="${pageContext.servletContext.contextPath}/MainMenu">
     	<input type="submit" value="Quit Game">
     	<input type = "hidden" value ="${username}" name=username >
+    
     </form>
     <script>
     	let pieceImg = ${boardJson};
@@ -89,10 +92,13 @@
            		var locy = parseInt(submit.value[2])
             	//if the selecting piece has gone from false to true, add lastmove to game moves
             	if(sessionStorage.getItem("lastSelectingPieceState")=="False" && !tileStart){
-            		if("${AddMove}"!="No"){
+            		if("${AddMove}"!="No" ){
+            		//Checks to make sure that the last move that was made wasn't to save the game
+            		if(sessionStorage.getItem("lastMove") !="Save"){
             		var lastMovex = sessionStorage.getItem("lastMove")[0]
             		var lastMovey = sessionStorage.getItem("lastMove")[2]
             		sessionStorage.setItem("gameMoves",sessionStorage.getItem("gameMoves")+lastMovex+""+lastMovey+" ")
+            		}
             		}else{
             			var gameMoves = sessionStorage.getItem("gameMoves");
                 		gameMoves = gameMoves.substring(0,gameMoves.length -2)
@@ -107,7 +113,7 @@
             		}
             	}
            		//Pawn Promotion
-            	if(sessionStorage.getItem("lastMove").length == 4){
+            	if(sessionStorage.getItem("lastMove").length == 4 && sessionStorage.getItem("lastMove") != "Save"){
             		var pawnPromotedChar = sessionStorage.getItem("lastMove")
             		pawnPromotedChar = pawnPromotedChar[pawnPromotedChar.length-1]
             	 	var gameMovesStr = sessionStorage.getItem("gameMoves")

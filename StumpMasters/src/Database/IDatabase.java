@@ -33,5 +33,7 @@ public interface IDatabase {
 	public List<String> getCapturedPlayersList(int playerColor);
 
 	public void setUsername(String username);
+
+	public void saveGame();
 	
 }

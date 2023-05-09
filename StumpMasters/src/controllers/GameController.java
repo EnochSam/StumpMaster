@@ -24,7 +24,7 @@ public class GameController {
 	//zELLER gAE 
 	//0 for Fake
 	//1 for Real
-	private int dbTest = 1;
+	private int dbTest = 0;
 	private IDatabase db = null;
 	private Game model;
 	private String username;
@@ -247,10 +247,11 @@ public class GameController {
 		//if last move was pawn promotion , break
 		int possiblePawnOldXpos = -1;int possiblePawnOldYpos = -1;int	possiblePawnNewXpos = -1;int possiblePawnNewYpos = -1;
 		if(gameMoves.length() > 8) {
+			try {
 			possiblePawnOldXpos = Integer.parseInt(""+gameMoves.charAt(gameMoves.length()-7))-1;
 			possiblePawnOldYpos = Integer.parseInt(""+gameMoves.charAt(gameMoves.length()-6))-1;
 			possiblePawnNewXpos = Integer.parseInt(""+gameMoves.charAt(gameMoves.length()-5))-1;
-			try {
+			
 			possiblePawnNewYpos = Integer.parseInt(""+gameMoves.charAt(gameMoves.length()-4))-1;
 			}catch(NumberFormatException e) {
 				return false;
@@ -302,6 +303,7 @@ public class GameController {
 					piece.setYpos(loc[1]);
 					board[piece.getYpos()][piece.getXpos()] = piece;
 					if(this.checkForCheckMate(opponent)) {
+						System.out.println(piece.type()+" at pos "+piece.getXpos()+1+":"+piece.getYpos()+1);
 						mateIn1 = true;
 					}
 					if(old != null) {
@@ -331,5 +333,29 @@ public class GameController {
 	public void setUsername(String username) {
 		this.username = username;
 		db.setUsername(username);
+	}
+
+	public void setTurn(String playerTurn) {
+		if(playerTurn == "White") {
+			this.model.getWhitePlayer().setTurn(true);
+			this.model.getBlackPlayer().setTurn(false); 
+		}else {
+			this.model.getWhitePlayer().setTurn(false);
+			this.model.getBlackPlayer().setTurn(true);
+		}
+		
+	}
+
+	public void switchTurns() {
+		if(this.model.getWhitePlayer().getTurn()) {
+			this.model.getBlackPlayer().setTurn(true);
+			this.model.getWhitePlayer().setTurn(false);
+		}
+		
+	}
+
+	public void saveGame() {
+		db.saveGame();
+		
 	}
 }

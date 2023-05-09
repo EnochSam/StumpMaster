@@ -59,7 +59,8 @@ public class GameServlet extends HttpServlet {
 			//Grabs all variables from client
 			pawnPromotion = request.getParameter("pawnPromotion");
 			tileSelected = request.getParameter("tile");
-			if(tileSelected !=null || pawnPromotion!= null ) {
+		String saveGame = request.getParameter("Save");
+			if(tileSelected !=null || pawnPromotion!= null || saveGame != null) {
 			gameMoves = request.getParameter("gameMoves");
 			playerTurn = request.getParameter("playerTurn");
 			selectingPiece = request.getParameter("selectingPiece");
@@ -76,17 +77,31 @@ public class GameServlet extends HttpServlet {
 			tileSelected = "START";
 			//to tell Servlet to save the sessionData
 			request.setAttribute("beginningOfGame", true);
-			}	
+			}
+			// if player is saving game, remove all Nans
+			System.out.println(gameMoves);
+			if(saveGame != null) {
+				if(gameMoves.charAt(gameMoves.length()-1) == 'N') {
+					gameMoves = gameMoves.substring(0, gameMoves.length() - 6);
+					gameMoves += "11";
+				}
+			}
 			String username = request.getParameter("username");
+			if(username == null){
+				username = "NotLoggedIn";
+			}
+			System.out.println(gameMoves);
 			controller.setUsername(username);
 			try {
 				controller.setBoard(gameMoves,playerTurn);
+				controller.setTurn(playerTurn);
 			} catch (Exception e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
+			
 			//Checks if the Player is selecting a piece
-			if(selectingPiece.equals("True") && !(tileSelected.equals("START"))) {
+			if(selectingPiece.equals("True") && !(tileSelected.equals("START") && saveGame== null)) {
 				//Checks to see if there is a player's piece at specified location
 				try { 
 					//Grabs location from client
@@ -107,7 +122,7 @@ public class GameServlet extends HttpServlet {
 				}
 				
 		}else
-		if(selectValidMoves.equals("True")) {
+		if(selectValidMoves.equals("True") && saveGame == null) {
 			String pieceAttemptingToMove = gameMoves.substring(gameMoves.length()-2, gameMoves.length());
 			String previousTitle = ""+pieceAttemptingToMove.charAt(0)+":"+pieceAttemptingToMove.charAt(1);
 			Boolean isMoveValid = controller.moveValidMove(tileSelected,previousTitle,playerTurn );
@@ -127,8 +142,10 @@ public class GameServlet extends HttpServlet {
 				}
 				else if(playerTurn.equals("White")){
 					playerTurn = "Black";
+					controller.switchTurns();
 				}else {
 					playerTurn = "White";
+					controller.switchTurns();
 				}
 				selectValidMoves = "False";
 				selectingPiece = "True";
@@ -137,6 +154,10 @@ public class GameServlet extends HttpServlet {
 				}
 			}
 			
+		}else { 
+			if(saveGame!= null){
+				controller.saveGame();
+			}
 		}
 		 //let Controller Create Board
 

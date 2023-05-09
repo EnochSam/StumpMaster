@@ -258,8 +258,6 @@ public class DerbyDatabase implements IDatabase {
 	}
 	@Override
 	public void resetLocations() {
-		dropTables();
-		createTables();
 		executeTransaction(new Transaction<Boolean>() {
 			@Override
 			public Boolean execute(Connection conn) throws SQLException {
