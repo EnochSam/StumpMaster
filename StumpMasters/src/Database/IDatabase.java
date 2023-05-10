@@ -5,6 +5,8 @@ import java.util.List;
 
 import models.Game;
 import models.Player;
+import models.User;
+import models.inputType;
 import pieceModels.Piece;
 
 public interface IDatabase {
@@ -43,5 +45,19 @@ public interface IDatabase {
 	public void saveGame(String gameMoves, boolean turn);
 
 	public boolean getPlayerTurnFromSave();
+	
+	// User Interactions
+	
+	public void createUser(String username, String password);
+	
+	public boolean checkExists(String username, String password);
+	
+	public boolean checkUsernameExists(String username);
+	
+	public User getUser(String username, String password);
+	
+	
+	
+	
 	
 }

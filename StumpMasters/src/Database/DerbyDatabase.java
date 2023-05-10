@@ -11,6 +11,7 @@ import java.util.List;
 
 import models.Game;
 import models.Player;
+import models.User;
 import pieceModels.Bishop;
 import pieceModels.King;
 import pieceModels.Knight;
@@ -133,7 +134,7 @@ public class DerbyDatabase implements IDatabase {
 						")"
 					);	
 					stmt2.executeUpdate();
-					stmt3 = conn.prepareStatement(
+					/*stmt3 = conn.prepareStatement(
 							"create table saveStates (" +
 							"	game_id integer primary key " +
 							"		generated always as identity (start with 0, increment by 1), " +
@@ -143,7 +144,7 @@ public class DerbyDatabase implements IDatabase {
 							")"
 						);	
 						stmt3.executeUpdate();
-					
+					*/
 					
 					return true;
 				} finally {
@@ -273,7 +274,7 @@ public class DerbyDatabase implements IDatabase {
 	}
 	@Override
 	public void resetLocations() {
-		executeTransaction(new Transaction<Boolean>() {
+	executeTransaction(new Transaction<Boolean>() {
 			@Override
 			public Boolean execute(Connection conn) throws SQLException {
 				PreparedStatement stmt1 = null;
@@ -897,6 +898,113 @@ executeTransaction(new Transaction<Boolean>() {
 				return true;
 			}});
 		return isWhiteTurn[0];
+		
+		
+	}
+	
+	@Override
+	public void createUser(String username, String password) {
+		executeTransaction(new Transaction<Boolean>() {
+			@Override
+			public Boolean execute(Connection conn) throws SQLException {
+				PreparedStatement createUser = null;
+				try {
+					createUser = conn.prepareStatement(
+							"insert into users (username, password) values (?,?) "
+					);
+					createUser.setString(1, username);
+					createUser.setString(2, password);
+					createUser.executeUpdate();
+					
+					return true;
+				} finally {
+					DBUtil.closeQuietly(createUser);
+
+				}
+			}
+		});
+	}
+	
+	@Override
+	public boolean checkExists(String username, String password) {
+		boolean[] exists = new boolean[1];
+		executeTransaction(new Transaction<Boolean>() {
+			public Boolean execute(Connection conn) throws SQLException {
+				
+				PreparedStatement getUser = null;
+
+				try {
+					getUser = conn.prepareStatement(
+							"select * from users where username = ? and password = ? ");
+					getUser.setString(1, username);
+					getUser.setString(2, password);
+					
+					ResultSet resultSet = getUser.executeQuery();
+					exists[0] = resultSet.next();
+					
+					
+				}finally {
+					DBUtil.closeQuietly(getUser);
+				}
+				return true;
+			}});
+		return exists[0];
+		
+		
+	}
+	
+	@Override
+	public boolean checkUsernameExists(String username) {
+		boolean[] exists = new boolean[1];
+		executeTransaction(new Transaction<Boolean>() {
+			public Boolean execute(Connection conn) throws SQLException {
+				
+				PreparedStatement getUser = null;
+
+				try {
+					getUser = conn.prepareStatement(
+							"select * from users where username = ? ");
+					getUser.setString(1, username);
+					
+					ResultSet resultSet = getUser.executeQuery();
+					exists[0] = resultSet.next();
+					
+					
+				}finally {
+					DBUtil.closeQuietly(getUser);
+				}
+				return true;
+			}});
+		return exists[0];
+		
+		
+	}
+	
+	@Override
+	public User getUser(String username, String password) {
+		User[] user = new User[1];
+		executeTransaction(new Transaction<Boolean>() {
+			public Boolean execute(Connection conn) throws SQLException {
+				
+				PreparedStatement getUser = null;
+
+				try {
+					getUser = conn.prepareStatement(
+							"select username, password from users where username = ? ");
+					getUser.setString(1, username);
+					
+					ResultSet resultSet = getUser.executeQuery();
+					resultSet.next();
+					
+					user[0] = new User(resultSet.getString(1), resultSet.getString(2));
+					
+					
+				}finally {
+					DBUtil.closeQuietly(getUser);
+				}
+				return true;
+			}});
+		return user[0];
 		
 		
 	}
