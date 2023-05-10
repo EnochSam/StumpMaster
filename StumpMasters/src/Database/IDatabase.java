@@ -5,6 +5,8 @@ import java.util.List;
 
 import models.Game;
 import models.Player;
+import models.User;
+import models.inputType;
 import pieceModels.Piece;
 
 public interface IDatabase {
@@ -31,5 +33,37 @@ public interface IDatabase {
 	public void updatDatabaseForPawnPromotion(int x, int y, char promotedPawnChar);
 
 	public List<String> getCapturedPlayersList(int playerColor);
+
+	public void setUsername(String username);
+
+	public boolean doesSaveExist();
+
+	public String loadGame();
+
+	public void overwritePieces(Player[] player);
+
+	public void saveGame(String gameMoves, boolean turn);
+
+	public boolean getPlayerTurnFromSave();
+	
+	// User Interactions
+	
+	public void createUser(String username, String password);
+	
+	public boolean checkExists(String username, String password);
+	
+	public boolean checkUsernameExists(String username);
+	
+	public User getUser(String username, String password);
+	
+	public void deleteUser(String username);
+	
+	public void changeUsername(String username, String newUsername);
+	
+	public void changePassword(String username, String newPassword);
+	
+	
+	
+	
 	
 }

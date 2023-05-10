@@ -7,6 +7,7 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 
 import pieceModels.Piece;
+import pieceModels.King;
 import pieceModels.Knight;
 
 class KnightTests {
@@ -14,16 +15,18 @@ class KnightTests {
 	
 	@Test
 	void testMovePossibleMoves(){
-		Knight testKnight = new Knight(4,4,Piece.WHITE, 1);
+		Knight testKnight = new Knight(4,4,Piece.WHITE);
 		Piece[][] board= new Piece[8][8];
-		Piece enemyPiece = new Knight(5,6,Piece.BLACK, 2);
-		Piece friendlyPiece = new Knight(2,4,Piece.WHITE, 3);
+		Piece enemyPiece = new Knight(5,6,Piece.BLACK);
+		Piece friendlyPiece = new Knight(2,4,Piece.WHITE);
+		King king = new King(6,6,Piece.WHITE);
+		board[king.getYpos()][king.getXpos()] = king;
 		board[enemyPiece.getYpos()][enemyPiece.getXpos()] = enemyPiece;
 		board[friendlyPiece.getYpos()][friendlyPiece.getXpos()] = friendlyPiece;
 		boolean foundPiece = false;
 		boolean pieceToLeftOfEnemy = false;
 		boolean friendlyPieceIsValidMove = false;
-		List<Integer[]>possibleMoves = testKnight.getValidMoves(board);
+		List<Integer[]>possibleMoves = testKnight.getValidMoves(board, testKnight.getColor());
 		for(int i = 0; i < possibleMoves.size(); i++) {
 			if(possibleMoves.get(i)[0].equals(enemyPiece.getXpos()) && possibleMoves.get(i)[1].equals(enemyPiece.getYpos())){
 				foundPiece = true;

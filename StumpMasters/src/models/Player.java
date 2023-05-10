@@ -13,6 +13,7 @@ public class Player {
 	private boolean inCheckmate;
 	private int color;
 	private String type;
+	private boolean turn;
 	//PlayerModeld with no Parameter
 	public Player() {
 		//initializes Pieces
@@ -122,5 +123,13 @@ public class Player {
 	
 	public String getType() {
 		return this.type;
+	}
+	
+	public boolean getTurn() {
+		return this.turn;
+	}
+	
+	public void setTurn(boolean turn) {
+		this.turn = turn;
 	}
 }

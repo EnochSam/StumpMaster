@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
+import pieceModels.King;
 import pieceModels.Pawn;
 import pieceModels.Piece;
 import pieceModels.Rook;
@@ -14,11 +15,13 @@ class PawnTests {
 	
 	@Test
 	void testBlackPawn(){
-		Piece testPiece = new Pawn(4,4,Piece.BLACK, 1);
+		Piece testPiece = new Pawn(4,4,Piece.BLACK);
 		Piece[][] board= new Piece[8][8];
-		Piece enemyPiece = new Rook(5,5,Piece.WHITE, 2);
-		Piece enemyPiece2 = new Pawn(4,5,Piece.WHITE, 3);
-		Piece friendlyPiece = new Rook(3,5,Piece.BLACK, 4);
+		Piece enemyPiece = new Rook(5,5,Piece.WHITE);
+		Piece enemyPiece2 = new Pawn(4,5,Piece.WHITE);
+		Piece friendlyPiece = new Rook(3,5,Piece.BLACK);
+		King king = new King(6,6,Piece.BLACK);
+		board[king.getYpos()][king.getXpos()] = king;
 		board[enemyPiece.getYpos()][enemyPiece.getXpos()] = enemyPiece;
 		board[enemyPiece2.getYpos()][enemyPiece2.getXpos()] = enemyPiece2;
 		board[friendlyPiece.getYpos()][friendlyPiece.getXpos()] = friendlyPiece;
@@ -26,7 +29,7 @@ class PawnTests {
 		boolean pieceToLeftOfEnemy = false;
 		boolean friendlyPieceIsValidMove = false;
 		boolean pieceInFrontOfEnemy = false;
-		List<Integer[]>possibleMoves = testPiece.getValidMoves(board);
+		List<Integer[]>possibleMoves = testPiece.getValidMoves(board, testPiece.getColor());
 		for(int i = 0; i < possibleMoves.size(); i++) {
 			if(possibleMoves.get(i)[0].equals(enemyPiece.getXpos()) && possibleMoves.get(i)[1].equals(enemyPiece.getYpos())){
 				foundPiece = true;
@@ -41,7 +44,7 @@ class PawnTests {
 				pieceInFrontOfEnemy = true;
 			}
 		}
-		assertEquals(true, foundPiece);
+		assertEquals(false, foundPiece);
 		assertFalse(pieceToLeftOfEnemy);
 		assertFalse(friendlyPieceIsValidMove);
 		assertFalse(pieceInFrontOfEnemy);
@@ -49,11 +52,13 @@ class PawnTests {
 	
 	@Test
 	void testWhitePawn(){
-		Piece testPiece = new Pawn(4,4,Piece.WHITE, 5);
+		Piece testPiece = new Pawn(4,4,Piece.WHITE);
 		Piece[][] board= new Piece[8][8];
-		Piece enemyPiece = new Rook(3,3,Piece.BLACK, 6);
-		Piece enemyPiece2 = new Pawn(4,3,Piece.BLACK, 7);
-		Piece friendlyPiece = new Rook(2,3,Piece.WHITE, 8);
+		Piece enemyPiece = new Rook(3,3,Piece.BLACK);
+		Piece enemyPiece2 = new Pawn(4,3,Piece.BLACK);
+		Piece friendlyPiece = new Rook(2,3,Piece.WHITE);
+		King king = new King(6,6,Piece.WHITE);
+		board[king.getYpos()][king.getXpos()] = king;
 		board[enemyPiece.getYpos()][enemyPiece.getXpos()] = enemyPiece;
 		board[enemyPiece2.getYpos()][enemyPiece2.getXpos()] = enemyPiece2;
 		board[friendlyPiece.getYpos()][friendlyPiece.getXpos()] = friendlyPiece;
@@ -61,7 +66,7 @@ class PawnTests {
 		boolean pieceToLeftOfEnemy = false;
 		boolean friendlyPieceIsValidMove = false;
 		boolean pieceInFrontOfEnemy = false;
-		List<Integer[]>possibleMoves = testPiece.getValidMoves(board);
+		List<Integer[]>possibleMoves = testPiece.getValidMoves(board, testPiece.getColor());
 		for(int i = 0; i < possibleMoves.size(); i++) {
 			if(possibleMoves.get(i)[0].equals(enemyPiece.getXpos()) && possibleMoves.get(i)[1].equals(enemyPiece.getYpos())){
 				foundPiece = true;
@@ -76,7 +81,7 @@ class PawnTests {
 				pieceInFrontOfEnemy = true;
 			}
 		}
-		assertEquals(true, foundPiece);
+		assertEquals(false, foundPiece);
 		assertFalse(pieceToLeftOfEnemy);
 		assertFalse(friendlyPieceIsValidMove);
 		assertFalse(pieceInFrontOfEnemy);

@@ -15,7 +15,7 @@
 <form method="post" action="${pageContext.servletContext.contextPath}/Login">
 	<input type="text" name="username">
 	<br>
-	<input type="text" name="password">
+	<input type="password" name="password">
 	<br><br>
 	<input type="submit" name="login" value="Log In">
 	<input type="submit" name="create" value="Create Account">

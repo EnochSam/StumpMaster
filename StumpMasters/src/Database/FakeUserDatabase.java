@@ -3,7 +3,7 @@ package Database;
 import java.util.ArrayList;
 
 import models.User;
-public class FakeUserDatabase {
+public class FakeUserDatabase implements IUserDatabase{
 	
 	// List of Users
 	private ArrayList<User> users = new ArrayList<User>();

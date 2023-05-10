@@ -37,7 +37,7 @@ public class GameServlet extends HttpServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) 
-			throws ServletException, IOException {
+		throws ServletException, IOException {
 		//Set Controller and Models
 		Game model = new Game();
 		//GameController controller = new GameController();
@@ -59,7 +59,8 @@ public class GameServlet extends HttpServlet {
 			//Grabs all variables from client
 			pawnPromotion = request.getParameter("pawnPromotion");
 			tileSelected = request.getParameter("tile");
-			if(tileSelected !=null || pawnPromotion!= null ) {
+		String saveGame = request.getParameter("Save");
+			if(tileSelected !=null || pawnPromotion!= null || saveGame != null) {
 			gameMoves = request.getParameter("gameMoves");
 			playerTurn = request.getParameter("playerTurn");
 			selectingPiece = request.getParameter("selectingPiece");
@@ -76,17 +77,32 @@ public class GameServlet extends HttpServlet {
 			tileSelected = "START";
 			//to tell Servlet to save the sessionData
 			request.setAttribute("beginningOfGame", true);
-			}	
-			
+			}
+			// if player is saving game, remove all Nans
+		
+			if(saveGame != null) {
+				if(gameMoves.charAt(gameMoves.length()-1) == 'N') {
+					gameMoves = gameMoves.substring(0, gameMoves.length() - 6);
+					gameMoves += "11";
+				}
+			}
+			String username = request.getParameter("username");
+			if(username == null){
+				username = "NotLoggedIn";
+			}
+			controller.setUsername(username);
 			try {
-				controller.setBoard(gameMoves);
+				controller.setBoard(gameMoves,playerTurn);
+				controller.setTurn(playerTurn);
 			} catch (Exception e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
+
 			//Checks if the Player is selecting a piece
-			if(selectingPiece.equals("True") && !(tileSelected.equals("START"))) {
+			if(selectingPiece.equals("True") && (!tileSelected.equals("START") && saveGame== null)) {
 				//Checks to see if there is a player's piece at specified location
+
 				try { 
 					//Grabs location from client
 					//sends string version of possible list to views
@@ -106,7 +122,8 @@ public class GameServlet extends HttpServlet {
 				}
 				
 		}else
-		if(selectValidMoves.equals("True")) {
+		if(selectValidMoves.equals("True") && saveGame == null) {
+
 			String pieceAttemptingToMove = gameMoves.substring(gameMoves.length()-2, gameMoves.length());
 			String previousTitle = ""+pieceAttemptingToMove.charAt(0)+":"+pieceAttemptingToMove.charAt(1);
 			Boolean isMoveValid = controller.moveValidMove(tileSelected,previousTitle,playerTurn );
@@ -126,8 +143,10 @@ public class GameServlet extends HttpServlet {
 				}
 				else if(playerTurn.equals("White")){
 					playerTurn = "Black";
+					controller.switchTurns();
 				}else {
 					playerTurn = "White";
+					controller.switchTurns();
 				}
 				selectValidMoves = "False";
 				selectingPiece = "True";
@@ -136,6 +155,10 @@ public class GameServlet extends HttpServlet {
 				}
 			}
 			
+		}else  
+			if(saveGame!= null){
+
+				controller.saveGame();
 		}
 		 //let Controller Create Board
 
@@ -152,14 +175,14 @@ public class GameServlet extends HttpServlet {
 		PrintWriter out=null;
 		try {
 			out=response.getWriter();
-			out.println("Hello, Here is the Print Request since Enoch is a Poopie: "+ tileSelected);
+			out.println("");
 		}
 		catch(Exception e) {
 			out.println("Error: " + e.getMessage());
 		}
 		finally {
-			out.println("<br></br>");
-			out.println("To go to MainPage, <a href=index.html> ClICK HERE </a>");
+			out.println("");
+			out.println("");
 			out.println("</center>");
 		}
 
@@ -181,13 +204,15 @@ public class GameServlet extends HttpServlet {
 		}
 		
 
-		
+		controller.serverCheckForMateIn();
 		//sends all atributes to client
 		request.setAttribute("board", loadBoard);
 		request.setAttribute("gameMoves", model.getGameMoves());
 		request.setAttribute("playerTurn",playerTurn);
 		request.setAttribute("selectingPiece",selectingPiece);
 		request.setAttribute("selectValidMoves",selectValidMoves);
+		request.setAttribute("mateinone", model.getChekForMateInOne());
+		request.setAttribute("username", username);
 		if(model.getInCheckmate()) {
 			request.setAttribute("inCheckmate", true);
 		}

@@ -3,6 +3,7 @@ package Database;
 import java.util.List;
 
 import models.Player;
+import models.User;
 import pieceModels.Bishop;
 import pieceModels.Knight;
 import pieceModels.Piece;
@@ -205,6 +206,98 @@ public class FakeGameDatabase implements IDatabase{
 	public List<String> getCapturedPlayersList(int playerColor) {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+
+	@Override
+	public void setUsername(String username) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public boolean doesSaveExist() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+
+	@Override
+	public String loadGame() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+	@Override
+	public void overwritePieces(Player[] player) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+	@Override
+	public void saveGame(String gameMoves, boolean turn) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+	@Override
+	public boolean getPlayerTurnFromSave() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+
+	@Override
+	public void createUser(String username, String password) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+	@Override
+	public boolean checkExists(String username, String password) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+
+	@Override
+	public boolean checkUsernameExists(String username) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+
+	@Override
+	public User getUser(String username, String password) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+
+
+	@Override
+	public void deleteUser(String username) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+	@Override
+	public void changeUsername(String username, String newUsername) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+	@Override
+	public void changePassword(String username, String newPassword) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

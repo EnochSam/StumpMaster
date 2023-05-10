@@ -9,6 +9,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import controllers.GameController;
+
 /**
  * Servlet implementation class MainMenu
  */
@@ -22,6 +24,16 @@ public class MainMenuServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) 
 			throws ServletException, IOException {
 		//Get Menu JSP File
+		//Checks to see if there is a stored Game
+		if(request.getParameter("username") != null) {
+			String username = request.getParameter("username");
+			GameController controller = new GameController();
+			controller.setUsername(username);
+			if(controller.doesSaveExist()) {
+				request.setAttribute("loadGame", true);
+			}
+			request.setAttribute("username", username);
+		}
 		RequestDispatcher rd = request.getRequestDispatcher("view/menu.jsp");
 		rd.forward(request, response);
 	}
