@@ -32,7 +32,8 @@ public class DiagonalTesting {
 		testingPiece.setColor(0);
 		testingPiece.setXpos(3);
 		testingPiece.setYpos(4);
-		possibleMoves = testingPiece.getValidMoves(board);
+		board[4][3] = testingPiece;
+		possibleMoves = testingPiece.getValidMoves(board, testingPiece.getColor());
 
 		//Top Left
 		assertEquals(inList(possibleMoves, 0, 7), true);
@@ -59,7 +60,7 @@ public class DiagonalTesting {
 		testingPiece.setColor(0);
 		testingPiece.setXpos(3);
 		testingPiece.setYpos(4);
-		possibleMoves = testingPiece.getValidMoves(board);
+		possibleMoves = testingPiece.getValidMoves(board, testingPiece.getColor());
 
 		//Top Left
 		assertEquals(inList(possibleMoves, 0, 7), false);
@@ -83,7 +84,8 @@ public class DiagonalTesting {
 		testingPiece.setColor(0);
 		testingPiece.setXpos(3);
 		testingPiece.setYpos(4);
-		possibleMoves = testingPiece.getValidMoves(board);
+		board[4][3] = testingPiece;
+		possibleMoves = testingPiece.getValidMoves(board, testingPiece.getColor());
 
 		//Top Left
 		assertEquals(inList(possibleMoves, 0, 7), false);
@@ -109,10 +111,12 @@ public class DiagonalTesting {
 		Piece testingPiece = new Bishop(); 
 		board[4][3] = testingPiece;
 		List<Integer[]> possibleMoves;
-		board[5][2] = new Pawn(2,5,1, 1);
-		board[5][4] = new Pawn(4,5,0, 2);
-		board[2][5] = new Pawn(5,2,1, 3);
-		board[2][6] = new Pawn(6,1,0, 4);
+		board[5][2] = new Pawn(2,5,1);
+		board[5][4] = new Pawn(4,5,0);
+		board[2][5] = new Pawn(5,2,1);
+		board[2][6] = new Pawn(6,1,0);
+		board[6][6] = new King(6,6,1);
+		board[1][0] = new King(0,1,0);
 		
 		List<Piece> PiecesToPass = new ArrayList<Piece>();
 		PiecesToPass.addAll(Arrays.asList(new Bishop(), new Queen()));
@@ -121,14 +125,15 @@ public class DiagonalTesting {
 		testingPiece.setColor(0);
 		testingPiece.setXpos(3);
 		testingPiece.setYpos(4);
-		possibleMoves = testingPiece.getValidMoves(board);
+		board[4][3] = testingPiece;
+		possibleMoves = testingPiece.getValidMoves(board, testingPiece.getColor());
 
 		//Top Left
 		assertEquals(inList(possibleMoves, 0, 7), false);
 		//Top Right
 		assertEquals(inList(possibleMoves, 6, 7), false);
 		//Bottom Left
-		assertEquals(inList(possibleMoves, 0, 1), true);
+		assertEquals(inList(possibleMoves, 0, 1), false);
 		//Bottom Right
 		assertEquals(inList(possibleMoves, 7, 0), false);
 		//Inner Top Left
@@ -148,7 +153,7 @@ public class DiagonalTesting {
 		testingPiece.setColor(0);
 		testingPiece.setXpos(3);
 		testingPiece.setYpos(4);
-		possibleMoves = testingPiece.getValidMoves(board);
+		possibleMoves = testingPiece.getValidMoves(board, testingPiece.getColor());
 
 		//Top Left
 		assertEquals(inList(possibleMoves, 0, 7), false);
@@ -172,7 +177,8 @@ public class DiagonalTesting {
 		testingPiece.setColor(0);
 		testingPiece.setXpos(3);
 		testingPiece.setYpos(4);
-		possibleMoves = testingPiece.getValidMoves(board);
+		board[4][3] = testingPiece;
+		possibleMoves = testingPiece.getValidMoves(board, testingPiece.getColor());
 
 		//Top Left
 		assertEquals(inList(possibleMoves, 0, 7), false);
@@ -192,8 +198,8 @@ public class DiagonalTesting {
 		assertEquals(inList(possibleMoves, 4, 3), true);
 		
 		//White Pawn
-		testingPiece = new Pawn(3,4,0, 5);
-		possibleMoves = testingPiece.getValidMoves(board);
+		testingPiece = new Pawn(3,4,0);
+		possibleMoves = testingPiece.getValidMoves(board, testingPiece.getColor());
 
 		//Top Left
 		assertEquals(inList(possibleMoves, 0, 7), false);
@@ -214,8 +220,8 @@ public class DiagonalTesting {
 		
 		
 		//Black Pawn
-		testingPiece = new Pawn(3,4,1, 6);
-		possibleMoves = testingPiece.getValidMoves(board);
+		testingPiece = new Pawn(3,4,1);
+		possibleMoves = testingPiece.getValidMoves(board, testingPiece.getColor());
 
 		//Top Left
 		assertEquals(inList(possibleMoves, 0, 7), false);

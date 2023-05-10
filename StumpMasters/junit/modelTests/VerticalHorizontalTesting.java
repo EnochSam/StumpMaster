@@ -24,6 +24,8 @@ public class VerticalHorizontalTesting {
 		Piece testingPiece = new Bishop(); 
 		board[4][3] = testingPiece;
 		List<Integer[]> possibleMoves;
+		King king = new King(6,6,Piece.WHITE);
+		board[king.getYpos()][king.getXpos()] = king;
 		
 		List<Piece> PiecesToPass = new ArrayList<Piece>();
 		PiecesToPass.addAll(Arrays.asList(new Rook(), new Queen()));
@@ -32,24 +34,24 @@ public class VerticalHorizontalTesting {
 		testingPiece.setColor(0);
 		testingPiece.setXpos(3);
 		testingPiece.setYpos(4);
-		possibleMoves = testingPiece.getValidMoves(board);
+		possibleMoves = testingPiece.getValidMoves(board, testingPiece.getColor());
 
 		//Far Top
-		assertEquals(inList(possibleMoves, 3, 7), true);
+		assertEquals(inList(possibleMoves, 3, 7), false);
 		//Far Bottom
-		assertEquals(inList(possibleMoves, 3, 0), true);
+		assertEquals(inList(possibleMoves, 3, 0), false);
 		//Far Left
-		assertEquals(inList(possibleMoves, 0, 4), true);
+		assertEquals(inList(possibleMoves, 0, 4), false);
 		//Far Right
-		assertEquals(inList(possibleMoves, 7, 4), true);
+		assertEquals(inList(possibleMoves, 7, 4), false);
 		//Inner Left
-		assertEquals(inList(possibleMoves, 2, 4), true);
+		assertEquals(inList(possibleMoves, 2, 4), false);
 		//Inner Right
-		assertEquals(inList(possibleMoves, 2, 4), true);
+		assertEquals(inList(possibleMoves, 2, 4), false);
 		//Inner Bottom
 		assertEquals(inList(possibleMoves, 3, 3), true);
 		//Inner Bottom Right
-		assertEquals(inList(possibleMoves, 3, 5), true);
+		assertEquals(inList(possibleMoves, 3, 5), false);
 		}
 		
 		List<Piece> PiecesToFail = new ArrayList<Piece>();
@@ -59,7 +61,7 @@ public class VerticalHorizontalTesting {
 		testingPiece.setColor(0);
 		testingPiece.setXpos(3);
 		testingPiece.setYpos(4);
-		possibleMoves = testingPiece.getValidMoves(board);
+		possibleMoves = testingPiece.getValidMoves(board, testingPiece.getColor());
 
 		//Far Top
 		assertEquals(inList(possibleMoves, 3, 7), false);
@@ -78,12 +80,13 @@ public class VerticalHorizontalTesting {
 		//Inner Bottom Right
 		assertEquals(inList(possibleMoves, 3, 5), false);
 		}
-		
+		board[6][6] = null;
 		testingPiece = new King();
 		testingPiece.setColor(0);
 		testingPiece.setXpos(3);
 		testingPiece.setYpos(4);
-		possibleMoves = testingPiece.getValidMoves(board);
+		board[4][3] = testingPiece;
+		possibleMoves = testingPiece.getValidMoves(board, testingPiece.getColor());
 
 		//Far Top
 		assertEquals(inList(possibleMoves, 3, 7), false);
@@ -102,8 +105,9 @@ public class VerticalHorizontalTesting {
 		//Inner Bottom Right
 		assertEquals(inList(possibleMoves, 3, 5), true);
 		
-		testingPiece = new Pawn(3,4,0, 1);
-		possibleMoves = testingPiece.getValidMoves(board);
+		testingPiece = new Pawn(3,4,0);
+		board[4][3] = testingPiece;
+		possibleMoves = testingPiece.getValidMoves(board, testingPiece.getColor());
 		//Far Top
 		assertEquals(inList(possibleMoves, 3, 7), false);
 		//Far Bottom
@@ -121,8 +125,9 @@ public class VerticalHorizontalTesting {
 		//Inner Bottom Right
 		assertEquals(inList(possibleMoves, 3, 5), true);
 		
-		testingPiece = new Pawn(3,4,1, 2);
-		possibleMoves = testingPiece.getValidMoves(board);
+		testingPiece = new Pawn(3,4,1);
+		board[4][3] = testingPiece;
+		possibleMoves = testingPiece.getValidMoves(board, testingPiece.getColor());
 		//Far Top
 		assertEquals(inList(possibleMoves, 3, 7), false);
 		//Far Bottom
@@ -147,10 +152,12 @@ public class VerticalHorizontalTesting {
 		Piece testingPiece = new Bishop(); 
 		board[4][3] = testingPiece;
 		List<Integer[]> possibleMoves;
-		board[4][0] = new Pawn(0,4,1, 3);
-		board[5][3] = new Pawn(3,5,0, 4);
-		board[4][4] = new Pawn(4,4,1, 5);
-		board[4][6] = new Pawn(6,4,0, 6);
+		board[4][0] = new Pawn(0,4,1);
+		board[5][3] = new Pawn(3,5,0);
+		board[4][4] = new Pawn(4,4,1);
+		board[4][6] = new Pawn(6,4,0);
+		board[6][6] = new King(6,6,0);
+		board[0][1] = new King(1,0,1);
 		
 		List<Piece> PiecesToPass = new ArrayList<Piece>();
 		PiecesToPass.addAll(Arrays.asList(new Rook(), new Queen()));
@@ -159,7 +166,7 @@ public class VerticalHorizontalTesting {
 		testingPiece.setColor(0);
 		testingPiece.setXpos(3);
 		testingPiece.setYpos(4);
-		possibleMoves = testingPiece.getValidMoves(board);
+		possibleMoves = testingPiece.getValidMoves(board, testingPiece.getColor());
 
 		//Far Top
 		assertEquals(inList(possibleMoves, 3, 7), false);
@@ -186,7 +193,7 @@ public class VerticalHorizontalTesting {
 		testingPiece.setColor(0);
 		testingPiece.setXpos(3);
 		testingPiece.setYpos(4);
-		possibleMoves = testingPiece.getValidMoves(board);
+		possibleMoves = testingPiece.getValidMoves(board, testingPiece.getColor());
 
 		//Far Top
 		assertEquals(inList(possibleMoves, 3, 7), false);
@@ -206,11 +213,13 @@ public class VerticalHorizontalTesting {
 		assertEquals(inList(possibleMoves, 3, 5), false);
 		}
 		
+		board[6][6] = null;
 		testingPiece = new King();
 		testingPiece.setColor(0);
 		testingPiece.setXpos(3);
 		testingPiece.setYpos(4);
-		possibleMoves = testingPiece.getValidMoves(board);
+		board[4][3] = testingPiece;
+		possibleMoves = testingPiece.getValidMoves(board, testingPiece.getColor());
 
 		//Far Top
 		assertEquals(inList(possibleMoves, 3, 7), false);
@@ -225,12 +234,12 @@ public class VerticalHorizontalTesting {
 		//Inner Right
 		assertEquals(inList(possibleMoves, 2, 4), true);
 		//Inner Bottom
-		assertEquals(inList(possibleMoves, 3, 3), true);
+		assertEquals(inList(possibleMoves, 3, 3), false);
 		//Inner Bottom Right
 		assertEquals(inList(possibleMoves, 3, 5), false);
 		
-		testingPiece = new Pawn(3,4,0, 7);
-		possibleMoves = testingPiece.getValidMoves(board);
+		testingPiece = new Pawn(3,4,0);
+		possibleMoves = testingPiece.getValidMoves(board, testingPiece.getColor());
 		//Far Top
 		assertEquals(inList(possibleMoves, 3, 7), false);
 		//Far Bottom
@@ -248,8 +257,8 @@ public class VerticalHorizontalTesting {
 		//Inner Bottom Right
 		assertEquals(inList(possibleMoves, 3, 5), false);
 		
-		testingPiece = new Pawn(3,4,1, 6);
-		possibleMoves = testingPiece.getValidMoves(board);
+		testingPiece = new Pawn(3,4,1);
+		possibleMoves = testingPiece.getValidMoves(board, testingPiece.getColor());
 		//Far Top
 		assertEquals(inList(possibleMoves, 3, 7), false);
 		//Far Bottom
