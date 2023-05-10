@@ -175,14 +175,14 @@ public class GameServlet extends HttpServlet {
 		PrintWriter out=null;
 		try {
 			out=response.getWriter();
-			out.println("Hello, Here is the Print Request since Enoch is a Poopie: "+ tileSelected);
+			out.println("");
 		}
 		catch(Exception e) {
 			out.println("Error: " + e.getMessage());
 		}
 		finally {
-			out.println("<br></br>");
-			out.println("To go to MainPage, <a href=index.html> ClICK HERE </a>");
+			out.println("");
+			out.println("");
 			out.println("</center>");
 		}
 

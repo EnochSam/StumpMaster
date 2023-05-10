@@ -9,7 +9,7 @@
 <link rel="stylesheet" href="${pageContext.servletContext.contextPath}/resources/chessStyleSheet.css">
 </head>
 <body>
-	<
+	
     <form method="post" id= "gameForm" action="${pageContext.servletContext.contextPath}/Game">
         	<input type = "hidden" value ="${username}" name=username >
     
@@ -44,7 +44,7 @@
 		//Displays if a player is in Checkmate
 			if(inCheckmate == "true"){
 			let inCheckSign = document.createElement("div")
-			inCheckSign.id = "inCheck"
+			inCheckSign.id = "txt"
 			inCheckSign.innerHTML = "Checkmate";
 			//Prints Winner
 			if(playerTurn == "White"){
@@ -58,14 +58,19 @@
 		//Displays if a player is in Check
 		else if(inCheck == "true"){
 			let inCheckSign = document.createElement("div")
-			inCheckSign.id = "inCheck"
+			inCheckSign.id = "txt"
 			inCheckSign.innerHTML = "Check";
 			document.getElementById("gameForm").prepend(inCheckSign)
 			
 		}else if(mateinone == "true"){
 			let mateinoneSig = document.createElement("div")
-			mateinoneSig.id = "MateNextMove"
+			mateinoneSig.id = "txt"
 			mateinoneSig.innerHTML = "Mate Next Move";
+			document.getElementById("gameForm").prepend(mateinoneSig)
+		}else{
+			let mateinoneSig = document.createElement("br")
+			mateinoneSig.id = "txt"
+			mateinoneSig.innerHTML = "   ";
 			document.getElementById("gameForm").prepend(mateinoneSig)
 		}
 		

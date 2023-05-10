@@ -85,6 +85,10 @@
 	height: 50px;
 	width:50px;
 }
+#txt{
+	text-align :center;
+	font-size: 30px;
+}
 #WhiteKing{
 	clip-path: inset(0px 250px 50px 0px);
 }
