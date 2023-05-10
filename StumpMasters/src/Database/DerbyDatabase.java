@@ -1010,22 +1010,69 @@ executeTransaction(new Transaction<Boolean>() {
 	}
 	
 	@Override
-	public void deleteUser(String username, String password) {
+	public void deleteUser(String username) {
 		executeTransaction(new Transaction<Boolean>() {
 			@Override
 			public Boolean execute(Connection conn) throws SQLException {
 				PreparedStatement deleteUser = null;
 				try {
 					deleteUser = conn.prepareStatement(
-							"delete from users where username = ? and password = ? "
+							"delete from users where username = ? "
 					);
 					deleteUser.setString(1, username);
-					deleteUser.setString(2, password);
 					deleteUser.executeUpdate();
 					
 					return true;
 				} finally {
 					DBUtil.closeQuietly(deleteUser);
+
+				}
+			}
+		});
+	}
+	
+	@Override
+	public void changeUsername(String username, String password, String newUsername) {
+		executeTransaction(new Transaction<Boolean>() {
+			@Override
+			public Boolean execute(Connection conn) throws SQLException {
+				PreparedStatement deleteUser = null;
+				try {
+					deleteUser = conn.prepareStatement(
+							"update users set username = ? where username = ? and password = ? "
+					);
+					deleteUser.setString(1, newUsername);
+					deleteUser.setString(2, username);
+					deleteUser.setString(3, password);
+					deleteUser.executeUpdate();
+					
+					return true;
+				} finally {
+					DBUtil.closeQuietly(deleteUser);
+
+				}
+			}
+		});
+	}
+	
+	@Override
+	public void changePassword(String username, String password, String newPassword) {
+		executeTransaction(new Transaction<Boolean>() {
+			@Override
+			public Boolean execute(Connection conn) throws SQLException {
+				PreparedStatement updateUser = null;
+				try {
+					updateUser = conn.prepareStatement(
+							"update users set password = ? where username = ? and password = ? "
+					);
+					updateUser.setString(1, newPassword);
+					updateUser.setString(2, username);
+					updateUser.setString(3, password);
+					updateUser.executeUpdate();
+					
+					return true;
+				} finally {
+					DBUtil.closeQuietly(updateUser);
 
 				}
 			}

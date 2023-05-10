@@ -7,8 +7,8 @@ import Database.FakeUserDatabase;
 import Database.IDatabase;
 
 public class LoginController {
-	private FakeUserDatabase db = new FakeUserDatabase();
-	//private IDatabase db = new DerbyDatabase();
+	//private FakeUserDatabase db = new FakeUserDatabase();
+	private IDatabase db = new DerbyDatabase();
 	
 	public LoginController() {
 		

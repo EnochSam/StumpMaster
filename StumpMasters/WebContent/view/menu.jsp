@@ -24,6 +24,12 @@
 		</form>
 		
 			<br>
+	<br><br>
+	<form method="get" id = "Login" action="${pageContext.servletContext.contextPath}/Login">
+		<input type="submit" value="Delete Account">
+		<input type="hidden" name = delete value="delete">
+		<input type="hidden" name = username value="${username}">
+	</form>
 		
 	<br><br>
 	<form method="get" id = "Login" action="${pageContext.servletContext.contextPath}/Login">

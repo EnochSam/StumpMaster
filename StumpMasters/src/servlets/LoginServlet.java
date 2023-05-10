@@ -10,6 +10,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import Database.DerbyDatabase;
+import Database.IDatabase;
 import controllers.LoginController;
 import models.inputType;
 import sun.security.util.Debug;
@@ -34,7 +36,17 @@ public class LoginServlet extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
-
+		IDatabase db = new DerbyDatabase();
+		
+		// Check if user asked to delete account
+		String delete = request.getParameter("delete");
+		
+		if(delete != null) {
+			if(delete.equals("delete")) {
+				db.deleteUser(request.getParameter("username"));
+			}
+		}
+		
 		RequestDispatcher rd = request.getRequestDispatcher("view/Login.jsp");
 		rd.include(request, response);
 	}

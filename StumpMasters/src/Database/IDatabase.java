@@ -56,7 +56,11 @@ public interface IDatabase {
 	
 	public User getUser(String username, String password);
 	
-	public void deleteUser(String username, String password);
+	public void deleteUser(String username);
+	
+	public void changeUsername(String username, String password, String newUsername);
+	
+	public void changePassword(String username, String password, String newPassword);
 	
 	
 	
