@@ -16,7 +16,7 @@
 	<br><br>
 	<form method="get" action="${pageContext.servletContext.contextPath}/Game">
 		<input type="submit" value="Create Game">
-		<input type="hidden" name = username value="${username}">
+		<input type="hidden" name = username value="${usernme}">
 	</form>
 			<br><br>
 		<form method="get" id = "LoadGame" action="${pageContext.servletContext.contextPath}/Load">
