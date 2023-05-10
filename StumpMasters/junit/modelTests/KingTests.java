@@ -19,16 +19,16 @@ class KingTests {
 	
 	@Test
 	void testMovePossibleMoves(){
-		King testKing = new King(4,4,Piece.WHITE, 1);
+		King testKing = new King(4,4,Piece.WHITE);
 		Piece[][] board= new Piece[8][8];
-		Piece enemyPiece = new King(7,7,Piece.BLACK, 2);
-		Piece friendlyPiece = new King(2,3,Piece.WHITE, 3);
+		Piece enemyPiece = new King(7,7,Piece.BLACK);
+		Piece friendlyPiece = new King(2,3,Piece.WHITE);
 		board[enemyPiece.getYpos()][enemyPiece.getXpos()] = enemyPiece;
 		board[friendlyPiece.getYpos()][friendlyPiece.getXpos()] = friendlyPiece;
 		boolean foundPiece = false;
 		boolean pieceToLeftOfEnemy = false;
 		boolean friendlyPieceIsValidMove = false;
-		List<Integer[]>possibleMoves = testKing.getValidMoves(board);
+		List<Integer[]>possibleMoves = testKing.getValidMoves(board, testKing.getColor());
 		for(int i = 0; i < possibleMoves.size(); i++) {
 			if(possibleMoves.get(i)[0].equals(enemyPiece.getXpos()) && possibleMoves.get(i)[1].equals(enemyPiece.getYpos())){
 				foundPiece = true;
@@ -40,7 +40,7 @@ class KingTests {
 				friendlyPieceIsValidMove = true;
 			}
 		}
-		assertEquals(true, foundPiece);
+		assertEquals(false, foundPiece);
 		assertFalse(pieceToLeftOfEnemy);
 		assertFalse(friendlyPieceIsValidMove);
 	}
