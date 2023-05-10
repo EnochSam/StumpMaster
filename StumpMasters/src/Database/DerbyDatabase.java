@@ -1008,5 +1008,28 @@ executeTransaction(new Transaction<Boolean>() {
 		
 		
 	}
+	
+	@Override
+	public void deleteUser(String username, String password) {
+		executeTransaction(new Transaction<Boolean>() {
+			@Override
+			public Boolean execute(Connection conn) throws SQLException {
+				PreparedStatement deleteUser = null;
+				try {
+					deleteUser = conn.prepareStatement(
+							"delete from users where username = ? and password = ? "
+					);
+					deleteUser.setString(1, username);
+					deleteUser.setString(2, password);
+					deleteUser.executeUpdate();
+					
+					return true;
+				} finally {
+					DBUtil.closeQuietly(deleteUser);
+
+				}
+			}
+		});
+	}
 
 }

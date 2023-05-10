@@ -56,6 +56,8 @@ public interface IDatabase {
 	
 	public User getUser(String username, String password);
 	
+	public void deleteUser(String username, String password);
+	
 	
 	
 	
