@@ -24,15 +24,6 @@
 		</form>
 		
 			<br>
-			
-			<br><br>
-	<form method="get" id = "delete" action="${pageContext.servletContext.contextPath}/Login">
-		<input type="submit" value="Delete Account">
-		<input type="hidden" name = delete value="delete">
-		<input type="hidden" name = username value="${username}">
-	</form>
-		
-	<br><br>
 	<br><br>
 	<form method="get" id = "Manage" action="${pageContext.servletContext.contextPath}/Manage">
 		<input type="submit" value="Manage Account">

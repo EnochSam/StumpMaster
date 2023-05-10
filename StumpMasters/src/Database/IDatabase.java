@@ -60,7 +60,7 @@ public interface IDatabase {
 	
 	public void changeUsername(String username, String newUsername);
 	
-	public void changePassword(String username, String password, String newPassword);
+	public void changePassword(String username, String newPassword);
 	
 	
 	

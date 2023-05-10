@@ -1055,18 +1055,17 @@ executeTransaction(new Transaction<Boolean>() {
 	}
 	
 	@Override
-	public void changePassword(String username, String password, String newPassword) {
+	public void changePassword(String username, String newPassword) {
 		executeTransaction(new Transaction<Boolean>() {
 			@Override
 			public Boolean execute(Connection conn) throws SQLException {
 				PreparedStatement updateUser = null;
 				try {
 					updateUser = conn.prepareStatement(
-							"update users set password = ? where username = ? and password = ? "
+							"update users set password = ? where username = ? "
 					);
 					updateUser.setString(1, newPassword);
 					updateUser.setString(2, username);
-					updateUser.setString(3, password);
 					updateUser.executeUpdate();
 					
 					return true;

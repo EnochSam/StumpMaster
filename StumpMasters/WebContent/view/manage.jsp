@@ -14,7 +14,25 @@
 			<div class="username">Username: ${username}</div>
 		</c:if>
 	<br><br>
+	
+	<form method="get" id = "changeUsername" action="${pageContext.servletContext.contextPath}/Manage">
+		<input type="text" name = newUsername>
+		<input type="hidden" name = username value="${username}">
+		<input type="submit" value="Change Username">
+	</form>
+	
 	<br><br>
+	
+	<br><br>
+	<form method="get" id = "changePassword" action="${pageContext.servletContext.contextPath}/Manage">
+		<input type="password" name = newPassword>
+		<input type="hidden" name = username value="${username}">
+		<input type="submit" value="Change Password">
+	</form>
+	
+	<br><br>
+	
+		<br><br>
 	<form method="get" id = "delete" action="${pageContext.servletContext.contextPath}/Login">
 		<input type="submit" value="Delete Account">
 		<input type="hidden" name = delete value="delete">
@@ -22,13 +40,16 @@
 	</form>
 		
 	<br><br>
-	<form method="get" id = "changeUsername" action="${pageContext.servletContext.contextPath}/Login">
-		<input type="text" name = newUsername>
+	
+	<br><br>
+	<form method="get" id = "menu" action="${pageContext.servletContext.contextPath}/MainMenu">
+		<input type="submit" value="Return to Main Menu">
 		<input type="hidden" name = username value="${username}">
-		<input type="submit" value="Change Username">
+		<input type="hidden" name = user value="${user}">
 	</form>
 	
 	<br><br>
+	
 	<form method="get" id = "Logout" action="${pageContext.servletContext.contextPath}/Login">
 		<input type="submit" value="Log Out">
 	</form>
