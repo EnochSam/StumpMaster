@@ -47,6 +47,7 @@ public class manageServlet extends HttpServlet {
 		if(request.getParameter("newUsername") != null) {
 			newUsername = request.getParameter("newUsername");
 			db.changeUsername(username, newUsername);
+			request.setAttribute("username", newUsername);
 		}
 		else if(request.getParameter("newPassword") != null) {
 			newPassword = request.getParameter("newPassword");
