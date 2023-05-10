@@ -83,7 +83,21 @@ public class LoginServlet extends HttpServlet {
 		{
 			//Check if user exists
 			exists = controller.checkExists(username, password);
-		}	//User clicked create account button
+			if(exists) {
+				// Pass user object to main menu
+				request.setAttribute("user", controller.getUser(username, password));
+				request.setAttribute("username", username);
+				
+				// Forward to Main menu
+				request.getRequestDispatcher("view/menu.jsp").forward(request, response);
+			}
+			else {
+				request.setAttribute("error", "The username or password is not correct");
+				doGet(request, response);
+			
+			}	//User clicked create account button
+		
+		}
 		else {
 			// Validate Username and password
 			boolean isValid = (controller.validate(username, inputType.USERNAME) && controller.validate(password, inputType.PASSWORD));
@@ -109,18 +123,7 @@ public class LoginServlet extends HttpServlet {
 				}
 		}
 		
-		if(exists) {
-			// Pass user object to main menu
-			request.setAttribute("username", controller.getUser(username, password).getUsername());
-			request.setAttribute("username", username);
-			
-			// Forward to Main menu
-			request.getRequestDispatcher("view/menu.jsp").forward(request, response);
-		}
-		else {
-			request.setAttribute("error", "The username or password is not correct");
-			doGet(request, response);
-		}
 	}
+	
 
 }

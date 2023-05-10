@@ -673,7 +673,7 @@ public class DerbyDatabase implements IDatabase {
 		return captured;
 	}
 	
-	private void dropTables() {
+	public void dropTables() {
 		executeTransaction(new Transaction<Boolean>() {
 
 			public Boolean execute(Connection conn) throws SQLException {
