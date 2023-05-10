@@ -1032,18 +1032,17 @@ executeTransaction(new Transaction<Boolean>() {
 	}
 	
 	@Override
-	public void changeUsername(String username, String password, String newUsername) {
+	public void changeUsername(String username, String newUsername) {
 		executeTransaction(new Transaction<Boolean>() {
 			@Override
 			public Boolean execute(Connection conn) throws SQLException {
 				PreparedStatement deleteUser = null;
 				try {
 					deleteUser = conn.prepareStatement(
-							"update users set username = ? where username = ? and password = ? "
+							"update users set username = ? where username = ? "
 					);
 					deleteUser.setString(1, newUsername);
 					deleteUser.setString(2, username);
-					deleteUser.setString(3, password);
 					deleteUser.executeUpdate();
 					
 					return true;

@@ -58,7 +58,7 @@ public interface IDatabase {
 	
 	public void deleteUser(String username);
 	
-	public void changeUsername(String username, String password, String newUsername);
+	public void changeUsername(String username, String newUsername);
 	
 	public void changePassword(String username, String password, String newPassword);
 	

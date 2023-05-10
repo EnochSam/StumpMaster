@@ -40,11 +40,16 @@ public class LoginServlet extends HttpServlet {
 		
 		// Check if user asked to delete account
 		String delete = request.getParameter("delete");
+		String username = request.getParameter("username");
+		String newUsername = request.getParameter("newUsername");
 		
 		if(delete != null) {
 			if(delete.equals("delete")) {
-				db.deleteUser(request.getParameter("username"));
+				db.deleteUser(username);
 			}
+		}
+		else if(newUsername != null) {
+			db.changeUsername(username, newUsername);
 		}
 		
 		RequestDispatcher rd = request.getRequestDispatcher("view/Login.jsp");
