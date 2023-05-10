@@ -160,8 +160,9 @@ public class King extends Piece{
 
 	public List<Integer[]> castling(Piece board[][], int playerColor) {
 		List<Integer[]> locs = new ArrayList<Integer[]>();
+		if(super.getColor() == playerColor) {
 		//check for of Castling
-		if(!super.getHasMovedAlready() && !this.inCheck) {
+		if(!super.getHasMovedAlready() && !this.checkForCheck(board, playerColor)) {
 			//check Left of King
 			//assuming that the king hasn't move, if theres a rook at a specific x pos, then the rook hasnt moved either
 			if(board[super.getYpos()][0] != null) {
@@ -248,7 +249,7 @@ public class King extends Piece{
 				}
 			} 
 		}
-		
+		}
 		return locs;
 	}
 	

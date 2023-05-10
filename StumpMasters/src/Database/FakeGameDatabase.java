@@ -278,8 +278,24 @@ public class FakeGameDatabase implements IDatabase{
 	}
 
 
+
+
 	@Override
-	public void deleteUser(String username, String password) {
+	public void deleteUser(String username) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+	@Override
+	public void changeUsername(String username, String newUsername) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+	@Override
+	public void changePassword(String username, String newPassword) {
 		// TODO Auto-generated method stub
 		
 	}
